@@ -1,6 +1,11 @@
 <?php
+/**
+ * Class file for Asset_Manager
+ *
+ * @package AssetManager
+ */
 
-abstract class Assetmanager {
+abstract class Asset_Manager {
 
 	/**
 	 * Array of assets to insert
@@ -164,7 +169,7 @@ abstract class Assetmanager {
 	 * @return void
 	 */
 	public function set_defaults() {
-		$this->default_classes = apply_filters( 'am_asset_classes', array( 'wp-custom-asset' ) );
+		$this->default_classes = apply_filters( 'am_asset_classes', array( 'wp-asset-manager' ) );
 		$this->be_quiet = apply_filters( 'am_ignore_asset_errors', false );
 
 		if ( ! empty( $this->asset_type ) ) {

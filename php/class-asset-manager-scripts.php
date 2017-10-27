@@ -1,6 +1,11 @@
 <?php
+/**
+ * Class file for Asset_Manager_Scripts
+ *
+ * @package AssetManager
+ */
 
-class Assetmanager_Scripts extends Assetmanager {
+class Asset_Manager_Scripts extends Asset_Manager {
 
 	/**
 	 * Holds references to the singleton instances.
@@ -21,7 +26,7 @@ class Assetmanager_Scripts extends Assetmanager {
 	 *
 	 * @var array
 	 */
-	public $inline_script_context = 'nypScripts';
+	public $inline_script_context = 'amScripts';
 
 	/**
 	 * Methods by which a script can be loaded into the DOM

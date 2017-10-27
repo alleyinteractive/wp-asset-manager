@@ -1,8 +1,8 @@
 <?php
 
-namespace Assetmanager_Tests;
+namespace Asset_Manager_Tests;
 
-abstract class Assetmanager_Test extends \WP_UnitTestCase {
+abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 
 	public function setUp() {
 		$this->test_script = [
@@ -59,13 +59,13 @@ abstract class Assetmanager_Test extends \WP_UnitTestCase {
 	}
 
 	function reset_assets() {
-		\Assetmanager_Scripts::instance()->assets = array();
-		\Assetmanager_Scripts::instance()->assets_by_handle = array();
-		\Assetmanager_Scripts::instance()->asset_handles = array();
-		\Assetmanager_Styles::instance()->assets = array();
-		\Assetmanager_Styles::instance()->assets_by_handle = array();
-		\Assetmanager_Styles::instance()->asset_handles = array();
-		\Assetmanager_Styles::instance()->preload_engaged = false;
+		\Asset_Manager_Scripts::instance()->assets = array();
+		\Asset_Manager_Scripts::instance()->assets_by_handle = array();
+		\Asset_Manager_Scripts::instance()->asset_handles = array();
+		\Asset_Manager_Styles::instance()->assets = array();
+		\Asset_Manager_Styles::instance()->assets_by_handle = array();
+		\Asset_Manager_Styles::instance()->asset_handles = array();
+		\Asset_Manager_Styles::instance()->preload_engaged = false;
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );

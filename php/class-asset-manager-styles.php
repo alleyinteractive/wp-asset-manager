@@ -1,6 +1,11 @@
 <?php
+/**
+ * Class file for Asset_Manager_Styles
+ *
+ * @package AssetManager
+ */
 
-class Assetmanager_Styles extends Assetmanager {
+class Asset_Manager_Styles extends Asset_Manager {
 
 	/**
 	 * Holds references to the singleton instances.

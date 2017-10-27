@@ -1,13 +1,13 @@
 <?php
 /**
- * Assetmanager Base Plugin File.
+ * Asset Manager Base Plugin File.
  *
- * @package Assetmanager
+ * @package AssetManager
  * @version 0.0.1
  */
 
 /*
-Plugin Name: Assetmanager
+Plugin Name: Asset Manager
 Plugin URI: https://github.com/alleyinteractive/wordpress-assetmanager
 Description: Add more robust functionality to enqueuing static assets
 Author: Alley Interactive
@@ -16,21 +16,21 @@ Author URI: https://www.alleyinteractive.com/
 */
 
 /**
- * Current version of Assetmanager.
+ * Current version of AssetManager.
  */
 define( 'AM_VERSION', '0.0.1' );
 
 /**
- * Filesystem path to Assetmanager.
+ * Filesystem path to AssetManager.
  */
 define( 'AM_BASE_DIR', dirname( __FILE__ ) );
 
 /**
  * Load base classes
  */
-require_once( AM_BASE_DIR . '/php/class-assetmanager.php' );
-require_once( AM_BASE_DIR . '/php/class-assetmanager-scripts.php' );
-require_once( AM_BASE_DIR . '/php/class-assetmanager-styles.php' );
+require_once( AM_BASE_DIR . '/php/class-asset-manager.php' );
+require_once( AM_BASE_DIR . '/php/class-asset-manager-scripts.php' );
+require_once( AM_BASE_DIR . '/php/class-asset-manager-styles.php' );
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
 
@@ -47,7 +47,7 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	function am_enqueue_script( $handle, $src = false, $deps = array(), $condition = 'global', $load_method = 'sync', $version = '1.0.0', $load_hook = 'wp_head' ) {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook' );
 		$args = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
-		Assetmanager_Scripts::instance()->add_asset( $args );
+		Asset_Manager_Scripts::instance()->add_asset( $args );
 	}
 
 endif;
@@ -61,12 +61,12 @@ if ( ! function_exists( 'am_modify_load_method' ) ) :
 	 * @param {string} $load_method - how to load this asset.
 	 */
 	function am_modify_load_method( $handle, $load_method = 'sync' ) {
-		Assetmanager_Scripts::instance()->modify_load_method( $handle, $load_method );
+		Asset_Manager_Scripts::instance()->modify_load_method( $handle, $load_method );
 	}
 
 endif;
 
-add_action( 'after_setup_theme', array( 'Assetmanager_Scripts', 'instance' ), 10 );
+add_action( 'after_setup_theme', array( 'Asset_Manager_Scripts', 'instance' ), 10 );
 
 if ( ! function_exists( 'am_enqueue_style' ) ) :
 
@@ -85,9 +85,9 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	function am_enqueue_style( $handle, $src = false, $deps = array(), $condition = 'global', $load_method = 'sync', $version = '1.0.0', $load_hook = 'wp_head', $media = false ) {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook', 'media' );
 		$args = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
-		Assetmanager_Styles::instance()->add_asset( $args );
+		Asset_Manager_Styles::instance()->add_asset( $args );
 	}
 
 endif;
 
-add_action( 'after_setup_theme', array( 'Assetmanager_Styles', 'instance' ), 10 );
+add_action( 'after_setup_theme', array( 'Asset_Manager_Styles', 'instance' ), 10 );
