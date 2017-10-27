@@ -7,19 +7,19 @@ abstract class Assetmanager_Test extends \WP_UnitTestCase {
 	public function setUp() {
 		$this->test_script = [
 			'handle' => 'my-test-asset',
-			'src' => get_stylesheet_directory_uri() . 'static/js/test.bundle.js'
+			'src' => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 		];
 		$this->test_script_two = [
 			'handle' => 'test-asset-two',
-			'src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js'
+			'src' => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
 		];
 		$this->test_style = [
 			'handle' => 'my-test-style',
-			'src' => get_stylesheet_directory_uri() . 'static/css/test.css'
+			'src' => 'http://www.example.org/wp-content/themes/example/static/css/test.css',
 		];
 		$this->test_style_two = [
 			'handle' => 'test-style-two',
-			'src' => get_stylesheet_directory_uri() . 'static/css/test-two.css'
+			'src' => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
 		];
 
 		// Add test conditions

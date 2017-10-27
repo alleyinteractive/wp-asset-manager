@@ -1,4 +1,36 @@
 <?php
+/**
+ * Assetmanager Base Plugin File.
+ *
+ * @package Assetmanager
+ * @version 0.0.1
+ */
+
+/*
+Plugin Name: Assetmanager
+Plugin URI: https://github.com/alleyinteractive/wordpress-assetmanager
+Description: Add more robust functionality to enqueuing static assets
+Author: Alley Interactive
+Version: 0.0.1
+Author URI: https://www.alleyinteractive.com/
+*/
+
+/**
+ * Current version of Assetmanager.
+ */
+define( 'AM_VERSION', '0.0.1' );
+
+/**
+ * Filesystem path to Assetmanager.
+ */
+define( 'AM_BASE_DIR', dirname( __FILE__ ) );
+
+/**
+ * Load base classes
+ */
+require_once( AM_BASE_DIR . '/php/class-assetmanager.php' );
+require_once( AM_BASE_DIR . '/php/class-assetmanager-scripts.php' );
+require_once( AM_BASE_DIR . '/php/class-assetmanager-styles.php' );
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
 

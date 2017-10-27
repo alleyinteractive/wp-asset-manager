@@ -19,7 +19,7 @@ class Assetmanager_Core_Tests extends Assetmanager_Test {
 		$this->assertContains( 'my-test-asset', \Assetmanager_Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
 		$this->assertContains( [
 			'handle' => 'my-test-asset',
-			'src' => get_stylesheet_directory_uri() . 'static/js/test.bundle.js',
+			'src' => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 			'deps' => [],
 			'condition' => 'global',
 			'load_method' => 'sync',
@@ -258,7 +258,7 @@ class Assetmanager_Core_Tests extends Assetmanager_Test {
 		$expected_assets = [
 			[
 				'handle' => 'test-asset-two',
-				'src' => 'http://example.org/wp-content/themes/twentytwelve/js/test-two.bundle.js',
+				'src' => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
 				'deps' => [ 'jquery' ],
 				'condition' => 'global',
 				'load_method' => 'sync',
@@ -266,7 +266,7 @@ class Assetmanager_Core_Tests extends Assetmanager_Test {
 				'load_hook' => 'wp_head',
 				'in_footer' => false,
 				'type' => 'script',
-				'loaded' => '1',
+				'loaded' => true,
 			],
 			[
 				'handle' => 'jquery',

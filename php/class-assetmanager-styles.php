@@ -131,7 +131,7 @@ class Assetmanager_Styles extends Assetmanager {
 		if ( ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) && ! $this->preload_engaged ) {
 			am_enqueue_script( array(
 				'handle' => 'loadCSS',
-				'src' => get_template_directory() . '/static/js/loadCSS.min.js',
+				'src' => AM_BASE_DIR . '/js/loadCSS.min.js',
 				'load_method' => 'inline',
 				'load_hook' => 'am_critical',
 			) );

@@ -8,7 +8,7 @@
  * Note: Do note change the name of this file. PHPUnit will automatically fire
  * this file when run.
  *
- * @package Assetmanager
+ * @package assetmanager
  */
 
 $_tests_dir = getenv('WP_TESTS_DIR');
@@ -19,7 +19,7 @@ if ( ! $_tests_dir ) {
 require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../../assetmanager.php';
+	require dirname( __FILE__ ) . '/../assetmanager.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
@@ -37,4 +37,4 @@ function _am_phpunit_is_wp_at_least( $min_version ) {
 }
 
 // Load custom `UnitTestCase` classes
-require_once( __DIR__ . '/includes/class-assetmanager-test.php' );
+require_once( __DIR__ . '/class-assetmanager-test.php' );

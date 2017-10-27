@@ -11,7 +11,7 @@ class Assetmanager_Styles_Tests extends Assetmanager_Test {
 		// Inline load method with array provided for src attribute
 		$inline_src = [
 			'handle' => 'inline-src-asset',
-			'src' => 'tests/test-css.css',
+			'src' => 'tests/mocks/test-css.css',
 			'load_method' => 'inline',
 		];
 		$expected_style_output = "<style class=\"wp-custom-asset inline-src-asset\" type=\"text/css\">body {
@@ -78,10 +78,11 @@ class Assetmanager_Styles_Tests extends Assetmanager_Test {
 		$async_style = array_merge( $this->test_style, [
 			'load_method' => 'async',
 		] );
+		am_enqueue_style( $async_style );
 		$this->assertContains( 'loadCSS', \Assetmanager_Scripts::instance()->asset_handles );
 		$this->assertContains( [
 		    'handle' => 'loadCSS',
-		    'src' => get_template_directory() . '/static/js/loadCSS.min.js',
+		    'src' => AM_BASE_DIR . '/js/loadCSS.min.js',
 		    'deps' => [],
 		    'condition' => 'global',
 		    'load_method' => 'inline',

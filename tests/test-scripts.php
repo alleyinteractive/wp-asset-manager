@@ -27,11 +27,11 @@ class Assetmanager_Scripts_Tests extends Assetmanager_Test {
 	function test_modify_load_method() {
 		$sync_asset = [
 			'handle' => 'sync-asset',
-			'src' => get_stylesheet_directory_uri() . '/static/js/async-test.js',
+			'src' => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
 		];
 		$expected_async_result = [
 			'handle' => 'sync-asset',
-			'src' => 'http://example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
+			'src' => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
 			'deps' => [],
 			'condition' => 'global',
 			'load_method' => 'async',
@@ -67,7 +67,7 @@ class Assetmanager_Scripts_Tests extends Assetmanager_Test {
 		// Inline load method with path provided for src attibute
 		$inline_src = [
 			'handle' => 'inline-src-asset',
-			'src' => 'tests/test-js.js',
+			'src' => 'tests/mocks/test-js.js',
 			'load_method' => 'inline',
 		];
 		$expected_script_output = "<script class=\"wp-custom-asset inline-src-asset\" type=\"text/javascript\">export function testFunction() {
