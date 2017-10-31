@@ -1,1 +1,3 @@
-# wp-asset-manager
+# WordPress Asset Manager
+
+This is the readme. Welcome!
