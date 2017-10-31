@@ -87,9 +87,10 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Add async and defer attributes to script tags where necessary
 	 *
-	 * @param {string} $tag
-	 * @param {string} $handle
-	 * @return {string} The updated script tag
+	 * @param string $tag    HTML <script> tag
+	 * @param string $handle Handle of script
+	 *
+	 * @return string The updated script tag
 	 */
 	public function add_attributes( $tag, $handle ) {
 		if ( isset( $this->assets_by_handle[ $handle ] ) ) {
@@ -108,9 +109,10 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Disable JS concatenation for async and defer scripts
 	 *
-	 * @param {bool} $do_concat - whether or not to concatenate this script
-	 * @param {string} $handle - handle for enqueued script
-	 * @return {bool}
+	 * @param bool $do_concat Whether or not to concatenate this script
+	 * @param string $handle  Handle for enqueued script
+	 *
+	 * @return bool
 	 */
 	public function disable_concat( $do_concat, $handle ) {
 		if ( in_array( $handle, $this->async_scripts, true ) ) {
@@ -122,11 +124,12 @@ class Asset_Manager_Scripts extends Asset_Manager {
 
 	/**
 	 * Modify the load method of a script that's already been added.
-	 * This is generally useful for async or defer loading core scripts.
-	 * Note: If you call this function on the wp_enqueue_scripts action, set a low priority to ensure the script you want is available
 	 *
-	 * @param {string} $handle - handle of script to modify
-	 * @param {string} $load_method - target load method
+	 * This is generally useful for async or defer loading core scripts. NOTE: If you call this function on the wp_enqueue_scripts action, set a low priority to ensure the script you want is available
+	 *
+	 * @param string $handle      Handle of script to modify
+	 * @param string $load_method Target load method
+	 *
 	 * @return void
 	 */
 	public function modify_load_method( $handle, $load_method ) {
@@ -147,7 +150,8 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Print a single script
 	 *
-	 * @param array $script - script to insert into DOM
+	 * @param array $script Script to insert into DOM
+	 *
 	 * @return void
 	 */
 	public function print_asset( $script ) {
@@ -176,8 +180,8 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Perform final mutations before adding script to array
 	 *
-	 * @param {array} $script - script to mutate
-	 * @return $array
+	 * @param array $script Script to mutate
+	 * @return array
 	 */
 	public function pre_add_asset( $script ) {
 		return $script;
@@ -186,8 +190,8 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Add script to async/defer script list
 	 *
-	 * @param {array} $script - script to add
-	 * @return {array}
+	 * @param array $script Script to add
+	 * @return array
 	 */
 	public function post_validate_asset( $script ) {
 		$unsafe_dependents = array();
@@ -220,7 +224,9 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Add a script handle to the list of async or defer scripts
 	 *
-	 * @param {array} $script - script to add
+	 * @param array $script Script to add
+	 *
+	 * @return void
 	 */
 	public function add_to_async( $script ) {
 		if (

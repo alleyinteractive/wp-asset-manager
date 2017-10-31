@@ -49,7 +49,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @return Alley_assets
+	 * @return class
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
@@ -64,6 +64,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 * Print a single stylesheet
 	 *
 	 * @param array $stylesheet Stylesheet to insert into DOM
+	 *
 	 * @return void
 	 */
 	public function print_asset( $stylesheet ) {
@@ -128,8 +129,8 @@ class Asset_Manager_Styles extends Asset_Manager {
 	/**
 	 * Add loadCSS and preload polyfill if necessary
 	 *
-	 * @param {array} $stylesheet - stylesheet to check
-	 * @return {array}
+	 * @param array $stylesheet Stylesheet to check
+	 * @return array
 	 */
 	public function pre_add_asset( $stylesheet ) {
 		// Add preload script
@@ -149,8 +150,8 @@ class Asset_Manager_Styles extends Asset_Manager {
 	/**
 	 * Perform mutations to stylesheet after validation
 	 *
-	 * @param {array} $stylesheet - stylesheet to mutate
-	 * @return $array
+	 * @param array $stylesheet Stylesheet to mutate
+	 * @return array
 	 */
 	public function post_validate_asset( $stylesheet ) {
 		if (

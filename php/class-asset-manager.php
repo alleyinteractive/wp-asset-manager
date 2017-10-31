@@ -106,17 +106,28 @@ abstract class Asset_Manager {
 	public $core_ref_type = null;
 
 	/**
-	 * Actions on which to load assets. Configure these in order of first to last, according to when they're called in the HTML document.
+	 * Actions on which to load assets.
 	 *
-	 * Additional information:
-	 * 	  - These hooks correspond to the $load_hook argument when adding an asset, and determine where an asset is inserted into the DOM
+	 * IMPORTANT NOTE: Order matters! Configure these in order of first to last,
+	 * according to roughly at what point in DOM construction the hook is called.
+	 * For example, wp_head should always be configured before wp_footer!
+	 *
+	 * Troubleshooting:
+	 * 	  - These hooks correspond to the $load_hook argument when adding an asset,
+	 * 	    and should be used to determine where an asset is inserted into the DOM.
 	 *	  - For any custom actions, you will have to add a call to do_action yourself in the appropriate location
-	 *    - wp_enqueue_* will only allow you to print assets on the wp_print_* actions, so you may need to set up a custom print condition
+	 *    - wp_enqueue_* will only allow you to print assets on the wp_print_* actions,
+	 *    	so if you are using a load method that allows enqueuing via `wp_enqueue_*` then you may need to override
+	 *    	it with a custom print condition.
 	 *    - Custom actions will likely require that you enqueue the assets on the same action, but with an earlier priority.
 	 *
-	 * @var array: {
-	 * 		@type array $hook: {
-	 *			@type int $function Function to call on this hook and priority to call it with
+	 * @var array $load_hooks {
+	 * 		List of available hooks on which an asset can be loaded. These can be any valid hook.
+	 *
+	 * 		@type array $hook {
+	 * 			Hook name. Any valid hook in core or otherwise.
+	 *
+	 * 			@type string $method Class method to call on the provided hook. Accepts an integer corresponding to the priority 								 at which to call the method
 	 * 		}
 	 * }
 	 */
@@ -138,14 +149,14 @@ abstract class Asset_Manager {
 	/**
 	 * Default print function throws error (and prints nothing)
 	 *
-	 * @param {array} $asset - asset to print
+	 * @param array $asset Asset to print
 	 */
 	abstract function print_asset( $asset );
 
 	/**
 	 * Perform final mutations before adding asset to array
 	 *
-	 * @param {array} $asset - asset to mutate
+	 * @param array $asset Asset to mutate
 	 * @return $array
 	 */
 	abstract function pre_add_asset( $asset );
@@ -153,8 +164,9 @@ abstract class Asset_Manager {
 	/**
 	 * Perform mutations to asset after validation
 	 *
-	 * @param {array} $asset - asset to mutate
-	 * @return $array
+	 * @param array $asset Asset to mutate
+	 *
+	 * @return array
 	 */
 	abstract function post_validate_asset( $asset );
 
@@ -164,6 +176,7 @@ abstract class Asset_Manager {
 
 	/**
 	 * Set default properties
+	 *
 	 * NOTE: $handle provided when enqeueing the asset will always be added as a class
 	 *
 	 * @return void
@@ -206,13 +219,18 @@ abstract class Asset_Manager {
 	/**
 	 * Add a asset to the manifest of assets to load
 	 *
-	 * @param {array} $args - Arguments for loading asset. May differ based on asset type, but most contain: {
-	 * 		@type string $handle Handle for asset. Currently not used, but could be used to dequeue assets in the future.
-	 * 		@type string $src URI for src attribute of printed asset handle
-	 * 		@type string $condition Corresponds to a configured condition under which the asset should be loaded
-	 * 		@type string $load_hook note: generally loading using 'defer' for load_method is better than setting 'wp_footer' for load_hook
-	 * 		@type string $load_method Style with which to load this asset. Options are 'auto', 'sync' (or false), 'async', 'defer'
+	 * @param array $args {
+	 * 	Arguments for loading asset. May differ based on asset type, but most contain the following.
+	 *
+	 * 		@type string $handle      Handle for asset. Currently not used, but could be used to dequeue assets in the future.
+	 * 		@type string $src         URI for src attribute of printed asset handle
+	 * 		@type string $condition   Corresponds to a configured condition under which the asset should be loaded
+	 * 		@type string $load_hook   Hook on which to load the asset
+	 * 		@type string $load_method Style with which to load this asset. Defaults to 'sync'.
+	 * 								  Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
+	 *
+	 * @return void
 	 */
 	public function add_asset( $args ) {
 		$wp_enqueue_function = $this->wp_enqueue_function;
@@ -269,8 +287,9 @@ abstract class Asset_Manager {
 	/**
 	 * Consolidate direct dependents of this asset
 	 *
-	 * @param {array} $asset - asset to sort in the dependency array
-	 * @return {array}
+	 * @param array $asset - asset to sort in the dependency array
+	 *
+	 * @return array
 	 */
 	public function find_dependents( $asset ) {
 		$dependents = array();
@@ -288,7 +307,7 @@ abstract class Asset_Manager {
 	/**
 	 * Make sure the assets and their dependencies are valid
 	 *
-	 * @return {bool|WP_Error}
+	 * @return bool|WP_Error
 	 */
 	public function validate_assets() {
 		foreach ( $this->assets as $idx => $asset ) {
@@ -351,7 +370,8 @@ abstract class Asset_Manager {
 	/**
 	 * Check if a asset has any dependencies that exist in WP Core and, if so, enqueue them
 	 *
-	 * @param {array} $asset - asset on which we need to check for core dependencies
+	 * @param array $asset Asset to check for core dependencies
+	 *
 	 * @return void
 	 */
 	public function add_core_dependencies( $asset ) {
@@ -367,8 +387,9 @@ abstract class Asset_Manager {
 	/**
 	 * Add a core asset to the custom asset array, so we can track it as a dependency and make load method modifications
 	 *
-	 * @param {string} $handle - Handle of core asset to add
-	 * @param {string} $load_method - Customize load method of core asset, otherwise leave it as syncronous
+	 * @param string $handle      Handle of core asset to add
+	 * @param string $load_method Customize load method of core asset, otherwise leave it as 'sync'
+	 *
 	 * @return void
 	 */
 	public function add_core_asset( $handle, $load_method = 'sync' ) {
@@ -402,7 +423,7 @@ abstract class Asset_Manager {
 	/**
 	 * Determine if an asset should be added (enqueued) or not
 	 *
-	 * @return {bool|WP_Error}
+	 * @return bool|WP_Error
 	 */
 	public function asset_should_add( $asset ) {
 		if ( ! apply_filters( 'am_asset_should_add', true, $asset ) ) {
@@ -470,8 +491,13 @@ abstract class Asset_Manager {
 	/**
 	 * Verify an asset should load in the current load cycle
 	 *
-	 * @param {array} $asset - asset to check
-	 * @return {bool}
+	 * This function primarily checks to see if the $load_hook matches the currently active WordPress hook.
+	 * If the provided $load_hook has already happened (determined by the order in which $this->load_hooks are defined),
+	 * the asset will be printed at the next available opportunity.
+	 *
+	 * @param array $asset Asset to check whether or not it should load
+	 *
+	 * @return bool
 	 */
 	public function asset_should_load( $asset ) {
 		$this_action = current_filter();
@@ -492,10 +518,11 @@ abstract class Asset_Manager {
 	/**
 	 * Generate and echo a WP_Error based on a provided error code
 	 *
-	 * @param {array} $code - error code
-	 * @param {array} $asset - offending asset
-	 * @param {array|string} $info - additional information about a dependency or dependent
-	 * @return {WP_Error}
+	 * @param array        $code  Error code
+	 * @param array        $asset Offending asset
+	 * @param array|string $info  Additional information about a dependency or dependent
+	 *
+	 * @return void
 	 */
 	public function generate_asset_error( $code, $asset, $info = false ) {
 		switch ( $code ) {
@@ -542,8 +569,9 @@ abstract class Asset_Manager {
 	/**
 	 * Display an error to the user
 	 *
-	 * @param {WP_Error} $error - error to display to user
-	 * @return {string}
+	 * @param WP_Error $error Error to display to user
+	 *
+	 * @return string
 	 */
 	public function format_error( $error ) {
 		if ( current_user_can( 'manage_options' ) ) {
