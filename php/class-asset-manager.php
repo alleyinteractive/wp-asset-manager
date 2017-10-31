@@ -182,7 +182,22 @@ abstract class Asset_Manager {
 	 * @return void
 	 */
 	public function set_defaults() {
+		/**
+		 * Filters function used to get the default classes to add to the resulting asset markup
+		 *
+		 * @since 0.0.1
+		 *
+		 * @param array $classes List of classes to apply to `class` attribute of resulting asset markup
+		 */
 		$this->default_classes = apply_filters( 'am_asset_classes', array( 'wp-asset-manager' ) );
+
+		/**
+		 * Filters function used to ignore errors when enqueueing assets
+		 *
+		 * @since 0.0.1
+		 *
+		 * @param bool $ignore_errors Whether or not to ignore errors
+		 */
 		$this->be_quiet = apply_filters( 'am_ignore_asset_errors', false );
 
 		if ( ! empty( $this->asset_type ) ) {
@@ -426,6 +441,14 @@ abstract class Asset_Manager {
 	 * @return bool|WP_Error
 	 */
 	public function asset_should_add( $asset ) {
+		/**
+		 * Filter function for preventing an asset from loading, regardless of conditions
+		 *
+		 * @since  0.0.1
+		 *
+		 * @param bool  $add_asset Whether or not to forcefully prevent asset from loading
+		 * @param array $asset     Asset to prevent from loading
+		 */
 		if ( ! apply_filters( 'am_asset_should_add', true, $asset ) ) {
 			return false;
 		}
@@ -440,7 +463,17 @@ abstract class Asset_Manager {
 			return true;
 		}
 
-		// Check conditions
+		/**
+		 * Filter function for getting available conditions to check for whether or not a given asset should load
+		 *
+		 * @since  0.0.1
+		 *
+		 * @param array $conditions {
+		 * 		List of available conditions
+		 *
+		 * 		@type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
+		 * }
+		 */
 		$conditions = apply_filters( 'am_asset_conditions', array(
 			'global' => true,
 			'single' => is_single(),
