@@ -183,7 +183,7 @@ abstract class Asset_Manager {
 	 */
 	public function set_defaults() {
 		/**
-		 * Filters function used to get the default classes to add to the resulting asset markup
+		 * Filter function used to get the default classes to add to the resulting asset markup
 		 *
 		 * @since 0.0.1
 		 *
@@ -192,7 +192,7 @@ abstract class Asset_Manager {
 		$this->default_classes = apply_filters( 'am_asset_classes', array( 'wp-asset-manager' ) );
 
 		/**
-		 * Filters function used to ignore errors when enqueueing assets
+		 * Filter function used to ignore errors when enqueueing assets
 		 *
 		 * @since 0.0.1
 		 *
