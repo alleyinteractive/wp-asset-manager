@@ -44,7 +44,7 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 * @param string $load_method  How to load this asset.
 	 * @param string $load_hook    Hook on which to load this asset
 	 */
-	function am_enqueue_script( $handle, $src, $deps = array(), $condition = 'global', $load_method = 'sync', $version = '1.0.0', $load_hook = 'wp_head' ) {
+	function am_enqueue_script( $handle, $src = false, $deps = array(), $condition = 'global', $load_method = 'sync', $version = '1.0.0', $load_hook = 'wp_head' ) {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook' );
 		$args = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Asset_Manager_Scripts::instance()->add_asset( $args );
