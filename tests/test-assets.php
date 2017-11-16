@@ -80,7 +80,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 
 		// If condition is provided as an array, should work as 'include'
 		$condition_array_asset = array_merge( $this->test_script_two, ['condition' => ['article_post_type'] ] );
-		$condition_array = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_string_asset );
+		$condition_array = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_array_asset );
 		$this->assertTrue( $condition_array, 'If script has an array as the load condition, it should assume that array contains `include` conditions' );
 
 		// Test condition with 'include' property
@@ -101,7 +101,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 			],
 		] );
 		$condition_include_exclude = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_exclude_asset );
-		$this->assertTrue( $condition_include_exclude, 'If script has a condition with both `include` and `exclude` keys, it should check all `include` conditions are true and all `eclude` conditions are false' );
+		$this->assertTrue( $condition_include_exclude, 'If script has a condition with both `include` and `exclude` keys, it should check all `include` conditions are true and all `exclude` conditions are false' );
 	}
 
 	/**

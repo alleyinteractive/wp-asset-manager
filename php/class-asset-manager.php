@@ -393,7 +393,7 @@ abstract class Asset_Manager {
 		$load_method = ! empty( $asset['load_method'] ) ? $asset['load_method'] : 'sync';
 
 		if ( ! empty( $asset['deps'] ) ) {
-			foreach ( $asset['deps'] as $idx => $dependency ) {
+			foreach ( $asset['deps'] as $dependency ) {
 				$this->add_core_asset( $dependency, $load_method );
 			}
 		}

@@ -78,7 +78,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 				if ( 0 === validate_file( $stylesheet['src'] ) && file_exists( $stylesheet['src'] ) ) {
 					printf( '<style class="%1$s" type="text/css">%2$s</style>', esc_attr( implode( ' ', $classes ) ), file_get_contents( $stylesheet['src'] ) );
 				} else {
-					echo $this->generate_asset_error( 'unsafe_inline', $stylesheet );
+					$this->generate_asset_error( 'unsafe_inline', $stylesheet );
 				}
 			} elseif ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
 				$media = false;
