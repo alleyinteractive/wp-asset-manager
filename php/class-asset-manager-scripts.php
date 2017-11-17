@@ -137,7 +137,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 		$this->add_core_asset( $handle );
 
 		// Get key of asset, now that it's added
-		$key = array_search( $handle, $this->asset_handles );
+		$key = array_search( $handle, $this->asset_handles, true );
 
 		// Only modfiy scripts that have been added, and only use load methods that are valid
 		if ( false !== $key && in_array( $load_method, $this->load_methods, true ) ) {
