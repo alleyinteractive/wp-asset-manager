@@ -60,7 +60,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			],
 			'load_method' => 'inline',
 		];
-		$expected_script_output = '<script class="wp-asset-manager inline-array-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["inline-array-asset"] = {"myGlobalVar":true}</script>';
+		$expected_script_output = '<script class="wp-asset-manager inline-array-asset" type="text/javascript">window.assetContext = window.assetContext || {}; window.assetContext["inline-array-asset"] = {"myGlobalVar":true}</script>';
 		$actual_script_output = get_echo( [ \Asset_Manager_Scripts::instance(), 'print_asset' ], [ $inline_array ] );
 		$this->assertEquals( $expected_script_output, $actual_script_output, 'Inline assets with an array provided in `src` should output a script containing a global variable' );
 
