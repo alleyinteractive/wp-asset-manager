@@ -84,8 +84,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param string $inline_script_context Property of the window object under which
-		 * 										inlined values will be nested
+		 * @param string $inline_script_context Property of the window object under which inlined values will be nested
 		 */
 		$this->inline_script_context = apply_filters( 'am_inline_script_context', 'amScripts' );
 	}
