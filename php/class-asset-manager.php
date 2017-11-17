@@ -207,7 +207,14 @@ abstract class Asset_Manager {
 		if ( ! empty( $this->core_ref_type ) ) {
 			$this->core_assets_global = 'wp_' . $this->core_ref_type;
 		}
+
+		$this->set_asset_type_defaults();
 	}
+
+	/**
+	 * Set or filter properties for a specific type of asset
+	 */
+	public function set_asset_type_defaults() {}
 
 	/**
 	 * Add hooks for outputting assets

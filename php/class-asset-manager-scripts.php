@@ -76,6 +76,21 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	}
 
 	/**
+	 * Set default properties for script manager
+	 */
+	public function set_asset_type_defaults() {
+		/**
+		 * Filter function for setting new inline script context
+		 *
+		 * @since 0.0.1
+		 *
+		 * @param string $inline_script_context Property of the window object under which
+		 * 										inlined values will be nested
+		 */
+		$this->inline_script_context = apply_filters( 'am_inline_script_context', 'amScripts' );
+	}
+
+	/**
 	 * Add filters for managing async or defer load methods
 	 */
 	public function manage_async() {

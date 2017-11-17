@@ -34,6 +34,9 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 				'has_video' => false,
 			];
 		} );
+		add_filter( 'am_inline_script_context', function() {
+			return 'assetContext';
+		} );
 
 		$this->reset_assets();
 		$this->add_test_user();
