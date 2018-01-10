@@ -12,6 +12,7 @@ Plugin URI: https://github.com/alleyinteractive/wordpress-assetmanager
 Description: Add more robust functionality to enqueuing static assets
 Author: Alley Interactive
 Version: 0.0.1
+License: GPLv2 or later
 Author URI: https://www.alleyinteractive.com/
 */
 

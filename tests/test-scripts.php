@@ -5,8 +5,8 @@ namespace Asset_Manager_Tests;
 class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_add_attributes() {
 		$async_asset = [
 			'handle' => 'async-asset',
@@ -22,8 +22,8 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_modify_load_method() {
 		$sync_asset = [
 			'handle' => 'sync-asset',
@@ -49,8 +49,8 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_array = [
@@ -100,8 +100,8 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_post_validate_asset() {
 		$sync_script = array_merge( $this->test_script, [
 			'load_method' => 'sync',
@@ -132,8 +132,8 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_add_to_async() {
 		$async_script = array_merge( $this->test_script_two, [
 			'handle' => 'async-script-test',

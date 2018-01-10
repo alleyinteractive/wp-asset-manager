@@ -5,8 +5,8 @@ namespace Asset_Manager_Tests;
 class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_src = [
@@ -72,8 +72,8 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_pre_add_asset() {
 		$async_style = array_merge( $this->test_style, [
 			'load_method' => 'async',
@@ -81,21 +81,21 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 		am_enqueue_style( $async_style );
 		$this->assertContains( 'loadCSS', \Asset_Manager_Scripts::instance()->asset_handles );
 		$this->assertContains( [
-		    'handle' => 'loadCSS',
-		    'src' => AM_BASE_DIR . '/js/loadCSS.min.js',
-		    'deps' => [],
-		    'condition' => 'global',
-		    'load_method' => 'inline',
-		    'version' => '1.0.0',
-		    'load_hook' => 'am_critical',
-		    'type' => 'script',
-		    'in_footer' => false,
+			'handle' => 'loadCSS',
+			'src' => AM_BASE_DIR . '/js/loadCSS.min.js',
+			'deps' => [],
+			'condition' => 'global',
+			'load_method' => 'inline',
+			'version' => '1.0.0',
+			'load_hook' => 'am_critical',
+			'type' => 'script',
+			'in_footer' => false,
 		], \Asset_Manager_Scripts::instance()->assets );
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_post_validate_asset() {
 		$sync_style = array_merge( $this->test_style, [
 			'deps' => ['defer-style-test'],
