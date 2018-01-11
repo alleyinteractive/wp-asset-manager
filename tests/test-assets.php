@@ -5,8 +5,8 @@ namespace Asset_Manager_Tests;
 class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_add_asset() {
 		global $wp_scripts;
 
@@ -32,8 +32,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_load_asset() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
@@ -57,8 +57,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_asset_should_add() {
 		// If no handle, should return false
 		$no_handle = \Asset_Manager_Scripts::instance()->asset_should_add( ['src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js'] );
@@ -105,8 +105,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_asset_should_load() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
@@ -149,8 +149,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_find_dependents() {
 		$asset_with_deps = array_merge( $this->test_script_two, [
 			'deps' => [ 'jquery', 'my-test-asset' ],
@@ -171,8 +171,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_invalid_load_hook() {
 		// Invalid load hook
 		$invalid_load_hook = [
@@ -186,8 +186,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_missing_dependency() {
 		// Missing dependency
 		$dep_missing = [
@@ -201,8 +201,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_unsafe_load_hook() {
 		// Unsafe load hook
 		$unsafe_load_hook_dep = [
@@ -223,8 +223,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_circular_dependency() {
 		// Unsafe load hook
 		$circular_dep = [
@@ -244,8 +244,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * @group assets
-     */
+	 * @group assets
+	 */
 	function test_add_core_dependencies() {
 		$asset_with_deps = array_merge( $this->test_script_two, [
 			'deps' => [ 'jquery' ],
