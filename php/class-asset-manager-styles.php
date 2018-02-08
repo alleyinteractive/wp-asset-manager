@@ -93,11 +93,11 @@ class Asset_Manager_Styles extends Asset_Manager {
 				}
 
 				if ( 'preload' === $stylesheet['load_method'] ) {
-					$print_string = '<link rel="preload" href="%1$s" class="%2$s" media="%3$s" as="style" onload="this.rel=\'stylesheet\'"></link><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s"></link></noscript>';
+					$print_string = '<link rel="preload" href="%1$s" class="%2$s" media="%3$s" as="style" onload="this.rel=\'stylesheet\'"></link><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s" /></noscript>';
 				} elseif ( 'async' === $stylesheet['load_method'] ) {
-					$print_string = '<script class="%2$s" type="text/javascript">loadCSS("%1$s");</script><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s"></link></noscript>';
+					$print_string = '<script class="%2$s" type="text/javascript">loadCSS("%1$s");</script><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s" /></noscript>';
 				} elseif ( 'defer' === $stylesheet['load_method'] ) {
-					$print_string = '<script class="%2$s" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("%1$s");});</script><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s"></link></noscript>';
+					$print_string = '<script class="%2$s" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("%1$s");});</script><noscript><link rel="stylesheet" href="%1$s" class="%2$s" media="%3$s" /></noscript>';
 				}
 
 				echo wp_kses(
