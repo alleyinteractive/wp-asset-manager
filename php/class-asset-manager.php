@@ -264,9 +264,13 @@ abstract class Asset_Manager {
 				$args['load_method'] = 'sync';
 			}
 
-			// Set in footer value based on load_hook
-			if ( empty( $args['in_footer'] ) ) {
-				$args['in_footer'] = ! empty( $args['load_hook'] ) && 'wp_footer' === $args['load_hook'] ? true : false;
+			// Set in footer value based on load_hook.
+			if ( 'style' !== $args['type'] ) {
+				if ( empty( $args['in_footer'] ) ) {
+					$args['in_footer'] = ! empty( $args['load_hook'] ) && 'wp_footer' === $args['load_hook'] ? true : false;
+				}
+			} elseif ( empty( $args['media'] ) ) {
+				$args['media'] = 'all';
 			}
 
 			// Set load_hook value based on in_footer
@@ -279,7 +283,13 @@ abstract class Asset_Manager {
 			// Enqueue asset if applicable
 			if ( in_array( $args['load_method'], $this->wp_enqueue_methods, true ) && empty( $args['loaded'] ) ) {
 				if ( function_exists( $wp_enqueue_function ) ) {
-					$wp_enqueue_function( $args['handle'], $args['src'], $args['deps'], $args['version'], $args['in_footer'] );
+					$wp_enqueue_function(
+						$args['handle'],
+						$args['src'],
+						$args['deps'],
+						$args['version'],
+						'style' === $args['type'] ? $args['media'] : $args['in_footer']
+					);
 					$args['loaded'] = true;
 				} else {
 					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', false, $wp_enqueue_function ) ) );

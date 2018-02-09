@@ -1,0 +1,44 @@
+sudo: false
+
+language: php
+
+# Receive notifications for build results.
+# @link http://docs.travis-ci.com/user/notifications/#Email-notifications
+notifications:
+    email: false
+
+branches:
+  only:
+    - production
+
+matrix:
+  fast_finish: true
+
+  include:
+    - php: 5.6
+      env: WP_VERSION=latest PHP_LINT=1
+    - php: 7.0
+      env: WP_VERSION=latest PHP_LINT=1
+    # - php: 5.6
+    #   env: WP_VERSION=nightly WP_PHPCS=1
+    - php: 7.2
+      env: WP_VERSION=nightly PHP_LINT=1
+  fast_finish: true
+
+before_script:
+  - |
+    if [[ ! -z "$WP_VERSION" ]] ; then
+      bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+    fi
+  - |
+    if [[ "$WP_PHPCS" == "1" ]]; then
+      composer install
+      export PATH=$PATH:${PWD}/vendor/bin/
+      # After CodeSniffer install you should refresh your path.
+      phpenv rehash
+    fi
+
+script:
+  - if [[ "$PHP_LINT" == "1" ]]; then find . -type "f" -iname "*.php" | xargs -L "1" php -l; fi
+  - if [[ "$WP_PHPCS" == "1" ]]; then phpcs -p -s -v -n --standard=./codesniffer.ruleset.xml --extensions=php .; fi
+  - phpunit
