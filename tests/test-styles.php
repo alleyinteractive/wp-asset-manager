@@ -28,7 +28,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'src' => 'client/css/test.css',
 			'load_method' => 'preload',
 		];
-		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" media="" as="style" onload="this.rel=\'stylesheet\'"></link><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" media=""></link></noscript>';
+		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" as="style" onload="this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $preload_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via a preload <link> tag that, on load, will switch to a stylesheet <link> tag' );
 
@@ -38,7 +38,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'src' => 'client/css/test.css',
 			'load_method' => 'async',
 		];
-		$expected_style_output = '<script class="wp-asset-manager inline-async-asset" type="text/javascript">loadCSS("http://client/css/test.css");</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-async-asset" media=""></link></noscript>';
+		$expected_style_output = '<script class="wp-asset-manager inline-async-asset" type="text/javascript">loadCSS("http://client/css/test.css");</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-async-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $async_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via loadCSS() function' );
 
@@ -48,7 +48,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'src' => 'client/css/test.css',
 			'load_method' => 'defer',
 		];
-		$expected_style_output = '<script class="wp-asset-manager inline-defer-asset" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("http://client/css/test.css");});</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-defer-asset" media=""></link></noscript>';
+		$expected_style_output = '<script class="wp-asset-manager inline-defer-asset" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("http://client/css/test.css");});</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-defer-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $defer_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via loadCSS() function called on DOMContentLoaded' );
 
