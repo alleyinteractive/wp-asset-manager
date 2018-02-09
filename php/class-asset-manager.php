@@ -427,7 +427,7 @@ abstract class Asset_Manager {
 	public function add_core_asset( $handle, $load_method = 'sync' ) {
 		global ${$this->core_assets_global};
 		$core_assets_ref = ${$this->core_assets_global}->registered;
-		$in_footer = ${$this->core_assets_global}->in_footer ?? false;
+		$in_footer = isset( ${$this->core_assets_global}->in_footer ) ? ${$this->core_assets_global}->in_footer : false;
 		$core_asset_handles = array_keys( ${$this->core_assets_global}->registered );
 
 		// Add assets that are wp_enqueued_* for custom enqueues, but only if they're not also custom enqueued
