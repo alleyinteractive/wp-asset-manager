@@ -19,4 +19,4 @@ The `develop` branch on GitHub contains the "bleeding edge" releases (alpha, bet
 
 ## Contributing to Development
 
-Development of Asset Manager happens on [Github](http://github.com/alleyinteractive/wordpress-fieldmanager). Bugs with Asset Manager should be addressed in the Github issue queue, and enhancements or bug fixes should be submitted as pull requests, which are always welcome.
+Development of Asset Manager happens on [Github](http://github.com/alleyinteractive/wp-asset-manager). Bugs with Asset Manager should be addressed in the Github issue queue, and enhancements or bug fixes should be submitted as pull requests, which are always welcome.
