@@ -501,6 +501,8 @@ abstract class Asset_Manager {
 		// Default functionality of condition is 'include'
 		if ( ! empty( $asset['condition']['include'] ) ) {
 			$condition_include = $asset['condition']['include'];
+		} elseif ( ! empty( $asset['condition']['include_any'] ) ) {
+			$condition_include_any = $asset['condition']['include_any'];
 		} elseif ( empty( $asset['condition']['exclude'] ) ) {
 			$condition_include = $asset['condition'];
 		}
@@ -520,6 +522,17 @@ abstract class Asset_Manager {
 			}
 		}
 
+		// Check for 'include_any' to allow for matching of _any_ condition instead of all conditions.
+		if ( ! empty( $condition_include_any ) ) {
+			$condition_include_any = ! is_array( $condition_include ) ? array( $condition_include_any ) : $condition_include_any;
+
+			foreach( $condition_include_any as $condition_true ) {
+				if ( $conditions[ $condition_true ] ) {
+					$condition_result = true;
+				}
+			}
+		}
+
 		// Check 'exclude' conditions (all must be false for asset to load)
 		// Verify $condition_result is true. If it's already false, we don't need to check excludes.
 		if ( ! empty( $asset['condition']['exclude'] ) && $condition_result ) {
@@ -534,6 +547,7 @@ abstract class Asset_Manager {
 				}
 			}
 		}
+		var_dump($condition_result);
 
 		return $condition_result;
 	}
