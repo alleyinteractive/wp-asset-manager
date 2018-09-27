@@ -547,7 +547,6 @@ abstract class Asset_Manager {
 				}
 			}
 		}
-		var_dump($condition_result);
 
 		return $condition_result;
 	}
