@@ -524,9 +524,9 @@ abstract class Asset_Manager {
 
 		// Check for 'include_any' to allow for matching of _any_ condition instead of all conditions.
 		if ( ! empty( $condition_include_any ) ) {
-			$condition_include_any = ! is_array( $condition_include ) ? array( $condition_include_any ) : $condition_include_any;
+			$condition_include_any = ! is_array( $condition_include_any ) ? array( $condition_include_any ) : $condition_include_any;
 
-			foreach( $condition_include_any as $condition_true ) {
+			foreach ( $condition_include_any as $condition_true ) {
 				if ( $conditions[ $condition_true ] ) {
 					$condition_result = true;
 				}
