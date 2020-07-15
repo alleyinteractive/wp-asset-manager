@@ -28,7 +28,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'src' => 'client/css/test.css',
 			'load_method' => 'preload',
 		];
-		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" as="style" onload="this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" /></noscript>';
+		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $preload_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via a preload <link> tag that, on load, will switch to a stylesheet <link> tag' );
 
@@ -38,7 +38,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'src' => 'client/css/test.css',
 			'load_method' => 'async',
 		];
-		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.media=\'all\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-async-asset" /></noscript>';
+		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.onload=null;this.media=\'all\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-async-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $async_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to `all`' );
 
@@ -49,7 +49,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'load_method' => 'async',
 			'media' => 'screen and (min-width: 1200px)',
 		];
-		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.media=\'screen and (min-width: 1200px)\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" media="screen and (min-width: 1200px)" class="wp-asset-manager inline-async-asset" /></noscript>';
+		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.onload=null;this.media=\'screen and (min-width: 1200px)\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" media="screen and (min-width: 1200px)" class="wp-asset-manager inline-async-asset" /></noscript>';
 		$actual_style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $async_media_style ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to the media attribute value specified in the config' );
 
