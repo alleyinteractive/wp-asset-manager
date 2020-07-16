@@ -80,7 +80,7 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 * @param array  $deps        List of dependencies.
 	 * @param string $condition   Corresponds to a configured loading condition that, if matches, will allow the stylesheet to load. Defaults are 'global', 'single', and 'search'.
 	 * @param string $load_method How to load this asset.
-	 * @param string $version      Version of the script.
+	 * @param string $version     Version of the script.
 	 * @param string $load_hook   Hook on which to load this asset.
 	 * @param string $media       Media query to restrict when this asset is loaded.
 	 */
