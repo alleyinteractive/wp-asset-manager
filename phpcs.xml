@@ -28,6 +28,7 @@
         <properties>
             <property name="prefixes" type="array">
                 <element value="am_"/>
+                <element value="Asset_Manager"/>
             </property>
         </properties>
     </rule>

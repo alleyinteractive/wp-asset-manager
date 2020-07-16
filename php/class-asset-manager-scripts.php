@@ -5,6 +5,9 @@
  * @package AssetManager
  */
 
+/**
+ * Asset_Manager_Scripts
+ */
 class Asset_Manager_Scripts extends Asset_Manager {
 
 	/**
@@ -56,6 +59,9 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	 */
 	public $core_ref_type = 'scripts';
 
+	/**
+	 * Constructor.
+	 */
 	private function __construct() {
 		// Don't do anything, needs to be initialized via instance() method.
 	}
@@ -101,8 +107,8 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Add async and defer attributes to script tags where necessary
 	 *
-	 * @param string $tag    HTML <script> tag
-	 * @param string $handle Handle of script
+	 * @param string $tag    HTML <script> tag.
+	 * @param string $handle Handle of script.
 	 *
 	 * @return string The updated script tag
 	 */
@@ -112,7 +118,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 			$attribute   = 'async-defer' === $this_script['load_method'] ? 'async defer' : $this_script['load_method'];
 
 			if ( in_array( $handle, $this->async_scripts, true ) && ! preg_match( "/[^-_]{$attribute}[^-_]/", $tag ) ) {
-				// Insert load attribute in front of src attribute to ensure we don't add it to script tags containing inline code
+				// Insert load attribute in front of src attribute to ensure we don't add it to script tags containing inline code.
 				$tag = str_replace( 'src=', $attribute . ' src=', $tag );
 			}
 		}
@@ -121,10 +127,10 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	}
 
 	/**
-	 * Disable JS concatenation for async and defer scripts
+	 * Disable JS concatenation for async and defer scripts.
 	 *
-	 * @param bool   $do_concat Whether or not to concatenate this script
-	 * @param string $handle  Handle for enqueued script
+	 * @param bool   $do_concat Whether or not to concatenate this script.
+	 * @param string $handle  Handle for enqueued script.
 	 *
 	 * @return bool
 	 */
@@ -139,21 +145,21 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Modify the load method of a script that's already been added.
 	 *
-	 * This is generally useful for async or defer loading core scripts. NOTE: If you call this function on the wp_enqueue_scripts action, set a low priority to ensure the script you want is available
+	 * This is generally useful for async or defer loading core scripts.
+	 * NOTE: If you call this function on the wp_enqueue_scripts action,
+	 * set a low priority to ensure the script you want is available.
 	 *
-	 * @param string $handle      Handle of script to modify
-	 * @param string $load_method Target load method
-	 *
-	 * @return void
+	 * @param string $handle      Handle of script to modify.
+	 * @param string $load_method Target load method.
 	 */
 	public function modify_load_method( $handle, $load_method ) {
-		// Add script if it's a core asset;
+		// Add script if it's a core asset.
 		$this->add_core_asset( $handle );
 
-		// Get key of asset, now that it's added
+		// Get key of asset, now that it's added.
 		$key = array_search( $handle, $this->asset_handles, true );
 
-		// Only modfiy scripts that have been added, and only use load methods that are valid
+		// Only modify scripts that have been added, and only use load methods that are valid.
 		if ( false !== $key && in_array( $load_method, $this->load_methods, true ) ) {
 			$this->assets_by_handle[ $handle ]['load_method'] = $load_method;
 			$this->assets[ $key ]['load_method']              = $load_method;
@@ -162,11 +168,9 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	}
 
 	/**
-	 * Print a single script
+	 * Print a single script.
 	 *
-	 * @param array $script Script to insert into DOM
-	 *
-	 * @return void
+	 * @param array $script Script to insert into DOM.
 	 */
 	public function print_asset( $script ) {
 		$classes   = $this->default_classes;
@@ -175,7 +179,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 		if ( ! empty( $script['src'] ) && ! in_array( $script['load_method'], $this->wp_enqueue_methods, true ) ) {
 			if ( 'inline' === $script['load_method'] ) {
 				if ( is_array( $script['src'] ) ) {
-					// If src is an array, add it as a property containing a JSON object on a global variable
+					// If src is an array, add it as a property containing a JSON object on a global variable.
 					printf(
 						'<script class="%1$s" type="text/javascript">window.%2$s = window.%2$s || {}; window.%2$s["%3$s"] = %4$s</script>',
 						esc_attr( implode( ' ', $classes ) ),
@@ -184,7 +188,11 @@ class Asset_Manager_Scripts extends Asset_Manager {
 						wp_json_encode( $script['src'] )
 					);
 				} elseif ( 0 === validate_file( $script['src'] ) && file_exists( $script['src'] ) ) {
-					printf( '<script class="%1$s" type="text/javascript">%2$s</script>', esc_attr( implode( ' ', $classes ) ), file_get_contents( $script['src'] ) );
+					printf(
+						'<script class="%1$s" type="text/javascript">%2$s</script>',
+						esc_attr( implode( ' ', $classes ) ),
+						file_get_contents( $script['src'] ) // phpcs:ignore
+					);
 				} else {
 					$this->generate_asset_error( 'unsafe_inline', $script );
 				}
@@ -193,9 +201,9 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	}
 
 	/**
-	 * Perform final mutations before adding script to array
+	 * Perform final mutations before adding script to array.
 	 *
-	 * @param array $script Script to mutate
+	 * @param array $script Script to mutate.
 	 * @return array
 	 */
 	public function pre_add_asset( $script ) {
@@ -203,9 +211,9 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	}
 
 	/**
-	 * Add script to async/defer script list
+	 * Add script to async/defer script list.
 	 *
-	 * @param array $script Script to add
+	 * @param array $script Script to add.
 	 * @return array
 	 */
 	public function post_validate_asset( $script ) {
@@ -213,7 +221,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 
 		if ( ! empty( $script['dependents'] ) ) {
 			if ( 'defer' === $script['load_method'] ) {
-				// Dependent is unsafe if it's not also 'defer'
+				// Dependent is unsafe if it's not also 'defer'.
 				foreach ( $script['dependents'] as $dependent ) {
 					$dependent_info = $this->assets_by_handle[ $dependent ];
 					if ( 'defer' !== $dependent_info['load_method'] ) {
@@ -221,7 +229,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 					}
 				}
 			} elseif ( 'async' === $script['load_method'] || 'async-defer' === $script['load_method'] ) {
-				// All dependents are unsafe
+				// All dependents are unsafe.
 				$unsafe_dependents = $script['dependents'];
 			}
 
@@ -239,9 +247,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Add a script handle to the list of async or defer scripts
 	 *
-	 * @param array $script Script to add
-	 *
-	 * @return void
+	 * @param array $script Script to add.
 	 */
 	public function add_to_async( $script ) {
 		if (
