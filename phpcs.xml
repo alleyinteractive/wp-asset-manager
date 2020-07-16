@@ -3,7 +3,10 @@
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
     <!-- Include Alley Rules -->
-    <rule ref="Alley-Coding-Standards" />
+    <rule ref="Alley-Coding-Standards">
+		<!-- Ignore rules in unit tests -->
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
 
     <!-- Project customizations go here -->
 
@@ -13,7 +16,7 @@
 			Verify that the text_domain is set to the desired text-domain.
 			Multiple valid text domains can be provided as a comma-delimited list.
 			 -->
-			<property name="text_domain" type="array" value="wp-irving" />
+			<property name="text_domain" type="array" value="am" />
 		</properties>
 	</rule>
 
@@ -24,10 +27,9 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="WP_Irving"/>
+                <element value="am_"/>
             </property>
         </properties>
-		<exclude-pattern>/tests/bootstrap\.php</exclude-pattern>
     </rule>
 
 	<rule ref="Generic.PHP.ForbiddenFunctions">
