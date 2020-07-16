@@ -1,5 +1,5 @@
-sudo: false
-dist: xenial
+os: linux
+dist: trusty
 
 language: php
 
