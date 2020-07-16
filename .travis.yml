@@ -26,7 +26,7 @@ matrix:
       env: WP_VERSION=latest
     - php: 7.3
       env: WP_TRAVISCI=phpcs
-    allow_failures:
+  allow_failures:
     - php: 7.4
       env: WP_VERSION=nightly
   fast_finish: true
