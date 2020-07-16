@@ -2,8 +2,6 @@ sudo: false
 
 language: php
 
-# Receive notifications for build results.
-# @link http://docs.travis-ci.com/user/notifications/#Email-notifications
 notifications:
     email: false
 
@@ -28,7 +26,7 @@ matrix:
   fast_finish: true
 
 before_script:
-    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
       phpenv config-rm xdebug.ini
