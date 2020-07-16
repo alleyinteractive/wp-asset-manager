@@ -3,7 +3,7 @@
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
     <!-- Include Alley Rules -->
-    <rule ref="Alley-Coding-Standards">
+    <rule ref="alley-coding-standards">
 		<!-- Ignore rules in unit tests -->
 		<exclude-pattern>/tests/*</exclude-pattern>
 	</rule>
