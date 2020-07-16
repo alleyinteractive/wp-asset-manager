@@ -130,7 +130,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	 * Disable JS concatenation for async and defer scripts.
 	 *
 	 * @param bool   $do_concat Whether or not to concatenate this script.
-	 * @param string $handle  Handle for enqueued script.
+	 * @param string $handle    Handle for enqueued script.
 	 *
 	 * @return bool
 	 */
