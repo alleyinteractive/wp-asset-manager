@@ -16,6 +16,7 @@
         "alley/alley-coding-standards": "0.1.0"
     },
     "scripts": {
-        "phpcs" : "phpcs --standard=Alley-Coding-Standards ."
+        "phpcs" : "phpcs . -p",
+        "phpcbf" : "phpcbf ."
     }
 }

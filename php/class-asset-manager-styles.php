@@ -26,7 +26,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 *
 	 * @var array
 	 */
-	public $load_methods = array( 'sync', 'preload', 'async', 'defer', 'inline' );
+	public $load_methods = [ 'sync', 'preload', 'async', 'defer', 'inline' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
@@ -53,7 +53,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			self::$instance = new static;
+			self::$instance = new static();
 			self::$instance->add_hooks();
 			self::$instance->set_defaults();
 		}
@@ -68,8 +68,8 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 * @return void
 	 */
 	public function print_asset( $stylesheet ) {
-		$classes = $this->default_classes;
-		$classes[] = $stylesheet['handle'];
+		$classes      = $this->default_classes;
+		$classes[]    = $stylesheet['handle'];
 		$print_string = '';
 
 		if ( ! empty( $stylesheet['src'] ) && ! in_array( $stylesheet['load_method'], $this->wp_enqueue_methods, true ) ) {
@@ -82,7 +82,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 				}
 			} elseif ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
 				$media = false;
-				$src = $stylesheet['src'];
+				$src   = $stylesheet['src'];
 
 				if ( ! empty( $stylesheet['version'] ) ) {
 					$src = add_query_arg( 'ver', $stylesheet['version'], $stylesheet['src'] );
@@ -101,26 +101,27 @@ class Asset_Manager_Styles extends Asset_Manager {
 				}
 
 				echo wp_kses(
-					sprintf( $print_string,
+					sprintf(
+						$print_string,
 						esc_url( $src ),
 						esc_attr( implode( ' ', $classes ) ),
 						! empty( $media ) ? sprintf( 'media="%s" ', esc_attr( $media ) ) : ''
 					),
-					array(
-						'link' => array(
-							'rel' => array(),
-							'href' => array(),
-							'class' => array(),
-							'media' => array(),
-							'as' => array(),
-							'onload' => array(),
-						),
-						'script' => array(
-							'class' => array(),
-							'type' => array(),
-						),
-						'noscript' => array(),
-					)
+					[
+						'link'     => [
+							'rel'    => [],
+							'href'   => [],
+							'class'  => [],
+							'media'  => [],
+							'as'     => [],
+							'onload' => [],
+						],
+						'script'   => [
+							'class' => [],
+							'type'  => [],
+						],
+						'noscript' => [],
+					]
 				);
 			}
 		}
@@ -135,12 +136,14 @@ class Asset_Manager_Styles extends Asset_Manager {
 	public function pre_add_asset( $stylesheet ) {
 		// Add preload script
 		if ( ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) && ! $this->preload_engaged ) {
-			am_enqueue_script( array(
-				'handle' => 'loadCSS',
-				'src' => AM_BASE_DIR . '/js/loadCSS.min.js',
-				'load_method' => 'inline',
-				'load_hook' => 'am_critical',
-			) );
+			am_enqueue_script(
+				[
+					'handle'      => 'loadCSS',
+					'src'         => AM_BASE_DIR . '/js/loadCSS.min.js',
+					'load_method' => 'inline',
+					'load_hook'   => 'am_critical',
+				] 
+			);
 			$this->preload_engaged = true;
 		}
 

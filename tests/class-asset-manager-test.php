@@ -5,38 +5,44 @@ namespace Asset_Manager_Tests;
 abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 
 	public function setUp() {
-		$this->test_script = [
+		$this->test_script     = [
 			'handle' => 'my-test-asset',
-			'src' => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 		];
 		$this->test_script_two = [
 			'handle' => 'test-asset-two',
-			'src' => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
 		];
-		$this->test_style = [
+		$this->test_style      = [
 			'handle' => 'my-test-style',
-			'src' => 'http://www.example.org/wp-content/themes/example/static/css/test.css',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test.css',
 		];
-		$this->test_style_two = [
+		$this->test_style_two  = [
 			'handle' => 'test-style-two',
-			'src' => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
 		];
 
 		// Add test conditions
 		remove_all_filters( 'am_asset_conditions', 10 );
-		add_filter( 'am_asset_conditions', function() {
-			return [
-				'global' => true,
-				'article_post_type' => true,
-				'single' => true,
-				'archive' => false,
-				'has_slideshow' => false,
-				'has_video' => false,
-			];
-		} );
-		add_filter( 'am_inline_script_context', function() {
-			return 'assetContext';
-		} );
+		add_filter(
+			'am_asset_conditions',
+			function() {
+				return [
+					'global'            => true,
+					'article_post_type' => true,
+					'single'            => true,
+					'archive'           => false,
+					'has_slideshow'     => false,
+					'has_video'         => false,
+				];
+			} 
+		);
+		add_filter(
+			'am_inline_script_context',
+			function() {
+				return 'assetContext';
+			} 
+		);
 
 		$this->reset_assets();
 		$this->add_test_user();
@@ -47,12 +53,14 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 	}
 
 	function add_test_user() {
-		$this->user_id = $this->factory->user->create( [
-			'user_login' => 'assets-test-user',
-			'user_pass' => 'password',
-			'user_email' => 'assets-test-user@test.com',
-			'role' => 'administrator',
-		] );
+		$this->user_id = $this->factory->user->create(
+			[
+				'user_login' => 'assets-test-user',
+				'user_pass'  => 'password',
+				'user_email' => 'assets-test-user@test.com',
+				'role'       => 'administrator',
+			] 
+		);
 		wp_set_current_user( $this->user_id );
 	}
 
@@ -62,13 +70,13 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 	}
 
 	function reset_assets() {
-		\Asset_Manager_Scripts::instance()->assets = array();
-		\Asset_Manager_Scripts::instance()->assets_by_handle = array();
-		\Asset_Manager_Scripts::instance()->asset_handles = array();
-		\Asset_Manager_Styles::instance()->assets = array();
-		\Asset_Manager_Styles::instance()->assets_by_handle = array();
-		\Asset_Manager_Styles::instance()->asset_handles = array();
-		\Asset_Manager_Styles::instance()->preload_engaged = false;
+		\Asset_Manager_Scripts::instance()->assets           = [];
+		\Asset_Manager_Scripts::instance()->assets_by_handle = [];
+		\Asset_Manager_Scripts::instance()->asset_handles    = [];
+		\Asset_Manager_Styles::instance()->assets            = [];
+		\Asset_Manager_Styles::instance()->assets_by_handle  = [];
+		\Asset_Manager_Styles::instance()->asset_handles     = [];
+		\Asset_Manager_Styles::instance()->preload_engaged   = false;
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );

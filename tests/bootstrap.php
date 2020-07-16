@@ -44,4 +44,4 @@ function _am_phpunit_is_wp_at_least( $min_version ) {
 }
 
 // Load custom `UnitTestCase` classes
-require_once( __DIR__ . '/class-asset-manager-test.php' );
+require_once __DIR__ . '/class-asset-manager-test.php';
