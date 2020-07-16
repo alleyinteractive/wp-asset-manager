@@ -1,5 +1,9 @@
 os: linux
-dist: trusty
+dist: xenial
+
+# Xenial does not start mysql by default
+services:
+  - mysql
 
 language: php
 
