@@ -1,25 +1,32 @@
 <?php
 /**
- * Bootstrap the testing environment
+ * PHPUnit bootstrap file
  *
- * Uses wordpress tests (http://github.com/nb/wordpress-tests/) which uses
- * PHPUnit.
- *
- * Note: Do note change the name of this file. PHPUnit will automatically fire
- * this file when run.
- *
- * @package assetmanager
+ * @package WP_Irving
  */
 
-$_tests_dir = getenv('WP_TESTS_DIR');
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
+
+// Constant to determine when tests are running.
+define( 'WP_IRVING_TEST', true );
+
 if ( ! $_tests_dir ) {
-	$_tests_dir = '/tmp/wordpress-tests-lib';
+	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
 }
 
+if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+	// PHPCS is complaining about this line not being translated, but it not really relevant for this file.
+	// phpcs:disable
+	echo "Could not find $_tests_dir/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL;
+	exit( 1 );
+	// phpcs:enable
+}
+
+// Give access to tests_add_filter() function.
 require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../asset-manager.php';
+	require dirname( __DIR__ ) . '/asset-manager.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

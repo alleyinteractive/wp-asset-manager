@@ -1,0 +1,21 @@
+{
+    "name": "alleyinteractive/wp-asset-manager",
+    "authors": [
+        {
+            "name": "Alley Interactive",
+            "email": "hello@alley.co"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/alleyinteractive/Alley-Coding-Standards"
+        }
+    ],
+    "require-dev": {
+        "alley/alley-coding-standards": "0.1.0"
+    },
+    "scripts": {
+        "phpcs" : "phpcs --standard=Alley-Coding-Standards ."
+    }
+}
