@@ -2,7 +2,11 @@
 
 namespace Asset_Manager_Tests;
 
-abstract class Asset_Manager_Test extends \WP_UnitTestCase {
+use Asset_Manager_Scripts;
+use Asset_Manager_Styles;
+use WP_UnitTestCase;
+
+abstract class Asset_Manager_Test extends WP_UnitTestCase {
 
 	public function setUp() {
 		$this->test_script     = [
@@ -35,13 +39,13 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 					'has_slideshow'     => false,
 					'has_video'         => false,
 				];
-			} 
+			}
 		);
 		add_filter(
 			'am_inline_script_context',
 			function() {
 				return 'assetContext';
-			} 
+			}
 		);
 
 		$this->reset_assets();
@@ -59,7 +63,7 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 				'user_pass'  => 'password',
 				'user_email' => 'assets-test-user@test.com',
 				'role'       => 'administrator',
-			] 
+			]
 		);
 		wp_set_current_user( $this->user_id );
 	}
@@ -70,13 +74,13 @@ abstract class Asset_Manager_Test extends \WP_UnitTestCase {
 	}
 
 	function reset_assets() {
-		\Asset_Manager_Scripts::instance()->assets           = [];
-		\Asset_Manager_Scripts::instance()->assets_by_handle = [];
-		\Asset_Manager_Scripts::instance()->asset_handles    = [];
-		\Asset_Manager_Styles::instance()->assets            = [];
-		\Asset_Manager_Styles::instance()->assets_by_handle  = [];
-		\Asset_Manager_Styles::instance()->asset_handles     = [];
-		\Asset_Manager_Styles::instance()->preload_engaged   = false;
+		Asset_Manager_Scripts::instance()->assets           = [];
+		Asset_Manager_Scripts::instance()->assets_by_handle = [];
+		Asset_Manager_Scripts::instance()->asset_handles    = [];
+		Asset_Manager_Styles::instance()->assets            = [];
+		Asset_Manager_Styles::instance()->assets_by_handle  = [];
+		Asset_Manager_Styles::instance()->asset_handles     = [];
+		Asset_Manager_Styles::instance()->preload_engaged   = false;
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );
