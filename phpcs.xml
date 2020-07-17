@@ -2,15 +2,15 @@
 <ruleset>
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
-    <!-- Include Alley Rules -->
-    <rule ref="alley-coding-standards">
+	<!-- Include Alley Rules -->
+	<rule ref="vendor/alley/Alley-Coding-Standards">
 		<!-- Ignore rules in unit tests -->
 		<exclude-pattern>/tests/*</exclude-pattern>
+		<include name="Squiz.Commenting.FunctionComment.SpacingAfterParamName"/>
 	</rule>
 
-    <!-- Project customizations go here -->
-
-    	<rule ref="WordPress.WP.I18n">
+	<!-- Project customizations go here -->
+		<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!--
 			Verify that the text_domain is set to the desired text-domain.
@@ -25,13 +25,13 @@
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
-        <properties>
-            <property name="prefixes" type="array">
-                <element value="am_"/>
-                <element value="Asset_Manager"/>
-            </property>
-        </properties>
-    </rule>
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="am_"/>
+				<element value="Asset_Manager"/>
+			</property>
+		</properties>
+	</rule>
 
 	<rule ref="Generic.PHP.ForbiddenFunctions">
 		<properties>
