@@ -399,7 +399,7 @@ abstract class Asset_Manager {
 			}
 
 			// Perform any type-specific validation checks or array mutation after validation.
-			$this->post_validate_asset( $asset );
+			$asset = $this->post_validate_asset( $asset );
 
 			// Reset asset in arrays.
 			$this->assets[ $idx ]                       = $asset;
