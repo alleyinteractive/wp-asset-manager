@@ -110,7 +110,10 @@ class Asset_Manager_Preload extends Asset_Manager {
 		$classes[]    = $asset['handle'];
 		$print_string = '';
 
-		if ( ! empty( $asset['src'] ) && in_array( $asset['as'], $this->preload_as, true ) ) {
+		if ( empty( $asset['as'] ) || ! in_array( $asset['as'], $this->preload_as, true ) ) {
+			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
+			$this->generate_asset_error( 'invalid_preload_attribute', $asset, [ 'attribute' => 'as' ] );
+		} else if ( ! empty( $asset['src'] ) ) {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
 			$asset_src = add_query_arg(
 				'ver',
@@ -165,15 +168,10 @@ class Asset_Manager_Preload extends Asset_Manager {
 			$asset = $this->set_asset_types( $asset );
 		}
 
-		// We weren't able to patch in the `as` attribute.
-		if ( empty( $asset['as'] ) ) {
-			$this->generate_asset_error( 'missing_preload_attribute', $asset, [ 'attribute' => 'as' ] );
-		} else {
-			if ( 'font' === $asset['as'] ) {
-				// Preloading fonts requires the `crossorigin` attribute.
-				// https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Cross-origin_fetches
-				$asset['crossorigin'] = true;
-			}
+		if ( ! empty( $asset['as'] ) && 'font' === $asset['as'] ) {
+			// Preloading fonts requires the `crossorigin` attribute.
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Cross-origin_fetches
+			$asset['crossorigin'] = true;
 		}
 
 		return $asset;

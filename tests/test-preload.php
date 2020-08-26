@@ -54,14 +54,33 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			"Should add the 'as' and 'crossorigin' arguments for a preloaded font"
 		);
 
-		// Throws an error for an unknown file type.
+		// Shouldn't alter the option values for an "unknown" file type.
 		$unknown_asset = [
 			'handle' => 'preload-as-audio',
 			'src'    => 'my-song.mp3',
 		];
 
-		$error = get_echo( [ \Asset_Manager_Preload::instance(), 'post_validate_asset' ], [ $unknown_asset ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>missing_preload_attribute</em>', $error, "Should throw missing_preload_attribute error if the 'as' attribute is missing" );
+		$actual_script_output = \Asset_Manager_Preload::instance()->set_asset_types( $unknown_asset );
+
+		$this->assertEquals(
+			$unknown_asset,
+			$actual_script_output,
+			"Should not add the 'as' and 'mime_type' arguments for an unknown file type"
+		);
+	}
+
+	/**
+	 * @group preload
+	 */
+	function test_print_asset() {
+		// Throws an error for missing `as` value.
+		$unknown_asset = [
+			'handle' => 'preload-as-audio',
+			'src'    => 'my-song.mp3',
+		];
+
+		$error = get_echo( [ \Asset_Manager_Preload::instance(), 'print_asset' ], [ $unknown_asset ] );
+		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
 	}
 
 	/**
