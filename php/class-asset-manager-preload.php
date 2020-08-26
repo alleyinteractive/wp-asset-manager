@@ -115,16 +115,20 @@ class Asset_Manager_Preload extends Asset_Manager {
 			$this->generate_asset_error( 'invalid_preload_attribute', $asset, [ 'attribute' => 'as' ] );
 		} else if ( ! empty( $asset['src'] ) ) {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
-			$asset_src = add_query_arg(
-				'ver',
-				$asset['version'],
-				$asset['src']
-			);
+
+			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
+				// Make sure we include the asset version for styles and scripts..
+				$asset['src'] = add_query_arg(
+					'ver',
+					$asset['version'],
+					$asset['src']
+				);
+			}
 
 			echo wp_kses(
 				sprintf(
 					$print_string,
-					esc_url( $asset_src ),
+					esc_url( $asset['src'] ),
 					esc_attr( implode( ' ', $classes ) ),
 					esc_attr( $asset['as'] ),
 					esc_attr( $asset['media'] ),
