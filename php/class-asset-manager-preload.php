@@ -157,6 +157,11 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * @return array
 	 */
 	public function pre_add_asset( $asset ) {
+		// It would be redundant to include this in the config options, so we're patching it here.
+		$asset['load_method'] = 'preload';
+		// Preloads will always be in <head>, so we force the `wp_head` load hook.
+		$asset['load_hook'] = 'wp_head';
+
 		return $asset;
 	}
 
