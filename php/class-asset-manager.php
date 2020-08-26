@@ -273,7 +273,7 @@ abstract class Asset_Manager {
 			}
 
 			// Set in footer value based on load_hook.
-			if ( ! in_array( $args['type'], [ 'styles', 'preload' ], true ) ) {
+			if ( ! in_array( $args['type'], [ 'style', 'preload' ], true ) ) {
 				if ( empty( $args['in_footer'] ) ) {
 					$args['in_footer'] = ! empty( $args['load_hook'] ) && 'wp_footer' === $args['load_hook'] ? true : false;
 				}
