@@ -18,7 +18,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	private static $instance;
 
 	/**
-	 * Methods by which an asset can be preloaded.
+	 * Types of files that can be preloaded; corresponds to allowed `as` attribute values.
 	 *
 	 * @var array
 	 */
@@ -38,7 +38,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	];
 
 	/**
-	 * Asset type this class is responsible for loading and managing
+	 * Asset type this class is responsible for loading and managing.
 	 *
 	 * @var string
 	 */
@@ -46,7 +46,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 
 
 	/**
-	 * Methods by which a asset can be loaded into the DOM
+	 * Methods by which an asset can be loaded into the DOM.
 	 *
 	 * @var array
 	 */
@@ -157,7 +157,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * @return array
 	 */
 	public function pre_add_asset( $asset ) {
-		// It would be redundant to include this in the config options, so we're patching it here.
+		// This is the only valid option, so we're patching it here.
 		$asset['load_method'] = 'preload';
 		// Preloads will always be in <head>, so we force the `wp_head` load hook.
 		$asset['load_hook'] = 'wp_head';
@@ -179,7 +179,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 
 		if ( ! empty( $asset['as'] ) && 'font' === $asset['as'] ) {
 			// Preloading fonts requires the `crossorigin` attribute.
-			// https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Cross-origin_fetches
+			// https://drafts.csswg.org/css-fonts/#font-fetching-requirements
 			$asset['crossorigin'] = true;
 		}
 
