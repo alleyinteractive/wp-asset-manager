@@ -59,15 +59,15 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * @var array
 	 */
 	public $asset_types = [
-		'css' => [
+		'css'   => [
 			'as'        => 'style',
 			'mime_type' => 'text/css',
 		],
-		'js' => [
+		'js'    => [
 			'as'        => 'script',
 			'mime_type' => 'text/javascript',
 		],
-		'woff' => [
+		'woff'  => [
 			'as'        => 'font',
 			'mime_type' => 'font/woff',
 		],
@@ -113,7 +113,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 		if ( empty( $asset['as'] ) || ! in_array( $asset['as'], $this->preload_as, true ) ) {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
 			$this->generate_asset_error( 'invalid_preload_attribute', $asset, [ 'attribute' => 'as' ] );
-		} else if ( ! empty( $asset['src'] ) ) {
+		} elseif ( ! empty( $asset['src'] ) ) {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
 
 			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
@@ -136,7 +136,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 					$asset['crossorigin'] ? esc_attr( 'crossorigin' ) : ''
 				),
 				[
-					'link'     => [
+					'link' => [
 						'rel'         => [],
 						'href'        => [],
 						'class'       => [],
@@ -178,8 +178,10 @@ class Asset_Manager_Preload extends Asset_Manager {
 		}
 
 		if ( ! empty( $asset['as'] ) && 'font' === $asset['as'] ) {
-			// Preloading fonts requires the `crossorigin` attribute.
-			// https://drafts.csswg.org/css-fonts/#font-fetching-requirements
+			/**
+			 * Preloading fonts requires the `crossorigin` attribute.
+			 * https://drafts.csswg.org/css-fonts/#font-fetching-requirements
+			 */
 			$asset['crossorigin'] = true;
 		}
 
@@ -191,11 +193,11 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * A MIME type isn't required, but will prevent the browser downloading an
 	 * asset it doesn't support.
 	 *
-	 * @param  array  $asset The asset for which the types are needed.
-	 * @return array         The $asset.
+	 * @param  array $asset The asset for which the types are needed.
+	 * @return array        The $asset.
 	 */
 	public function set_asset_types( $asset ) {
-		$path_parts = pathinfo( $asset['src'] );
+		$path_parts  = pathinfo( $asset['src'] );
 		$asset_types = $this->asset_types[ $path_parts['extension'] ] ?? [];
 
 		if ( ! empty( $asset_types ) ) {
