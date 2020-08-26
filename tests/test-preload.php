@@ -9,6 +9,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 	 */
 	function test_preload_asset() {
 		// Basic CSS preload.
+		// The `print_asset` function does no option parsing, so all expected values are required.
 		$preload_basic         = [
 			'handle'      => 'preload-basic',
 			'src'         => 'client/css/test.css',
@@ -16,8 +17,9 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			'media'       => '(min-width: 768px)',
 			'mime_type'   => 'text/css',
 			'crossorigin' => false,
+			'version'     => '1.0.0',
 		];
-		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager preload-basic" as="style" media="(min-width: 768px)" type="text/css" />';
+		$expected_style_output = '<link rel="preload" href="http://client/css/test.css?ver=1.0.0" class="wp-asset-manager preload-basic" as="style" media="(min-width: 768px)" type="text/css" />';
 		$actual_style_output   = get_echo( [ \Asset_Manager_Preload::instance(), 'print_asset' ], [ $preload_basic ] );
 		$this->assertEquals(
 			$expected_style_output,
