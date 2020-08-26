@@ -148,7 +148,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	}
 
 	/**
-	 * Perform final mutations before adding script to array.
+	 * Perform final mutations before adding asset to array.
 	 *
 	 * @param array $asset Asset to mutate.
 	 * @return array
