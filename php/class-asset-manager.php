@@ -273,7 +273,7 @@ abstract class Asset_Manager {
 			}
 
 			// Set in footer value based on load_hook.
-			if ( 'style' !== $args['type'] ) {
+			if ( ! in_array( $args['type'], [ 'styles', 'preload' ], true ) ) {
 				if ( empty( $args['in_footer'] ) ) {
 					$args['in_footer'] = ! empty( $args['load_hook'] ) && 'wp_footer' === $args['load_hook'] ? true : false;
 				}
@@ -637,6 +637,10 @@ abstract class Asset_Manager {
 
 			case 'unsafe_inline':
 				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'am' ), $asset['src'] );
+				break;
+
+			case 'missing_preload_attribute':
+				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> without the <strong>%2$s</strong> attribute, which helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'], $info['attribute'] );
 				break;
 
 			default:

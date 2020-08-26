@@ -4,6 +4,7 @@ namespace Asset_Manager_Tests;
 
 use Asset_Manager_Scripts;
 use Asset_Manager_Styles;
+use Asset_Manager_Preload;
 use WP_UnitTestCase;
 
 abstract class Asset_Manager_Test extends WP_UnitTestCase {
@@ -81,6 +82,9 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 		Asset_Manager_Styles::instance()->assets_by_handle  = [];
 		Asset_Manager_Styles::instance()->asset_handles     = [];
 		Asset_Manager_Styles::instance()->preload_engaged   = false;
+		Asset_Manager_Preload::instance()->assets           = [];
+		Asset_Manager_Preload::instance()->assets_by_handle = [];
+		Asset_Manager_Preload::instance()->asset_handles    = [];
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );

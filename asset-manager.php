@@ -32,6 +32,7 @@ define( 'AM_BASE_DIR', dirname( __FILE__ ) );
 require_once AM_BASE_DIR . '/php/class-asset-manager.php';
 require_once AM_BASE_DIR . '/php/class-asset-manager-scripts.php';
 require_once AM_BASE_DIR . '/php/class-asset-manager-styles.php';
+require_once AM_BASE_DIR . '/php/class-asset-manager-preload.php';
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
 
@@ -93,3 +94,31 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 endif;
 
 add_action( 'after_setup_theme', [ 'Asset_Manager_Styles', 'instance' ], 10 );
+
+if ( ! function_exists( 'am_preload' ) ) :
+
+	/**
+	 * Provide an asset with a `preload` resource hint for the browser to prioritize.
+	 *
+	 * @param string $handle       Handle for asset. This is necessary for dependency management.
+	 * @param string $src          URI to asset.
+	 * @param string $condition    Corresponds to a configured loading condition that, if matches,
+	 *                             will allow the asset to load.
+	 *                             Defaults are 'global', 'single', and 'search'.
+	 * @param string $load_method  How to load this asset. Defaults to 'preload'.
+	 * @param string $version      Version of the asset.
+	 * @param string $load_hook    Hook on which to load this asset.
+	 * @param string $media        Media query to restrict when this asset is loaded.
+	 * @param string $as           A hint to the browser about what type of asset this is.
+	 *                             See $preload_as for valid options.
+	 * @param boolean $crossorigin Preload this asset cross-origin.
+	 */
+	function am_preload( $handle, $src = false, $condition = 'global', $load_method = 'preload', $version = '1.0.0', $load_hook = 'wp_head', $media = 'all', $as = false, $crossorigin = false ) {
+		$defaults = compact( 'handle', 'src', 'condition', 'load_method', 'version', 'load_hook', 'media', 'as', 'crossorigin' );
+		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+		Asset_Manager_Preload::instance()->add_asset( $args );
+	}
+
+endif;
+
+add_action( 'after_setup_theme', [ 'Asset_Manager_Preload', 'instance' ], 10 );
