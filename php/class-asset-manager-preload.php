@@ -55,6 +55,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	/**
 	 * Map of asset 'as' and 'type` attributes based on file extension, used to
 	 * patch in attributes for commonly-preloaded assets.
+	 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 	 *
 	 * @var array
 	 */
@@ -66,10 +67,6 @@ class Asset_Manager_Preload extends Asset_Manager {
 		'js'    => [
 			'as'        => 'script',
 			'mime_type' => 'text/javascript',
-		],
-		'woff'  => [
-			'as'        => 'font',
-			'mime_type' => 'font/woff',
 		],
 		'woff2' => [
 			'as'        => 'font',
