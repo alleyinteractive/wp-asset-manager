@@ -84,7 +84,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @return class
+	 * @return Asset_Manager_Preload
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {

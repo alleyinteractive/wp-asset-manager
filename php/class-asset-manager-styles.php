@@ -55,7 +55,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @return class
+	 * @return Asset_Manager_Styles
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
