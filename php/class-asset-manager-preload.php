@@ -109,7 +109,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 
 		if ( empty( $asset['as'] ) || ! in_array( $asset['as'], $this->preload_as, true ) ) {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
-			$this->generate_asset_error( 'invalid_preload_attribute', $asset, [ 'attribute' => 'as' ] );
+			$this->generate_asset_error( 'invalid_preload_as_attribute', $asset );
 		} elseif ( ! empty( $asset['src'] ) ) {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
 

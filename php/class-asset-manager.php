@@ -639,8 +639,8 @@ abstract class Asset_Manager {
 				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'am' ), $asset['src'] );
 				break;
 
-			case 'invalid_preload_attribute':
-				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>%2$s</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'], $info['attribute'] );
+			case 'invalid_preload_as_attribute':
+				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'] );
 				break;
 
 			default:

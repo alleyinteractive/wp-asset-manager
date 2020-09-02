@@ -80,7 +80,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 		];
 
 		$error = get_echo( [ \Asset_Manager_Preload::instance(), 'print_asset' ], [ $unknown_asset ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
+		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_as_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
 	}
 
 	/**
