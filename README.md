@@ -6,6 +6,7 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
 * [Enqueue Functions](#enqueue-functions)
   * [am_enqueue_script](#am_enqueue_script)
   * [am_enqueue_style](#am_enqueue_style)
+  * [Conditions](#conditions)
   * [Inline Assets](#inline-assets)
   * [Enqueue Options](#enqueue-options)
 * [Preload Function](#preload-function)
@@ -69,6 +70,35 @@ am_enqueue_style(
     'media'       => 'all', // 'print', 'screen', or any valid media query
   ]
 );
+```
+
+### Conditions
+
+The `condition` parameter determines under which condition(s) the asset should load.
+
+There a few default conditions included out-of-the-box:
+
+| Name       | Condition     |
+|:-----------|---------------|
+| `'global'` | `true`        |
+| `'single'` | `is_single()` |
+| `'search'` | `is_search()` |
+
+Use the `am_asset_conditions` filter to add or replace conditions.
+
+```php
+function asset_conditions( $conditions ) {
+  return array_merge(
+    $conditions,
+    [
+      'home'    => ( is_home() || is_front_page() ),
+      'archive' => is_archive(),
+      'page'    => is_page(),
+    ]
+  );
+}
+
+add_filter( 'am_asset_conditions', 'asset_conditions', 10 );
 ```
 
 ### Inline Assets
