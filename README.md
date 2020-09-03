@@ -73,7 +73,7 @@ am_enqueue_style(
 
 ### Inline Assets
 
-Use `load_method => inline` for either enqueue function to print the contents of a file to the document head.
+Use `load_method => inline` with an absolute `src` path for either enqueue function to print the contents of the file to the document head.
 
 **Print the contents of a file**
 
@@ -126,26 +126,22 @@ add_filter(
 
 ### Enqueue Options
 
+The `am_enqueue_*` functions use the same parameters as their core WordPress enqueue equivelant, with the exception of the `$in_footer` parameter for scripts; use `'load_hook'` (details below) instead.
+
+**Additional options:**
+
 | Name                   | Description                                                         | Default     |
 |:-----------------------|:--------------------------------------------------------------------|:-----------:|
-| `handle`               | The handle for the asset ❗️                                         |             |
-| `src`                  | The URI for the asset ❗️                                            |             |
 | `condition`            | The condition for which this asset should load                      | `'global'`  |
-| `version`              | The asset version                                                   | `'1.0.0'`   |
-| `deps`                 | An array of the asset's dependencies                                | `[]`        |
 | `load_hook`            |                                                                     | `'wp_head'` |
-| &emsp; — `am_critical` |                                                                     |             |
 | &emsp; — `wp_head`     | Load this asset via `wp_head`                                       |             |
 | &emsp; — `wp_foot`     | Load this asset via `wp_foot`                                       |             |
 | `load_method`          |                                                                     | `'sync'`    |
 | &emsp; — `sync`        | Use the core`wp_enqueue` function                                   |             |
 | &emsp; — `async`       | Adds the `async` attribute to the enqueue                           |             |
 | &emsp; — `defer`       | Adds the `defer` attribute to the enqueue                           |             |
-| &emsp; — `async-defer` | Adds the `async` and `defer` attributes to the script tag 📜        |             |
+| &emsp; — `async-defer` | Adds the `async` and `defer` attributes (scripts only)              |             |
 | &emsp; — `inline`      | Prints the asset inline in the document head                        |             |
-| `media`                | The media attribute value used to conditionally apply the CSS 🎨    | `'all'`     |
-
-❗️ Required, 📜 Scripts only, 🎨 Styles only
 
 ## Preload Function
 
