@@ -143,7 +143,6 @@ add_filter(
 | &emsp; — `defer`       | Adds the `defer` attribute to the enqueue                           |             |
 | &emsp; — `async-defer` | Adds the `async` and `defer` attributes to the script tag 📜        |             |
 | &emsp; — `inline`      | Prints the asset inline in the document head                        |             |
-| &emsp; — `preload`     | Preload the stylesheet using a polyfill 🎨                          |             |
 | `media`                | The media attribute value used to conditionally apply the CSS 🎨    | `'all'`     |
 
 ❗️ Required, 📜 Scripts only, 🎨 Styles only

@@ -29,7 +29,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 *
 	 * @var array
 	 */
-	public $load_methods = [ 'sync', 'preload', 'async', 'defer', 'inline' ];
+	public $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
@@ -90,7 +90,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 				} else {
 					$this->generate_asset_error( 'unsafe_inline', $stylesheet );
 				}
-			} elseif ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
+			} elseif ( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
 				$media = false;
 				$src   = $stylesheet['src'];
 
@@ -102,9 +102,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 					$media = $stylesheet['media'];
 				}
 
-				if ( 'preload' === $stylesheet['load_method'] ) {
-					$print_string = '<link rel="preload" href="%1$s" class="%2$s" %3$s as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="%1$s" class="%2$s" %3$s/></noscript>';
-				} elseif ( 'async' === $stylesheet['load_method'] ) {
+				if ( 'async' === $stylesheet['load_method'] ) {
 					$onload_media = empty( $media ) ? 'all' : $media;
 					$print_string = '<link rel="stylesheet" class="%2$s" href="%1$s" media="print" onload="this.onload=null;this.media=\'' . $onload_media . '\'" /><noscript><link rel="stylesheet" href="%1$s" %3$s class="%2$s" /></noscript>';
 				} elseif ( 'defer' === $stylesheet['load_method'] ) {
@@ -170,7 +168,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	public function post_validate_asset( $stylesheet ) {
 		if (
 			! empty( $stylesheet['dependents'] ) &&
-			( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )
+			( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )
 		) {
 			$this->generate_asset_error( 'unsafe_load_method', $stylesheet, $this->assets_by_handle[ $stylesheet['dependents'][0] ] );
 		}
