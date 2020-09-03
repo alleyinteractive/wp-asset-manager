@@ -90,9 +90,18 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			$this->test_style,
 			[
 				'load_method' => 'async',
-			] 
+			]
 		);
 		am_enqueue_style( $async_style );
+		$this->assertNotContains( 'loadCSS', \Asset_Manager_Scripts::instance()->asset_handles );
+
+		$defer_style = array_merge(
+			$this->test_style_two,
+			[
+				'load_method' => 'defer',
+			]
+		);
+		am_enqueue_style( $defer_style );
 		$this->assertContains( 'loadCSS', \Asset_Manager_Scripts::instance()->asset_handles );
 		$this->assertContains(
 			[
@@ -106,7 +115,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 				'type'        => 'script',
 				'in_footer'   => false,
 			],
-			\Asset_Manager_Scripts::instance()->assets 
+			\Asset_Manager_Scripts::instance()->assets
 		);
 	}
 
@@ -118,14 +127,14 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			$this->test_style,
 			[
 				'deps' => [ 'defer-style-test' ],
-			] 
+			]
 		);
 		$defer_style = array_merge(
 			$this->test_style_two,
 			[
 				'handle'      => 'defer-style-test',
 				'load_method' => 'defer',
-			] 
+			]
 		);
 		am_enqueue_style( $sync_style );
 

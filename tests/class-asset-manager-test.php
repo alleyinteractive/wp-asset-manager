@@ -81,7 +81,7 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 		Asset_Manager_Styles::instance()->assets            = [];
 		Asset_Manager_Styles::instance()->assets_by_handle  = [];
 		Asset_Manager_Styles::instance()->asset_handles     = [];
-		Asset_Manager_Styles::instance()->preload_engaged   = false;
+		Asset_Manager_Styles::instance()->loadcss_added     = false;
 		Asset_Manager_Preload::instance()->assets           = [];
 		Asset_Manager_Preload::instance()->assets_by_handle = [];
 		Asset_Manager_Preload::instance()->asset_handles    = [];

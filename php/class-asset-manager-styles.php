@@ -18,11 +18,11 @@ class Asset_Manager_Styles extends Asset_Manager {
 	private static $instance;
 
 	/**
-	 * Whether or loadCSS and preload polyfill have been loaded
+	 * Whether or not loadCSS has been loaded.
 	 *
 	 * @var bool
 	 */
-	public $preload_engaged = false;
+	public $loadcss_added = false;
 
 	/**
 	 * Methods by which a stylesheet can be loaded into the DOM
@@ -139,14 +139,14 @@ class Asset_Manager_Styles extends Asset_Manager {
 	}
 
 	/**
-	 * Add loadCSS and preload polyfill if necessary.
+	 * Add loadCSS if necessary.
 	 *
 	 * @param array $stylesheet Stylesheet to check.
 	 * @return array
 	 */
 	public function pre_add_asset( $stylesheet ) {
-		// Add preload script.
-		if ( ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) && ! $this->preload_engaged ) {
+		// Add loadCSS for defer method.
+		if ( 'defer' === $stylesheet['load_method'] && ! $this->loadcss_added ) {
 			am_enqueue_script(
 				[
 					'handle'      => 'loadCSS',
@@ -155,7 +155,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 					'load_hook'   => 'am_critical',
 				]
 			);
-			$this->preload_engaged = true;
+			$this->loadcss_added = true;
 		}
 
 		return $stylesheet;
