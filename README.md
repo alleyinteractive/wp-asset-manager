@@ -76,7 +76,7 @@ am_enqueue_style(
 
 The `condition` parameter determines under which condition(s) the asset should load.
 
-There a few default conditions included out-of-the-box:
+There are a few default conditions included out-of-the-box:
 
 | Name       | Condition     |
 |:-----------|---------------|
