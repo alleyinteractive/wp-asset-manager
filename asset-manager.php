@@ -90,7 +90,7 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 
 		/**
-		 * am_enqueue_style with `load_method => preload` is no longer supported.
+		 * Using am_enqueue_style with `load_method => preload` is no longer supported.
 		 * This patches in a call to am_preload and updates the enqueued style's
 		 * load_method to 'sync', which replicates the deprecated behavior.
 		 */
