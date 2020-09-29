@@ -563,7 +563,7 @@ abstract class Asset_Manager {
 	 * Get the available conditions for loading assets.
 	 */
 	public static function get_conditions() {
-		if ( ! isset( static::$_conditions ) ) {
+		if ( ! isset( static::$_conditions ) || ( defined( 'WP_IRVING_TEST' ) && WP_IRVING_TEST ) ) {
 			/**
 			 * Filter function for getting available conditions to check for whether or not a given asset should load
 			 *
