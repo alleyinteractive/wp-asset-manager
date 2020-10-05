@@ -94,6 +94,11 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		$condition_include       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_asset );
 		$this->assertTrue( $condition_include, 'If script has a condition with an `include` key, it should check all `include` conditions are true' );
 
+		// Test condition with 'include_any' property
+		$condition_include_asset = array_merge( $this->test_script_two, [ 'condition' => [ 'include_any' => [ 'article_post_type', 'has_slideshow' ] ] ] );
+		$condition_include       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_asset );
+		$this->assertTrue( $condition_include, 'If script has a condition with an `include_any` key, it should check any `include_any` condition is true' );
+
 		// Test condition with 'exclude' property
 		$condition_exclude_asset = array_merge( $this->test_script_two, [ 'condition' => [ 'exclude' => 'article_post_type' ] ] );
 		$condition_exclude       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_exclude_asset );
