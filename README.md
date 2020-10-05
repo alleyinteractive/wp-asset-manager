@@ -76,6 +76,22 @@ am_enqueue_style(
 
 The `condition` parameter determines under which condition(s) the asset should load.
 
+**`include`**
+
+`string|array` Requires that all conditions be truthy in order for the asset to load.
+
+The `include` property is implied if the `condition` parameter is a string or array of strings; otherwise the `condition` parameter must contain the `include` property.
+
+**`include_any`**
+
+`string|array` Allows for _any_ condition to be truthy, instead of requiring that all conditions be.
+
+**`exclude`**
+
+`string|array` Requires that all conditions be falsey in order for the asset to load. This is skipped if neither `include` nor `include_any` are truthy.
+
+#### Custom Conditions
+
 There are a few default conditions included out-of-the-box:
 
 | Name       | Condition     |
