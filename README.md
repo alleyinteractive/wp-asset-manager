@@ -37,7 +37,7 @@ am_enqueue_script(
     'condition'   => 'global',
     'load_method' => 'sync', // 'sync', 'inline', 'async', 'defer', 'async-defer'
     'version'     => '1.0.0',
-    'load_hook'   => 'wp_foot',
+    'load_hook'   => 'wp_footer',
   ]
 );
 ```
@@ -165,7 +165,7 @@ The `am_enqueue_*` functions use the same parameters as their core WordPress enq
 | `condition`            | The condition for which this asset should load                      | `'global'`  |
 | `load_hook`            |                                                                     | `'wp_head'` |
 | &emsp; — `wp_head`     | Load this asset via `wp_head`                                       |             |
-| &emsp; — `wp_foot`     | Load this asset via `wp_foot`                                       |             |
+| &emsp; — `wp_footer`   | Load this asset via `wp_footer`                                     |             |
 | `load_method`          |                                                                     | `'sync'`    |
 | &emsp; — `sync`        | Use the core`wp_enqueue` function                                   |             |
 | &emsp; — `async`       | Adds the `async` attribute to the enqueue                           |             |
