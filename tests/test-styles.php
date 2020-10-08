@@ -22,16 +22,6 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 		$actual_style_output   = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $inline_src ] );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Inline load_method should print the contents of a CSS file in a <style> tag' );
 
-		// Preload load method
-		$preload_style         = [
-			'handle'      => 'inline-preload-asset',
-			'src'         => 'client/css/test.css',
-			'load_method' => 'preload',
-		];
-		$expected_style_output = '<link rel="preload" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-preload-asset" /></noscript>';
-		$actual_style_output   = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $preload_style ] );
-		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via a preload <link> tag that, on load, will switch to a stylesheet <link> tag' );
-
 		// Async load method
 		$async_style           = [
 			'handle'      => 'inline-async-asset',
@@ -90,9 +80,18 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			$this->test_style,
 			[
 				'load_method' => 'async',
-			] 
+			]
 		);
 		am_enqueue_style( $async_style );
+		$this->assertNotContains( 'loadCSS', \Asset_Manager_Scripts::instance()->asset_handles );
+
+		$defer_style = array_merge(
+			$this->test_style_two,
+			[
+				'load_method' => 'defer',
+			]
+		);
+		am_enqueue_style( $defer_style );
 		$this->assertContains( 'loadCSS', \Asset_Manager_Scripts::instance()->asset_handles );
 		$this->assertContains(
 			[
@@ -106,7 +105,48 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 				'type'        => 'script',
 				'in_footer'   => false,
 			],
-			\Asset_Manager_Scripts::instance()->assets 
+			\Asset_Manager_Scripts::instance()->assets
+		);
+
+		// am_enqueue_style > load_method => preload is depricated.
+		$preload_style = [
+			'handle' => 'style-preload-patch',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
+			'load_method' => 'preload',
+		];
+		am_enqueue_style( $preload_style );
+		$this->assertContains( 'style-preload-patch', \Asset_Manager_Styles::instance()->asset_handles );
+		$this->assertContains(
+			[
+				'handle'      => 'style-preload-patch',
+				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
+				'deps'        => [],
+				'condition'   => 'global',
+				'load_method' => 'sync',
+				'version'     => '1.0.0',
+				'load_hook'   => 'wp_head',
+				'media'       => 'all',
+				'type'        => 'style',
+				'loaded'      => true,
+			],
+			\Asset_Manager_Styles::instance()->assets,
+			"Styles preloaded via `am_enqueue_style` should be switched to the 'sync' `load_method`"
+		);
+		$this->assertContains( 'style-preload-patch', \Asset_Manager_Preload::instance()->asset_handles );
+		$this->assertContains(
+			[
+				'handle'      => 'style-preload-patch',
+				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
+				'deps'        => [],
+				'condition'   => 'global',
+				'load_method' => 'preload',
+				'version'     => '1.0.0',
+				'load_hook'   => 'wp_head',
+				'media'       => 'all',
+				'type'        => 'preload',
+			],
+			\Asset_Manager_Preload::instance()->assets,
+			'Styles preloaded via `am_enqueue_style` should be sent through `am_preload`'
 		);
 	}
 
@@ -118,14 +158,14 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			$this->test_style,
 			[
 				'deps' => [ 'defer-style-test' ],
-			] 
+			]
 		);
 		$defer_style = array_merge(
 			$this->test_style_two,
 			[
 				'handle'      => 'defer-style-test',
 				'load_method' => 'defer',
-			] 
+			]
 		);
 		am_enqueue_style( $sync_style );
 

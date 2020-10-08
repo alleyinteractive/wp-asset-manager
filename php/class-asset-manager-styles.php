@@ -18,18 +18,18 @@ class Asset_Manager_Styles extends Asset_Manager {
 	private static $instance;
 
 	/**
-	 * Whether or loadCSS and preload polyfill have been loaded
+	 * Whether or not loadCSS has been loaded.
 	 *
 	 * @var bool
 	 */
-	public $preload_engaged = false;
+	public $loadcss_added = false;
 
 	/**
 	 * Methods by which a stylesheet can be loaded into the DOM
 	 *
 	 * @var array
 	 */
-	public $load_methods = [ 'sync', 'preload', 'async', 'defer', 'inline' ];
+	public $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
@@ -55,7 +55,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @return class
+	 * @return Asset_Manager_Styles
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
@@ -90,7 +90,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 				} else {
 					$this->generate_asset_error( 'unsafe_inline', $stylesheet );
 				}
-			} elseif ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
+			} elseif ( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) {
 				$media = false;
 				$src   = $stylesheet['src'];
 
@@ -102,9 +102,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 					$media = $stylesheet['media'];
 				}
 
-				if ( 'preload' === $stylesheet['load_method'] ) {
-					$print_string = '<link rel="preload" href="%1$s" class="%2$s" %3$s as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="%1$s" class="%2$s" %3$s/></noscript>';
-				} elseif ( 'async' === $stylesheet['load_method'] ) {
+				if ( 'async' === $stylesheet['load_method'] ) {
 					$onload_media = empty( $media ) ? 'all' : $media;
 					$print_string = '<link rel="stylesheet" class="%2$s" href="%1$s" media="print" onload="this.onload=null;this.media=\'' . $onload_media . '\'" /><noscript><link rel="stylesheet" href="%1$s" %3$s class="%2$s" /></noscript>';
 				} elseif ( 'defer' === $stylesheet['load_method'] ) {
@@ -139,14 +137,14 @@ class Asset_Manager_Styles extends Asset_Manager {
 	}
 
 	/**
-	 * Add loadCSS and preload polyfill if necessary.
+	 * Add loadCSS if necessary.
 	 *
 	 * @param array $stylesheet Stylesheet to check.
 	 * @return array
 	 */
 	public function pre_add_asset( $stylesheet ) {
-		// Add preload script.
-		if ( ( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] ) && ! $this->preload_engaged ) {
+		// Add loadCSS for defer method.
+		if ( 'defer' === $stylesheet['load_method'] && ! $this->loadcss_added ) {
 			am_enqueue_script(
 				[
 					'handle'      => 'loadCSS',
@@ -155,7 +153,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 					'load_hook'   => 'am_critical',
 				]
 			);
-			$this->preload_engaged = true;
+			$this->loadcss_added = true;
 		}
 
 		return $stylesheet;
@@ -170,7 +168,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 	public function post_validate_asset( $stylesheet ) {
 		if (
 			! empty( $stylesheet['dependents'] ) &&
-			( 'preload' === $stylesheet['load_method'] || 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )
+			( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )
 		) {
 			$this->generate_asset_error( 'unsafe_load_method', $stylesheet, $this->assets_by_handle[ $stylesheet['dependents'][0] ] );
 		}

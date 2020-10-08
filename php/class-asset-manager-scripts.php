@@ -69,7 +69,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @return Alley_assets
+	 * @return Asset_Manager_Scripts
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
