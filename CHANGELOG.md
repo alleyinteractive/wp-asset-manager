@@ -25,8 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * `am_enqueue_style` with `load_method => preload` is no longer supported. For backward compatibility this configuration will patch in a call to `am_preload` and also `sync` enqueue the asset (127acbc)
 * The `loadCSS` preload polyfill is removed since it is [no longer supported](https://github.com/filamentgroup/loadCSS#changes-in-version-30-no-more-preload-polyfill) (5d820d9)
 
-**BREAKING CHANGES**
-
 ## 0.1.0
 
 Initial release.
