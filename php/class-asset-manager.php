@@ -288,22 +288,6 @@ abstract class Asset_Manager {
 
 			$args = $this->pre_add_asset( $args );
 
-			// Enqueue asset if applicable.
-			if ( in_array( $args['load_method'], $this->wp_enqueue_methods, true ) && empty( $args['loaded'] ) ) {
-				if ( function_exists( $wp_enqueue_function ) ) {
-					$wp_enqueue_function(
-						$args['handle'],
-						$args['src'],
-						$args['deps'],
-						$args['version'],
-						'style' === $args['type'] ? $args['media'] : $args['in_footer']
-					);
-					$args['loaded'] = true;
-				} else {
-					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', false, $wp_enqueue_function ) ) );
-				}
-			}
-
 			// Add to asset arrays.
 			// phpcs:disable Generic.Formatting.MultipleStatementAlignment
 			$this->assets[] = $args;
@@ -320,9 +304,29 @@ abstract class Asset_Manager {
 	 */
 	public function load_assets() {
 		foreach ( $this->assets as $idx => $asset ) {
-			if ( $this->asset_should_load( $asset ) ) {
-				$this->print_asset( $asset );
-				$this->assets[ $idx ]['loaded'] = true;
+			if ( !$this->asset_should_load( $asset ) ) {
+				return;
+			}
+
+			// Enqueue asset if applicable.
+			if ( in_array( $asset['load_method'], $this->wp_enqueue_methods, true ) && empty( $args['loaded'] ) ) {
+				$wp_enqueue_function = $this->wp_enqueue_function;
+
+				if ( function_exists( $wp_enqueue_function ) ) {
+					$wp_enqueue_function(
+						$asset['handle'],
+						$asset['src'],
+						$asset['deps'],
+						$asset['version'],
+						'style' === $asset['type'] ? $asset['media'] : $asset['in_footer']
+					);
+					$this->assets[ $idx ]['loaded'] = true;
+				} else {
+					$this->generate_asset_error( 'invalid_enqueue_function', [], $wp_enqueue_function );
+				}
+			} else {
+				$this->print_asset($asset);
+				$this->assets[$idx]['loaded'] = true;
 			}
 		}
 	}
@@ -600,7 +604,7 @@ abstract class Asset_Manager {
 	/**
 	 * Generate and echo a WP_Error based on a provided error code
 	 *
-	 * @param array        $code  Error code.
+	 * @param string       $code  Error code.
 	 * @param array        $asset Offending asset.
 	 * @param array|string $info  Additional information about a dependency or dependent.
 	 */
