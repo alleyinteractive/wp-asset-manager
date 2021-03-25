@@ -152,6 +152,13 @@ abstract class Asset_Manager {
 	];
 
 	/**
+	 * Storage of the asset conditions.
+	 *
+	 * @var array
+	 */
+	protected static $_conditions;
+
+	/**
 	 * Default print function throws error (and prints nothing)
 	 *
 	 * @param array $asset Asset to print.
@@ -495,25 +502,7 @@ abstract class Asset_Manager {
 			return true;
 		}
 
-		/**
-		 * Filter function for getting available conditions to check for whether or not a given asset should load
-		 *
-		 * @since  0.0.1
-		 *
-		 * @param array $conditions {
-		 *      List of available conditions
-		 *
-		 *      @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
-		 * }
-		 */
-		$conditions       = apply_filters(
-			'am_asset_conditions',
-			[
-				'global' => true,
-				'single' => is_single(),
-				'search' => is_search(),
-			]
-		);
+		$conditions       = static::get_conditions();
 		$condition_result = true;
 
 		// Default functionality of condition is 'include'.
@@ -568,6 +557,35 @@ abstract class Asset_Manager {
 		}
 
 		return $condition_result;
+	}
+
+	/**
+	 * Get the available conditions for loading assets.
+	 */
+	public static function get_conditions() {
+		if ( ! isset( static::$_conditions ) || ( defined( 'WP_IRVING_TEST' ) && WP_IRVING_TEST ) ) {
+			/**
+			 * Filter function for getting available conditions to check for whether or not a given asset should load
+			 *
+			 * @since  0.0.1
+			 *
+			 * @param array $conditions {
+			 * 		List of available conditions
+			 *
+			 * 		@type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
+			 * }
+			 */
+			static::$_conditions = apply_filters(
+				'am_asset_conditions',
+				[
+					'global' => true,
+					'single' => is_single(),
+					'search' => is_search(),
+				]
+			);
+		}
+
+		return static::$_conditions;
 	}
 
 	/**
