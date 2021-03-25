@@ -279,8 +279,8 @@ abstract class Asset_Manager {
 				$args['load_method'] = 'sync';
 			}
 
-			// Set in footer value based on load_hook.
-			if ( 'style' !== $args['type'] ) {
+			// Set in footer value based on asset_type.
+			if ( ! in_array( $args['type'], [ 'style', 'preload' ], true ) ) {
 				if ( empty( $args['in_footer'] ) ) {
 					$args['in_footer'] = ! empty( $args['load_hook'] ) && 'wp_footer' === $args['load_hook'] ? true : false;
 				}
@@ -406,7 +406,7 @@ abstract class Asset_Manager {
 			}
 
 			// Perform any type-specific validation checks or array mutation after validation.
-			$this->post_validate_asset( $asset );
+			$asset = $this->post_validate_asset( $asset );
 
 			// Reset asset in arrays.
 			$this->assets[ $idx ]                       = $asset;
@@ -655,6 +655,10 @@ abstract class Asset_Manager {
 
 			case 'unsafe_inline':
 				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'am' ), $asset['src'] );
+				break;
+
+			case 'invalid_preload_as_attribute':
+				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'] );
 				break;
 
 			default:

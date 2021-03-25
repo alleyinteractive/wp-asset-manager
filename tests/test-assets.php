@@ -31,7 +31,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'loaded'      => 1,
 			],
 			\Asset_Manager_Scripts::instance()->assets,
-			'Script data should exist in the primary asset manifest' 
+			'Script data should exist in the primary asset manifest'
 		);
 	}
 
@@ -52,7 +52,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				],
 				'load_method' => 'inline',
 				'load_hook'   => 'wp_head',
-			] 
+			]
 		);
 		$actual_output   = get_echo( [ \Asset_Manager_Scripts::instance(), 'load_assets' ] );
 		$expected_output = '<script class="wp-asset-manager test-inline-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["test-inline-asset"] = {"myGlobalVar":true}</script>';
@@ -94,6 +94,11 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		$condition_include       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_asset );
 		$this->assertTrue( $condition_include, 'If script has a condition with an `include` key, it should check all `include` conditions are true' );
 
+		// Test condition with 'include_any' property
+		$condition_include_asset = array_merge( $this->test_script_two, [ 'condition' => [ 'include_any' => [ 'article_post_type', 'has_slideshow' ] ] ] );
+		$condition_include       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_asset );
+		$this->assertTrue( $condition_include, 'If script has a condition with an `include_any` key, it should check any `include_any` condition is true' );
+
 		// Test condition with 'exclude' property
 		$condition_exclude_asset = array_merge( $this->test_script_two, [ 'condition' => [ 'exclude' => 'article_post_type' ] ] );
 		$condition_exclude       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_exclude_asset );
@@ -107,7 +112,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 					'include' => [ 'article_post_type', 'single' ],
 					'exclude' => [ 'has_slideshow', 'has_video', 'archive' ],
 				],
-			] 
+			]
 		);
 		$condition_include_exclude       = \Asset_Manager_Scripts::instance()->asset_should_add( $condition_include_exclude_asset );
 		$this->assertTrue( $condition_include_exclude, 'If script has a condition with both `include` and `exclude` keys, it should check all `include` conditions are true and all `exclude` conditions are false' );
@@ -127,7 +132,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'handle'    => 'my-test-asset',
 				'load_hook' => 'wp_head',
 				'loaded'    => false,
-			] 
+			]
 		);
 		$this->assertFalse( $no_src, 'If script does not have a src, it should fail to be added' );
 
@@ -137,7 +142,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'src'       => get_stylesheet_directory_uri() . 'static/js/test-bundle.bundle.js',
 				'load_hook' => 'wp_footer',
 				'loaded'    => false,
-			] 
+			]
 		);
 		$this->assertFalse( $bad_location, 'If current hook comes after configured load_hook, do not load script' );
 
@@ -147,7 +152,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'src'       => get_stylesheet_directory_uri() . 'static/js/test-bundle.bundle.js',
 				'load_hook' => 'am_critical',
 				'loaded'    => false,
-			] 
+			]
 		);
 		$this->assertTrue( $bad_location, 'If current hook corresponds to configured load_hook, or if load_hook comes before current hook, load the asset' );
 
@@ -157,7 +162,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'src'       => get_stylesheet_directory_uri() . 'static/js/test-bundle.bundle.js',
 				'load_hook' => 'wp_head',
 				'loaded'    => '1',
-			] 
+			]
 		);
 		$this->assertFalse( $already_loaded, 'If script is already loaded (indicated by loaded property), do not load script' );
 
@@ -173,7 +178,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 			$this->test_script_two,
 			[
 				'deps' => [ 'jquery', 'my-test-asset' ],
-			] 
+			]
 		);
 		$another_asset_with_deps = [
 			'handle' => 'asset-with-dependencies',
@@ -271,7 +276,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 			$this->test_script_two,
 			[
 				'deps' => [ 'jquery' ],
-			] 
+			]
 		);
 		am_enqueue_script( $asset_with_deps );
 
@@ -297,7 +302,6 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'condition'   => 'global',
 				'deps'        => [
 					'jquery-core',
-					'jquery-migrate',
 				],
 				'in_footer'   => false,
 				'load_hook'   => 'wp_head',
