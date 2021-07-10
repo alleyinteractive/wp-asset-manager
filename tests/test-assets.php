@@ -302,6 +302,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'condition'   => 'global',
 				'deps'        => [
 					'jquery-core',
+					'jquery-migrate',
 				],
 				'in_footer'   => false,
 				'load_hook'   => 'wp_head',
