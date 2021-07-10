@@ -5,6 +5,6 @@
  * @package AssetManager
  */
 
-if ( ! defined( 'AM_BASE_DIR' ) ) {
+if ( defined( 'ABSPATH' ) && ! defined( 'AM_BASE_DIR' ) ) {
 	require_once __DIR__ . '/asset-manager.php';
 }

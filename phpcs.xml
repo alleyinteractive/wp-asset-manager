@@ -2,14 +2,16 @@
 <ruleset>
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
+	<arg value="ps" />
+	<arg name="parallel" value="8" />
+
+	<exclude-pattern>tests/</exclude-pattern>
+
 	<!-- Include Alley Rules -->
-	<rule ref="alley-coding-standards">
-		<!-- Ignore rules in unit tests -->
-		<exclude-pattern>/tests/*</exclude-pattern>
-	</rule>
+	<rule ref="Alley-Interactive" />
 
 	<!-- Project customizations go here -->
-		<rule ref="WordPress.WP.I18n">
+	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!--
 			Verify that the text_domain is set to the desired text-domain.
@@ -45,5 +47,4 @@
 			</property> -->
 		</properties>
 	</rule>
-
 </ruleset>
