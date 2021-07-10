@@ -2,26 +2,23 @@ name: Unit Tests
 
 on:
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
+  push:
+    branches:
+      - production
+      - release/*
 
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     services:
-      mariadb:
-        image: mariadb:latest
+      mysql:
+        image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      redis:
-        image: redis:5.0
-        ports:
-          - 6379:6379
-        options: --entrypoint redis-server
     continue-on-error: ${{ matrix.can_fail }}
     strategy:
       fail-fast: true
@@ -34,16 +31,11 @@ jobs:
 
     env:
       CACHEDIR: /tmp/test-cache
-      WP_CORE_DIR: /tmp/wordpress
+      WP_CORE_DIR: /tmp/wordpress/
       WP_VERSION: ${{ matrix.wp_version }}
+      WP_MULTISITE: ${{ matrix.multisite }}
 
     steps:
-      - name: Cancel previous runs of this workflow (pull requests only)
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: styfle/cancel-workflow-action@0.5.0
-        with:
-          access_token: ${{ github.token }}
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -71,19 +63,33 @@ jobs:
           tools: composer:v2
           coverage: none
 
-      - name: Install WordPress and PHPUnit
+      - name: Install dependencies
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer install
+
+      - name: Install WordPress and Copy Project
         shell: bash
         run: |
-          bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+          bash bin/install-wp-tests.sh wordpress_unit_tests root '' 127.0.0.1 $WP_VERSION
           composer global require "phpunit/phpunit=4.8.*|5.7.*"
-          composer install
+
+          # Go into the core directory and replace wp-content.
+          # mkdir -p ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
+          rm -rf ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
+          rsync -aWq --no-compress . ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
 
       - name: Run Unit Tests
         shell: bash
         run: |
+          cd ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
           phpunit
           WP_MULTISITE=1 phpunit
 
       - name: Run phpcs
         shell: bash
-        run: composer run phpcs
+        run: |
+          cd ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
+          composer run phpcs
