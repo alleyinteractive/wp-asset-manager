@@ -308,7 +308,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'loaded'      => true,
 				'load_method' => 'sync',
 				'type'        => 'script',
-				'version'     => '1.12.4-wp',
+				'version'     => '3.5.1',
 			],
 		];
 		$actual_assets   = \Asset_Manager_Scripts::instance()->assets;
