@@ -26,13 +26,15 @@ define( 'AM_VERSION', '0.0.1' );
  */
 define( 'AM_BASE_DIR', dirname( __FILE__ ) );
 
-/**
- * Load base classes
- */
-require_once AM_BASE_DIR . '/php/class-asset-manager.php';
-require_once AM_BASE_DIR . '/php/class-asset-manager-scripts.php';
-require_once AM_BASE_DIR . '/php/class-asset-manager-styles.php';
-require_once AM_BASE_DIR . '/php/class-asset-manager-preload.php';
+if ( ! class_exists( 'Asset_Manager' ) ) :
+	/**
+	 * Load base classes
+	 */
+	require_once AM_BASE_DIR . '/php/class-asset-manager.php';
+	require_once AM_BASE_DIR . '/php/class-asset-manager-scripts.php';
+	require_once AM_BASE_DIR . '/php/class-asset-manager-styles.php';
+	require_once AM_BASE_DIR . '/php/class-asset-manager-preload.php';
+endif;
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
 
