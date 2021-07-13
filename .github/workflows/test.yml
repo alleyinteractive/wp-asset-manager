@@ -77,7 +77,6 @@ jobs:
           composer global require "phpunit/phpunit=4.8.*|5.7.*"
 
           # Go into the core directory and replace wp-content.
-          # mkdir -p ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
           rm -rf ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
           rsync -aWq --no-compress . ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
 
