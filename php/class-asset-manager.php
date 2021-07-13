@@ -156,7 +156,7 @@ abstract class Asset_Manager {
 	 *
 	 * @var array
 	 */
-	protected static $_conditions;
+	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Default print function throws error (and prints nothing)
@@ -570,9 +570,9 @@ abstract class Asset_Manager {
 			 * @since  0.0.1
 			 *
 			 * @param array $conditions {
-			 * 		List of available conditions
+			 *     List of available conditions
 			 *
-			 * 		@type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
+			 *     @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
 			 * }
 			 */
 			static::$_conditions = apply_filters(

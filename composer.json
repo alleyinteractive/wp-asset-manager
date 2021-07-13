@@ -6,17 +6,16 @@
             "email": "hello@alley.co"
         }
     ],
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/alleyinteractive/Alley-Coding-Standards"
-        }
-    ],
+    "autoload": {
+        "files": [
+            "autoload.php"
+        ]
+    },
     "require-dev": {
-        "alley/alley-coding-standards": "0.1.0"
+        "alleyinteractive/alley-coding-standards": "^0.3.0"
     },
     "scripts": {
-        "phpcs" : "phpcs . -p",
+        "phpcs" : "phpcs --standard=./phpcs.xml .",
         "phpcbf" : "phpcbf ."
     }
 }
