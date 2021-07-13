@@ -6,6 +6,8 @@
             "email": "hello@alley.co"
         }
     ],
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-only",
     "autoload": {
         "files": [
             "autoload.php"
