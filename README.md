@@ -270,7 +270,16 @@ Defining default attributes, such as `width` and `height`, for each symbol can s
 
 **Note**: _When only one of `width` or `height` is defined, the other dimension will be calculated based on the ratio of the symbol's `viewBox` attribute values._
 
-See [Conditions](#conditions) for more about Asset Manager's conditions and how to update them.
+**By default, the `path` value must be an absolute path to the SVG file.** Use the `am_symbol_base_path` filter to set the directory from which SVG paths will be referenced.
+
+```php
+add_filter(
+  'am_symbol_base_path',
+  function symbol_base_path() {
+    return get_stylesheet_directory() . '/images/';
+  }
+);
+```
 
 Asset Manager will add the SVG file contents to the template's sprite if:
 
@@ -297,21 +306,23 @@ Asset Manager will add the SVG file contents to the template's sprite if:
 </svg>
 ```
 
+See [Conditions](#conditions) for more about Asset Manager's conditions and how to update them.
+
 #### Global Attributes
 
 Use the `am_symbol_attributes` filter to add global attributes that will apply to all symbols.
 
 ```php
-function symbol_attributes() {
-  return [
-    'aria-hidden' => 'true',
-    'focusable'   => 'false',
-  ];
-};
-add_filter( 'am_symbol_attributes', 'symbol_attributes', 10 );
+add_filter(
+  'am_symbol_attributes',
+  function symbol_attributes() {
+    return [
+      'aria-hidden' => 'true',
+      'focusable'   => 'false',
+    ];
+  }
+);
 ```
-
-Attributes passed to `am_use_symbol` override global attributes; global attributes may be removed entirely by passing a `null` attribute value.
 
 ### `am_use_symbol`
 
@@ -328,6 +339,8 @@ am_use_symbol( $symbol_name = '', $attributes = [] );
 **`$attributes`**
 
 `array` An array of attribute-value pairs to add to the SVG markup.
+
+Attributes passed to `am_use_symbol` override global attributes; global attributes may be removed entirely by passing a `null` attribute value.
 
 _**Example**_:
 
