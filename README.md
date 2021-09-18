@@ -11,6 +11,10 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
   * [Enqueue Options](#enqueue-options)
 * [Preload Function](#preload-function)
   * [Preload Options](#preload-options)
+* [SVG Sprite](#svg-sprite)
+  * [am_define_symbols](#am_define_symbols)
+  * [am_get_symbol](#am_get_symbol)
+  * [am_use_symbol](#am_use_symbol)
 * [Requirements](#requirements)
 * [Downloads and Versioning](#downloads-and-versioning)
 * [Contributing to Development](#contributing-to-development)
@@ -233,6 +237,139 @@ This function will also automatically add the `crossorigin` attribute for fonts,
 | `media`       | The media attribute value used to conditionally preload the asset  | `'all'`     |
 
 ❗️ Required
+
+## SVG Sprite
+
+Provides fine-grained control over displaying SVG assets in WordPress templates.
+
+### `am_define_symbols`
+
+Use the `am_define_symbols` filter to define symbols' `path` (required), default attributes and the condition(s) for which the symbol should be added to the template's sprite.
+
+```php
+function define_symbols() {
+  return [
+    'logomark'       => [
+      'path'      => 'svg/logomark.svg',
+      'condition' => 'global',
+      'width'     => 148,
+      'height'    => 36,
+    ],
+    'chevron-right' => [
+      'path'      => 'svg/chevron-right.svg',
+      'condition' => [ 'search', 'archive' ],
+      'width'     => 8,
+      'height'    => 16,
+    ],
+  ];
+}
+add_filter( 'am_define_symbols', 'define_symbols', 10 );
+```
+
+Defining default attributes, such as `width` and `height`, for each symbol can simplify calls to `am_use_symbol`.
+
+**Note**: _When only one of `width` or `height` is defined, the other dimension will be calculated based on the ratio of the symbol's `viewBox` attribute values._
+
+See [Conditions](#conditions) for more about Asset Manager's conditions and how to update them.
+
+Asset Manager will add the SVG file contents to the template's sprite if:
+
+1. The symbol is registered via `am_define_symbols` with a valid file path
+2. The symbol's `condition` is truthy
+
+```html
+<svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
+  <!-- /assets/logomark.svg -->
+  <symbol
+    id="am-symbol-logomark"
+    viewBox="0 0 600 83"
+  >
+    <!-- ...coordinate data... -->
+  </symbol>
+
+  <!-- /assets/chevron-right.svg -->
+  <symbol
+    id="am-symbol-chevron-right"
+    viewBox="0 0 8 16"
+  >
+    <!-- ...coordinate data... -->
+  </symbol>
+</svg>
+```
+
+#### Global Attributes
+
+Use the `am_symbol_attributes` filter to add global attributes that will apply to all symbols.
+
+```php
+function symbol_attributes() {
+  return [
+    'aria-hidden' => 'true',
+    'focusable'   => 'false',
+  ];
+};
+add_filter( 'am_symbol_attributes', 'symbol_attributes', 10 );
+```
+
+Attributes passed to `am_use_symbol` override global attributes; global attributes may be removed entirely by passing a `null` attribute value.
+
+### `am_use_symbol`
+
+Inserts an `<svg>` element with the specified attributes.
+
+```php
+am_use_symbol( $symbol_name = '', $attributes = [] );
+```
+
+**`$symbol_name`**
+
+`string` The filename of the icon to display.
+
+**`$attributes`**
+
+`array` An array of attribute-value pairs to add to the SVG markup.
+
+_**Example**_:
+
+```php
+am_use_symbol(
+  'logomark',
+  [
+    'width' => 200,
+    'class' => 'header-logo',
+  ]
+);
+```
+
+_**Output**_:
+
+```html
+<svg width="200" height="27.67" class="header-logo" aria-hidden="true" focusable="false">
+  <use href="#am-symbol-logomark"></use>
+</svg>
+```
+
+### `am_get_symbol`
+
+Returns a string containing the `<svg>` element with the specified attributes.
+
+```php
+$symbol_markup = am_get_symbol( $symbol_name = '', $attributes = [] );
+```
+
+This function uses the same arguments as `am_use_symbol`.
+
+_**Example**_:
+
+```php
+$logomark_svg_markup = am_get_symbol(
+  'logomark',
+  [
+    'width' => 200,
+    'class' => 'header-logo',
+  ]
+);
+```
 
 ## Requirements
 
