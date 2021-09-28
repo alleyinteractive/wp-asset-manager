@@ -12,7 +12,7 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
 * [Preload Function](#preload-function)
   * [Preload Options](#preload-options)
 * [SVG Sprite](#svg-sprite)
-  * [am_define_symbols](#am_define_symbols)
+  * [am_define_symbol](#am_define_symbol)
   * [am_get_symbol](#am_get_symbol)
   * [am_use_symbol](#am_use_symbol)
 * [Requirements](#requirements)
@@ -242,40 +242,43 @@ This function will also automatically add the `crossorigin` attribute for fonts,
 
 Provides fine-grained control over displaying SVG assets in WordPress templates.
 
-### `am_define_symbols`
+### `am_define_symbol`
 
-Use the `am_define_symbols` filter to define symbols' `path` (required), default attributes and the condition(s) for which the symbol should be added to the template's sprite.
+Use the `am_define_symbol` function to add a symbol to the sprite.
 
 ```php
-function define_symbols() {
-  return [
-    'logomark'       => [
-      'path'      => 'svg/logomark.svg',
-      'condition' => 'global',
-      'width'     => 148,
-      'height'    => 36,
-    ],
-    'chevron-right' => [
-      'path'      => 'svg/chevron-right.svg',
-      'condition' => [ 'search', 'archive' ],
-      'width'     => 8,
-      'height'    => 16,
-    ],
-  ];
-}
-add_filter( 'am_define_symbols', 'define_symbols', 10 );
+am_define_symbol(
+  [
+    'handle'    => 'logomark',
+    'src'       => 'svg/logomark.svg',
+    'condition' => 'global',
+  ]
+);
 ```
 
-Defining default attributes, such as `width` and `height`, for each symbol can simplify calls to `am_use_symbol`.
+Use the `am_modify_symbols` filter to add or replace symbols.
 
-**Note**: _When only one of `width` or `height` is defined, the other dimension will be calculated based on the ratio of the symbol's `viewBox` attribute values._
+```php
+function modify_symbols( $symbols ) {
+  return array_merge(
+    $symbols,
+    [
+      'close' => [
+        'src'      => 'svg/close.svg',
+        'condition' => 'global',
+      ]
+    ]
+  );
+}
+add_filter( 'am_modify_symbols', 'modify_symbols', 10 );
+```
 
-**By default, the `path` value must be an absolute path to the SVG file.** Use the `am_symbol_base_path` filter to set the directory from which SVG paths will be referenced.
+**By default, the `src` value must be an absolute path to the SVG file.** Use the `am_modify_svg_root` filter to set the directory from which relative SVG paths will be referenced.
 
 ```php
 add_filter(
-  'am_symbol_base_path',
-  function symbol_base_path() {
+  'am_modify_svg_root',
+  function() {
     return get_stylesheet_directory() . '/images/';
   }
 );
@@ -283,7 +286,7 @@ add_filter(
 
 Asset Manager will add the SVG file contents to the template's sprite if:
 
-1. The symbol is registered via `am_define_symbols` with a valid file path
+1. The symbol is registered via `am_define_symbol` with a valid file path
 2. The symbol's `condition` is truthy
 
 ```html
@@ -310,11 +313,11 @@ See [Conditions](#conditions) for more about Asset Manager's conditions and how 
 
 #### Global Attributes
 
-Use the `am_symbol_attributes` filter to add global attributes that will apply to all symbols.
+Use the `am_svg_attributes` filter to add global attributes that will apply to all symbols.
 
 ```php
 add_filter(
-  'am_symbol_attributes',
+  'am_svg_attributes',
   function symbol_attributes() {
     return [
       'aria-hidden' => 'true',
@@ -341,6 +344,12 @@ am_use_symbol( $symbol_name = '', $attributes = [] );
 `array` An array of attribute-value pairs to add to the SVG markup.
 
 Attributes passed to `am_use_symbol` override global attributes; global attributes may be removed entirely by passing a `null` attribute value.
+
+Sizing is based on:
+1. The values set in the symbol's `am_define_symbol` array
+1. The `height` and `width` attributes from the SVG
+1. The value(s) passed to `am_use_symbol`
+1. The `viewBox` attribute values
 
 _**Example**_:
 
