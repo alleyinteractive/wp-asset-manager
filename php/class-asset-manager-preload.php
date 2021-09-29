@@ -44,7 +44,6 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 */
 	public $asset_type = 'preload';
 
-
 	/**
 	 * Methods by which an asset can be loaded into the DOM.
 	 *
