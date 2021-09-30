@@ -249,9 +249,9 @@ Use the `am_define_symbol` function to add a symbol to the sprite.
 ```php
 am_define_symbol(
   [
-    'handle'    => 'logomark',
-    'src'       => 'svg/logomark.svg',
-    'condition' => 'global',
+    'handle'     => 'logomark',
+    'src'        => 'svg/logomark.svg',
+    'condition'  => 'global',
   ]
 );
 ```
@@ -263,10 +263,9 @@ function modify_symbols( $symbols ) {
   return array_merge(
     $symbols,
     [
-      'close' => [
-        'src'      => 'svg/close.svg',
-        'condition' => 'global',
-      ]
+      'handle'    => 'close',
+      'src'       => 'svg/close.svg',
+      'condition' => 'global',
     ]
   );
 }
