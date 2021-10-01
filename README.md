@@ -242,6 +242,10 @@ This function will also automatically add the `crossorigin` attribute for fonts,
 
 Provides fine-grained control over displaying SVG assets in WordPress templates.
 
+### Setup
+
+The [wp_body_open()](https://developer.wordpress.org/reference/functions/wp_body_open/) function is required for the sprite sheet to print to the template.
+
 ### `am_define_symbol`
 
 Use the `am_define_symbol` function to add a symbol to the sprite.
@@ -256,29 +260,30 @@ am_define_symbol(
 );
 ```
 
-Use the `am_modify_symbols` filter to add or replace symbols.
+**`handle`**
 
-```php
-function modify_symbols( $symbols ) {
-  return array_merge(
-    $symbols,
-    [
-      'handle'    => 'close',
-      'src'       => 'svg/close.svg',
-      'condition' => 'global',
-    ]
-  );
-}
-add_filter( 'am_modify_symbols', 'modify_symbols', 10 );
-```
+`string` Handle for asset, used to refer to the symbol in `am_use_symbol`.
 
-**By default, the `src` value must be an absolute path to the SVG file.** Use the `am_modify_svg_root` filter to set the directory from which relative SVG paths will be referenced.
+**`src`**
+
+`string` Absolute path from the current the theme root, or a relative path based on the current theme root. Use the `am_modify_svg_directory` filter to update the directory from which relative paths will be completed.
+
+**`condition`**
+
+`string|array` Corresponds to a configured loading condition that, if matches, will allow the asset to be added to the sprite sheet.
+
+**`attributes`**
+
+`array` An array of attribute names and values to add to the resulting <svg> everywhere it is printed.
+
+
+**By default, the `src` value must either be an absolute path from current the theme root, or a relative path based on the current theme root.** Use the `am_modify_svg_directory` filter to update the directory from which relative paths will be completed.
 
 ```php
 add_filter(
-  'am_modify_svg_root',
+  'am_modify_svg_directory',
   function() {
-    return get_stylesheet_directory() . '/images/';
+    return get_stylesheet_directory() . '/svg/';
   }
 );
 ```
@@ -290,18 +295,9 @@ Asset Manager will add the SVG file contents to the template's sprite if:
 
 ```html
 <svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
-  <!-- /assets/logomark.svg -->
   <symbol
     id="am-symbol-logomark"
     viewBox="0 0 600 83"
-  >
-    <!-- ...coordinate data... -->
-  </symbol>
-
-  <!-- /assets/chevron-right.svg -->
-  <symbol
-    id="am-symbol-chevron-right"
-    viewBox="0 0 8 16"
   >
     <!-- ...coordinate data... -->
   </symbol>
@@ -331,10 +327,10 @@ add_filter(
 Inserts an `<svg>` element with the specified attributes.
 
 ```php
-am_use_symbol( $symbol_name = '', $attributes = [] );
+am_use_symbol( $handle = '', $attributes = [] );
 ```
 
-**`$symbol_name`**
+**`$handle`**
 
 `string` The filename of the icon to display.
 
@@ -345,10 +341,12 @@ am_use_symbol( $symbol_name = '', $attributes = [] );
 Attributes passed to `am_use_symbol` override global attributes; global attributes may be removed entirely by passing a `null` attribute value.
 
 Sizing is based on:
+1. The `height` and/or `width` attribute(s) passed to `am_use_symbol`
 1. The values set in the symbol's `am_define_symbol` array
 1. The `height` and `width` attributes from the SVG
-1. The value(s) passed to `am_use_symbol`
 1. The `viewBox` attribute values
+
+💡 The simplest way to ensure SVGs are sized as expected is to verify each file's `<svg>` element has `height` and `width` attributes.
 
 _**Example**_:
 
@@ -375,7 +373,7 @@ _**Output**_:
 Returns a string containing the `<svg>` element with the specified attributes.
 
 ```php
-$symbol_markup = am_get_symbol( $symbol_name = '', $attributes = [] );
+$symbol_markup = am_get_symbol( $handle = '', $attributes = [] );
 ```
 
 This function uses the same arguments as `am_use_symbol`.
