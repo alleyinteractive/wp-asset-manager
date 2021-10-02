@@ -392,8 +392,8 @@ $logomark_svg_markup = am_get_symbol(
 
 ## Requirements
 
-* WordPress: 4.7+
-* PHP: 7.0+
+* WordPress: 5.2.0+
+* PHP: 7.1+
 
 ## Downloads and Versioning.
 
