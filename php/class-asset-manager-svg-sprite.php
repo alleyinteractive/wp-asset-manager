@@ -94,7 +94,7 @@ class Asset_Manager_SVG_Sprite {
 		 * Filter function for updating the directory upon which a symbol's relative
 		 * path will be based.
 		 *
-		 * @since 0.1.2
+		 * @since 0.1.3
 		 *
 		 * @param string $path The absolute root for relative SVG paths.
 		 */
@@ -103,7 +103,7 @@ class Asset_Manager_SVG_Sprite {
 		/**
 		 * Filter function for configuring attributes to be added to all SVG symbols.
 		 *
-		 * @since 0.1.2
+		 * @since 0.1.3
 		 *
 		 * @param array $attributes {
 		 *     A list of attributes to be added to all SVG symbols.
