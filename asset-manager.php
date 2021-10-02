@@ -40,6 +40,7 @@ if ( ! class_exists( 'Asset_Manager' ) ) :
 	require_once AM_BASE_DIR . '/php/class-asset-manager-scripts.php';
 	require_once AM_BASE_DIR . '/php/class-asset-manager-styles.php';
 	require_once AM_BASE_DIR . '/php/class-asset-manager-preload.php';
+	require_once AM_BASE_DIR . '/php/class-asset-manager-svg-sprite.php';
 endif;
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
@@ -140,3 +141,57 @@ if ( ! function_exists( 'am_preload' ) ) :
 endif;
 
 add_action( 'after_setup_theme', [ 'Asset_Manager_Preload', 'instance' ], 10 );
+
+if ( ! function_exists( 'am_define_symbol' ) ) :
+
+	/**
+	 * Define a symbol to be added to the SVG sprite.
+	 *
+	 * @param string $handle     Handle for asset, used to refer to the symbol in `am_use_symbol`.
+	 * @param string $src        Absolute path from the current the theme root, or a relative path
+	 *                           based on the current theme root. Use the `am_modify_svg_directory`
+	 *                           filter to update the directory from which relative paths will be
+	 *                           completed.
+	 * @param string $condition  Corresponds to a configured loading condition that, if matches,
+	 *                           will allow the asset to be added to the sprite sheet.
+	 *                           Defaults are 'global', 'single', and 'search'.
+	 * @param array  $attributes An array of attribute names and values to add to the resulting <svg>
+	 *                           everywhere it is printed.
+	 */
+	function am_define_symbol( $handle, $src = false, $condition = 'global', $attributes = [] ) {
+		$defaults   = compact( 'handle', 'src', 'condition','attributes' );
+		$args       = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+		Asset_Manager_SVG_Sprite::instance()->add_asset( $args );
+	}
+
+endif;
+
+if ( ! function_exists( 'am_get_symbol' ) ) :
+
+	/**
+	 * Returns the SVG with `<use>` element referencing the symbol.
+	 *
+	 * @param string $handle The symbol name.
+	 * @param array  $attrs  The attributes to add to the SVG element.
+	 */
+	function am_get_symbol( $handle, $attrs = [] ) {
+		return Asset_Manager_SVG_Sprite::instance()->get_symbol( $handle, $attrs );
+	}
+
+endif;
+
+if ( ! function_exists( 'am_use_symbol' ) ) :
+
+	/**
+	 * Prints the SVG with `<use>` element referencing the symbol.
+	 *
+	 * @param string $handle The symbol name.
+	 * @param array  $attrs  The attributes to add to the SVG element.
+	 */
+	function am_use_symbol( $handle, $attrs = [] ) {
+		Asset_Manager_SVG_Sprite::instance()->use_symbol( $handle, $attrs );
+	}
+
+endif;
+
+add_action( 'after_setup_theme', [ 'Asset_Manager_SVG_Sprite', 'instance' ], 10 );

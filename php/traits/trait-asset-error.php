@@ -52,6 +52,10 @@ trait Asset_Error {
 				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'] );
 				break;
 
+			case 'missing_viewbox_attribute':
+				$message = sprintf( __( 'The asset at <strong>%1$s</strong> is missing the `viewBox` attribute, which is necessary for sizing. Either add one, or define `height` and `width` attributes in `am_define_symbol`.', 'am' ), $asset['src'] );
+				break;
+
 			default:
 				$message = sprintf( __( 'Something went wrong when enqueueing <strong>%s</strong>.', 'am' ), $asset['handle'] );
 				break;
