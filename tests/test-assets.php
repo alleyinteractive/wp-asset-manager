@@ -309,7 +309,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'loaded'      => true,
 				'load_method' => 'sync',
 				'type'        => 'script',
-				'version'     => '3.5.1',
+				'version'     => '3.6.0',
 			],
 		];
 		$actual_assets   = \Asset_Manager_Scripts::instance()->assets;
