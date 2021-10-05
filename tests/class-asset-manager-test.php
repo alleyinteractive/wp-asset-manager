@@ -50,6 +50,14 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 			}
 		);
 
+		$this->svg_directory = dirname( __FILE__ ) . '/mocks/';
+		add_filter(
+			'am_modify_svg_directory',
+			function() {
+				return $this->svg_directory;
+			}
+		);
+
 		$this->reset_assets();
 		$this->add_test_user();
 	}

@@ -25,7 +25,7 @@ class Asset_Manager_SVG_Sprite {
 	 *
 	 * @var string
 	 */
-	public $svg_directory;
+	public static $_svg_directory;
 
 	/**
 	 * The sprite document.
@@ -87,19 +87,28 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
+	 * Get the SVG directory.
+	 */
+	public function get_svg_directory() {
+		if ( ! isset( static::$_svg_directory ) ) {
+			/**
+			 * Filter function for updating the directory upon which a symbol's relative
+			 * path will be based.
+			 *
+			 * @since 0.1.3
+			 *
+			 * @param string $path The absolute root for relative SVG paths.
+			 */
+			static::$_svg_directory = apply_filters( 'am_modify_svg_directory', get_stylesheet_directory() );
+		}
+
+		return static::$_svg_directory;
+	}
+
+	/**
 	 * Initial setup.
 	 */
 	public function set_defaults() {
-		/**
-		 * Filter function for updating the directory upon which a symbol's relative
-		 * path will be based.
-		 *
-		 * @since 0.1.3
-		 *
-		 * @param string $path The absolute root for relative SVG paths.
-		 */
-		$this->svg_directory = apply_filters( 'am_modify_svg_directory', get_stylesheet_directory() );
-
 		/**
 		 * Filter function for configuring attributes to be added to all SVG symbols.
 		 *
@@ -167,7 +176,7 @@ class Asset_Manager_SVG_Sprite {
 		// Build the file path, validating absolute or relative path.
 		return ( $path[0] === DIRECTORY_SEPARATOR )
 			? $path
-			: rtrim( $this->svg_directory, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . $path;
+			: rtrim( $this->get_svg_directory(), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . $path;
 	}
 
 	/**
