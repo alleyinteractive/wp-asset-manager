@@ -217,10 +217,13 @@ class Asset_Manager_SVG_Sprite {
 			$file_contents = file_get_contents( $path );
 
 			if ( ! empty( $file_contents ) ) {
-				$svg = new DOMDocument();
-				$svg->loadXML( $file_contents );
+				$doc = new DOMDocument();
+				$doc->loadXML( $file_contents );
+				$svg = $doc->getElementsByTagName('svg');
 
-				return $svg;
+				if ( ! empty( $svg->item(0) ) ) {
+					return $svg->item(0);
+				}
 			}
 		}
 
