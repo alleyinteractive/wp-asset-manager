@@ -95,6 +95,22 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 		Asset_Manager_Preload::instance()->assets_by_handle = [];
 		Asset_Manager_Preload::instance()->asset_handles    = [];
 
+		Asset_Manager_SVG_Sprite::instance()->asset_handles       = [];
+		Asset_Manager_SVG_Sprite::instance()->sprite_map          = [];
+		Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html = [
+			'svg' => [
+				'height' => true,
+				'width'  => true,
+				'class'  => true,
+			],
+			'use' => [
+				'href' => true,
+			],
+		];
+		Asset_Manager_SVG_Sprite::instance()->global_attributes   = [];
+		Asset_Manager_SVG_Sprite::$_svg_directory                 = null;
+		Asset_Manager_SVG_Sprite::instance()->create_sprite_sheet();
+
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );
 	}
