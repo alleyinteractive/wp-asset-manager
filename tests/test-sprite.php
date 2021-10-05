@@ -90,6 +90,10 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
 				'condition'  => 'global',
+				'attributes' => [
+					'id'        => 'false',
+					'data-test' => 'no-dimensions',
+				],
 			]
 		);
 
@@ -102,6 +106,19 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$no_dimensions_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+
+		// Verify attributes were collected.
+		$this->assertArrayHasKey(
+			'data-test',
+			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
+			'Should add attributes to $symbol_allowed_html.'
+		);
+
+		$this->assertArrayHasKey(
+			'id',
+			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
+			'Should add attributes to $symbol_allowed_html.'
 		);
 	}
 
