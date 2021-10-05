@@ -6,6 +6,14 @@
  */
 
 trait Conditions {
+
+	/**
+	 * Storage of the asset conditions.
+	 *
+	 * @var array
+	 */
+	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+
 	/**
 	 * Get the available conditions for loading assets.
 	 */

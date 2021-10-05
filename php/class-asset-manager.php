@@ -153,13 +153,6 @@ abstract class Asset_Manager {
 	];
 
 	/**
-	 * Storage of the asset conditions.
-	 *
-	 * @var array
-	 */
-	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
-
-	/**
 	 * Default print function throws error (and prints nothing)
 	 *
 	 * @param array $asset Asset to print.
