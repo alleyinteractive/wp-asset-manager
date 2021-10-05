@@ -15,6 +15,11 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 	public $clean_no_dimensions = '<symbol id="am-symbol-no-dimensions" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
+	public $with_export_junk = '<symbol id="am-symbol-export-junk" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+	/**
+	 * Test adjusting relative filepaths.
+	 */
 	function test_get_the_normalized_filepath() {
 		$this->assertEquals(
 			$this->svg_directory . 'relative/path.svg',
@@ -29,6 +34,9 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 		);
 	}
 
+	/**
+	 * Test add_asset.
+	 */
 	function test_add_asset() {
 		$this->assertEquals(
 			sprintf( $this->empty_sprite_wrapper, '' ),
@@ -70,6 +78,25 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$add_asset_test_two,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should add the symbol to the sprite sheet.'
+		);
+
+		am_define_symbol(
+			[
+				'handle'    => 'export-junk',
+				'src'       => 'export-junk.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$add_asset_test_three = sprintf(
+			$this->empty_sprite_wrapper,
+			$this->clean_no_dimensions . $this->clean_with_dimensions . $this->with_export_junk
+		);
+
+		$this->assertEquals(
+			$add_asset_test_three,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);

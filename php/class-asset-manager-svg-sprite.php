@@ -350,7 +350,10 @@ class Asset_Manager_SVG_Sprite {
 
 		// Add the SVG's childNodes to the symbol.
 		foreach ( iterator_to_array( $svg->childNodes ) as $childNode ) {
-			$symbol->appendChild( $this->sprite_document->importNode( $childNode, true ) );
+			// Exclude text nodes.
+			if ( ! ( $childNode instanceof DOMText ) ) {
+				$symbol->appendChild( $this->sprite_document->importNode( $childNode, true ) );
+			}
 		}
 
 		// Append the symbol to the SVG sprite.
