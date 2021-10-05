@@ -35,32 +35,21 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-	 * Test add_asset.
+	 * Test adding multiple assets to the sprite sheet.
 	 */
-	function test_add_asset() {
+	function test_add_assets() {
 		$this->assertEquals(
 			sprintf( $this->empty_sprite_wrapper, '' ),
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			'Should create sprite sheet.'
+			'Should create an empty sprite sheet.'
 		);
 
 		am_define_symbol(
 			[
-				'handle'    => 'no-dimensions',
-				'src'       => 'no-dimensions.svg',
-				'condition' => 'global',
+				'handle'     => 'no-dimensions',
+				'src'        => 'no-dimensions.svg',
+				'condition'  => 'global',
 			]
-		);
-
-		$add_asset_test_one = sprintf(
-			$this->empty_sprite_wrapper,
-			$this->clean_no_dimensions
-		);
-
-		$this->assertEquals(
-			$add_asset_test_one,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			'Should add the symbol to the sprite sheet.'
 		);
 
 		am_define_symbol(
@@ -71,16 +60,80 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$add_asset_test_two = sprintf(
+		am_define_symbol(
+			[
+				'handle'    => 'export-junk',
+				'src'       => 'export-junk.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$add_assets_expected = sprintf(
 			$this->empty_sprite_wrapper,
-			$this->clean_no_dimensions . $this->clean_with_dimensions
+			$this->clean_no_dimensions . $this->clean_with_dimensions . $this->with_export_junk
 		);
 
 		$this->assertEquals(
-			$add_asset_test_two,
+			$add_assets_expected,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should add the symbols to the sprite sheet.'
+		);
+	}
+
+	/**
+	 * Test adding an asset without dimensions.
+	 */
+	function test_add_asset_no_dimensions() {
+
+		am_define_symbol(
+			[
+				'handle'     => 'no-dimensions',
+				'src'        => 'no-dimensions.svg',
+				'condition'  => 'global',
+			]
+		);
+
+		$no_dimensions_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$this->clean_no_dimensions
+		);
+
+		$this->assertEquals(
+			$no_dimensions_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
+	}
+
+	/**
+	 * Test adding an asset with dimensions.
+	 */
+	function test_add_asset_with_dimensions() {
+
+		am_define_symbol(
+			[
+				'handle'    => 'with-dimensions',
+				'src'       => 'with-dimensions.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$with_dimensions_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$this->clean_with_dimensions
+		);
+
+		$this->assertEquals(
+			$with_dimensions_expected,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should add the symbol to the sprite sheet.'
+		);
+	}
+
+	/**
+	 * Test adding an asset with dimensions.
+	 */
+	function test_add_asset_with_export_junk() {
 
 		am_define_symbol(
 			[
@@ -90,13 +143,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$add_asset_test_three = sprintf(
+		$with_export_junk_expected = sprintf(
 			$this->empty_sprite_wrapper,
-			$this->clean_no_dimensions . $this->clean_with_dimensions . $this->with_export_junk
+			$this->with_export_junk
 		);
 
 		$this->assertEquals(
-			$add_asset_test_three,
+			$with_export_junk_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
