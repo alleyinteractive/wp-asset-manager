@@ -58,6 +58,14 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 			}
 		);
 
+		$this->global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
+		add_filter(
+			'am_svg_attributes',
+			function( $attrs ) {
+				return array_merge( $attrs, $this->global_attributes );
+			}
+		);
+
 		$this->reset_assets();
 		$this->add_test_user();
 	}

@@ -133,7 +133,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should add the symbol to the sprite sheet.'
 		);
 
-		$basic_markup_expected = '<svg width="24" height="24"><use href="#am-symbol-with-dimensions"></use></svg>';
+		$basic_markup_expected = '<svg focusable="false" aria-hidden="true" width="24" height="24"><use href="#am-symbol-with-dimensions"></use></svg>';
 
 		$this->assertEquals(
 			$basic_markup_expected,
@@ -141,7 +141,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should get the svg + use markup.'
 		);
 
-		$with_attributes_markup_expected = '<svg width="48" height="48" class="am-test" data-test="test"><use href="#am-symbol-with-dimensions"></use></svg>';
+		$this->assertArrayHasKey(
+			'focusable',
+			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
+			'Should add global attributes to $symbol_allowed_html.'
+		);
+
+		$with_attributes_markup_expected = '<svg focusable="false" aria-hidden="true" width="48" height="48" class="am-test" data-test="test"><use href="#am-symbol-with-dimensions"></use></svg>';
 
 		$this->assertEquals(
 			$with_attributes_markup_expected,
@@ -153,7 +159,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 					'data-test' => 'test'
 				]
 			),
-			'Should get the svg + use markup, with calculated height and additional attributes.'
+			'Should get the svg + use markup, with calculated height, global attributes, and additional attributes.'
 		);
 
 		$this->assertArrayHasKey(
@@ -175,7 +181,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 					]
 				]
 			),
-			'Should echo the svg + use markup, with calculated height and additional attributes.'
+			'Should echo the svg + use markup, with calculated height, global attributes, and additional attributes.'
 		);
 	}
 
