@@ -28,6 +28,13 @@ class Asset_Manager_SVG_Sprite {
 	public static $_svg_directory;
 
 	/**
+	 * Array fo attributes to add to each symbol.
+	 *
+	 * @var array
+	 */
+	public static $_global_attributes;
+
+	/**
 	 * The sprite document.
 	 *
 	 * @var DOMDocument
@@ -79,7 +86,6 @@ class Asset_Manager_SVG_Sprite {
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new static();
-			self::$instance->set_defaults();
 			self::$instance->create_sprite_sheet();
 		}
 
@@ -106,21 +112,25 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Initial setup.
+	 * Get the SVG directory.
 	 */
-	public function set_defaults() {
-		/**
-		 * Filter function for configuring attributes to be added to all SVG symbols.
-		 *
-		 * @since 0.1.3
-		 *
-		 * @param array $attributes {
-		 *     A list of attributes to be added to all SVG symbols.
-		 *
-		 *     @type array $attribute Attribute name-value pairs.
-		 * }
-		 */
-		$this->global_attributes = apply_filters( 'am_svg_attributes', [] );
+	public function get_global_attributes() {
+		if ( ! isset( static::$_global_attributes ) ) {
+			/**
+			 * Filter function for configuring attributes to be added to all SVG symbols.
+			 *
+			 * @since 0.1.3
+			 *
+			 * @param array $attributes {
+			 *     A list of attributes to be added to all SVG symbols.
+			 *
+			 *     @type array $attribute Attribute name-value pairs.
+			 * }
+			 */
+			static::$_global_attributes = apply_filters( 'am_svg_attributes', [] );
+		}
+
+		return static::$_global_attributes;
 	}
 
 	/**
@@ -395,7 +405,11 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		// Merge attributes.
-		$local_attrs = array_merge( $this->global_attributes, $asset['attributes'] ?? [], $attrs );
+		$local_attrs = array_merge(
+			$this->get_global_attributes(),
+			$asset['attributes'] ?? [],
+			$attrs
+		);
 		$local_attrs = array_map( 'esc_attr', $local_attrs );
 
 		// Ensure attributes are in allowed_html.
