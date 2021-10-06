@@ -371,11 +371,11 @@ class Asset_Manager_SVG_Sprite {
 	 * @return string         The <svg> and <use> elements for displaying a symbol.
 	 */
 	public function get_symbol( $handle, $attrs = [] ) {
-		if ( empty( $handle ) || ! in_array( $handle, array_keys( $sprite_map ), true ) ) {
+		if ( empty( $handle ) || ! in_array( $handle, array_keys( $this->sprite_map ), true ) ) {
 			return '';
 		}
 
-		$asset = $sprite_map[ $handle ];
+		$asset = $this->sprite_map[ $handle ];
 
 		if ( empty( $asset ) ) {
 			return '';
