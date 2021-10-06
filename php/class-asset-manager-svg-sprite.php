@@ -321,13 +321,10 @@ class Asset_Manager_SVG_Sprite {
 		 * These dimensions are used to create a ratio for setting the symbol
 		 * size when only one dimension is passed via `am_use_symbol()`
 		 */
-		[
-			'width'  => $width,
-			'height' => $height,
-		] = $this->get_default_dimensions( $svg, $asset );
+		$default_dimensions = $this->get_default_dimensions( $svg, $asset );
 
-		if ( ! empty( $width ) && ! empty( $height ) ) {
-			$asset['attributes'] = array_merge( $asset['attributes'] ?? [], [ $width, $height ] );
+		if ( ! empty( $default_dimensions['width'] ) && ! empty( $default_dimensions['height'] ) ) {
+			$asset['attributes'] = array_merge( $asset['attributes'] ?? [], $default_dimensions );
 		}
 
 		// Create the <symbol> element.
