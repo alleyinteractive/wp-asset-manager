@@ -5,6 +5,9 @@
  * @package AssetManager
  */
 
+/**
+ * Trait for getting and evalutaing asset conditions.
+ */
 trait Conditions {
 
 	/**

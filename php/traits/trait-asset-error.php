@@ -5,6 +5,9 @@
  * @package AssetManager
  */
 
+/**
+ * Trait for generating and formatting asset errors.
+ */
 trait Asset_Error {
 	/**
 	 * Generate and echo a WP_Error based on a provided error code

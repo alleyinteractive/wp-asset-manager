@@ -159,8 +159,8 @@ if ( ! function_exists( 'am_define_symbol' ) ) :
 	 *                           everywhere it is printed.
 	 */
 	function am_define_symbol( $handle, $src = false, $condition = 'global', $attributes = [] ) {
-		$defaults   = compact( 'handle', 'src', 'condition','attributes' );
-		$args       = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );
+		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Asset_Manager_SVG_Sprite::instance()->add_asset( $args );
 	}
 

@@ -25,14 +25,14 @@ class Asset_Manager_SVG_Sprite {
 	 *
 	 * @var string
 	 */
-	public static $_svg_directory;
+	public static $_svg_directory; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Array fo attributes to add to each symbol.
 	 *
 	 * @var array
 	 */
-	public static $_global_attributes;
+	public static $_global_attributes; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * The sprite document.
@@ -139,8 +139,8 @@ class Asset_Manager_SVG_Sprite {
 	public function create_sprite_sheet() {
 		$this->sprite_document = new DOMDocument();
 
-		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
-		$svg_style = $this->sprite_document->createAttribute('style');
+		$this->svg_root   = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		$svg_style        = $this->sprite_document->createAttribute( 'style' );
 		$svg_style->value = 'display:none;';
 
 		$this->svg_root->appendChild( $svg_style );
@@ -158,7 +158,7 @@ class Asset_Manager_SVG_Sprite {
 		 * along with the relative security concerns; printing file contents
 		 * requires code access to add the file and the `am_define_symbol()`.
 		 */
-		echo $this->sprite_document->C14N();
+		echo $this->sprite_document->C14N(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		// Build the file path, validating absolute or relative path.
-		return ( $path[0] === DIRECTORY_SEPARATOR )
+		return ( DIRECTORY_SEPARATOR === $path[0] )
 			? $path
 			: rtrim( $this->get_svg_directory(), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . $path;
 	}
@@ -224,15 +224,15 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		if ( file_exists( $path ) && 0 === validate_file( $path ) ) {
-			$file_contents = file_get_contents( $path );
+			$file_contents = file_get_contents( $path ); // phpcs:ignore
 
 			if ( ! empty( $file_contents ) ) {
 				$doc = new DOMDocument();
 				$doc->loadXML( $file_contents );
-				$svg = $doc->getElementsByTagName('svg');
+				$svg = $doc->getElementsByTagName( 'svg' );
 
-				if ( ! empty( $svg->item(0) ) ) {
-					return $svg->item(0);
+				if ( ! empty( $svg->item( 0 ) ) ) {
+					return $svg->item( 0 );
 				}
 			}
 		}
@@ -273,7 +273,7 @@ class Asset_Manager_SVG_Sprite {
 		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
 
 		if ( ! empty( $viewbox ) ) {
-			// [0]: min-x, [1]: min-y, [2]: width, [3]: height.
+			// 0. min-x, 1. min-y, 2. width, 3. height.
 			$viewbox_attr = explode( ' ', $viewbox );
 
 			return [
@@ -338,7 +338,7 @@ class Asset_Manager_SVG_Sprite {
 		$symbol = $this->sprite_document->createElement( 'symbol' );
 
 		// Add the id attribute.
-		$symbol_id = $this->sprite_document->createAttribute('id');
+		$symbol_id        = $this->sprite_document->createAttribute( 'id' );
 		$symbol_id->value = $this->format_handle_as_symbol_id( $asset['handle'] );
 		$symbol->appendChild( $symbol_id );
 
@@ -346,24 +346,24 @@ class Asset_Manager_SVG_Sprite {
 		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
 
 		if ( ! empty( $viewbox ) ) {
-			$symbol_viewbox = $this->sprite_document->createAttribute('viewBox');
+			$symbol_viewbox        = $this->sprite_document->createAttribute( 'viewBox' );
 			$symbol_viewbox->value = $viewbox;
 
 			$symbol->appendChild( $symbol_viewbox );
 		}
 
 		// Add the SVG's childNodes to the symbol.
-		foreach ( iterator_to_array( $svg->childNodes ) as $childNode ) {
+		foreach ( iterator_to_array( $svg->childNodes ) as $child_node ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			// Exclude text nodes.
-			if ( ! ( $childNode instanceof DOMText ) ) {
-				$symbol->appendChild( $this->sprite_document->importNode( $childNode, true ) );
+			if ( ! ( $child_node instanceof DOMText ) ) {
+				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
 		}
 
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
 
-		$this->asset_handles[] = $asset['handle'];
+		$this->asset_handles[]                = $asset['handle'];
 		$this->sprite_map[ $asset['handle'] ] = $asset;
 	}
 
@@ -435,7 +435,7 @@ class Asset_Manager_SVG_Sprite {
 	 * @param  array  $attrs  Additional HTML attributes to add to the SVG markup.
 	 */
 	public function use_symbol( $handle, $attrs = [] ) {
-		$symbol_markup = $this->get_symbol( $handle, $attrs);
+		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
 			echo wp_kses( $symbol_markup, $this->symbol_allowed_html );
