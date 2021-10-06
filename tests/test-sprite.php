@@ -155,6 +155,28 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			),
 			'Should get the svg + use markup, with calculated height and additional attributes.'
 		);
+
+		$this->assertArrayHasKey(
+			'data-test',
+			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
+			'Should add attributes to $symbol_allowed_html.'
+		);
+
+		$this->assertEquals(
+			$with_attributes_markup_expected,
+			get_echo(
+				'am_use_symbol',
+				[
+					'with-dimensions',
+					[
+						'width'     => 48,
+						'class'     => 'am-test',
+						'data-test' => 'test'
+					]
+				]
+			),
+			'Should echo the svg + use markup, with calculated height and additional attributes.'
+		);
 	}
 
 	/**
