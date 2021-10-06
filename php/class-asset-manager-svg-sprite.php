@@ -121,11 +121,6 @@ class Asset_Manager_SVG_Sprite {
 		 * }
 		 */
 		$this->global_attributes = apply_filters( 'am_svg_attributes', [] );
-
-		// Add global attributes to $symbol_allowed_html.
-		if ( ! empty( $this->global_attributes ) ) {
-			$this->update_allowed_html( $this->global_attributes );
-		}
 	}
 
 	/**
@@ -291,9 +286,6 @@ class Asset_Manager_SVG_Sprite {
 	 * @return array The modified asset definition.
 	 */
 	public function pre_add_asset( $asset ) {
-		// Collect attributes.
-		$this->update_allowed_html( $asset['attributes'] ?? [] );
-
 		$src = $this->get_the_normalized_filepath( $asset['src'] );
 
 		return ( empty( $src ) )
@@ -405,6 +397,9 @@ class Asset_Manager_SVG_Sprite {
 		// Merge attributes.
 		$local_attrs = array_merge( $this->global_attributes, $asset['attributes'] ?? [], $attrs );
 		$local_attrs = array_map( 'esc_attr', $local_attrs );
+
+		// Ensure attributes are in allowed_html.
+		$this->update_allowed_html( $local_attrs );
 
 		// Build a string of all attributes.
 		$attrs = '';
