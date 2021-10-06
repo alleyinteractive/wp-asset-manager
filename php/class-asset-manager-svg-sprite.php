@@ -418,6 +418,9 @@ class Asset_Manager_SVG_Sprite {
 		// Build a string of all attributes.
 		$attrs = '';
 		foreach ( $local_attrs as $name => $value ) {
+			if ( empty( $value ) ) {
+				continue;
+			}
 			$attrs .= " $name=" . '"' . $value . '"';
 		}
 

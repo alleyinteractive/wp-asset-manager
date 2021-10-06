@@ -91,7 +91,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 				'src'        => 'no-dimensions.svg',
 				'condition'  => 'global',
 				'attributes' => [
-					'id'        => 'false',
+					'id'        => 'define-symbol',
 					'data-test' => 'no-dimensions',
 				],
 			]
@@ -107,12 +107,38 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
+
+		$basic_markup_expected = '<svg focusable="false" aria-hidden="true" id="define-symbol" data-test="no-dimensions" width="24" height="24"><use href="#am-symbol-no-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$basic_markup_expected,
+			am_get_symbol( 'no-dimensions' ),
+			'Should get the svg + use markup.'
+		);
+
+		$with_attributes_markup_expected = '<svg focusable="false" data-test="test" width="48" height="48"><use href="#am-symbol-no-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$with_attributes_markup_expected,
+			am_get_symbol(
+				'no-dimensions',
+				[
+					'height'      => 48,
+					// Overrides attributes passed to `am_define_symbol()`.
+					'id'          => null,
+					'data-test'   => 'test',
+					// Override global attribute
+					'aria-hidden' => false,
+				]
+			),
+			'Should get the svg + use markup, with calculated height, global attributes, and additional attributes.'
+		);
 	}
 
 	/**
 	 * Test adding and retrieving an asset with dimensions.
 	 */
-	function test_add_asset_with_dimensions() {
+	function test_with_dimensions() {
 
 		am_define_symbol(
 			[
@@ -188,7 +214,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	/**
 	 * Test adding an asset with dimensions.
 	 */
-	function test_add_asset_with_export_junk() {
+	function test_asset_with_export_junk() {
 
 		am_define_symbol(
 			[
