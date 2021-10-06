@@ -148,6 +148,11 @@ class Asset_Manager_SVG_Sprite {
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
 	public function print_sprite_sheet() {
+		/**
+		 * Echoing unescaped due to the complexities of escaping SVG markup,
+		 * along with the relative security concerns; printing file contents
+		 * requires code access to add the file and the `am_define_symbol()`.
+		 */
 		echo $this->sprite_document->C14N();
 	}
 
