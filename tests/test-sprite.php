@@ -123,7 +123,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-	 * Test adding an asset with dimensions.
+	 * Test adding and retrieving an asset with dimensions.
 	 */
 	function test_add_asset_with_dimensions() {
 
@@ -144,6 +144,29 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$with_dimensions_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+
+		$basic_markup_expected = '<svg width="24" height="24"><use href="#am-symbol-with-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$basic_markup_expected,
+			am_get_symbol( 'with-dimensions' ),
+			'Should get the svg + use markup.'
+		);
+
+		$with_attributes_markup_expected = '<svg width="48" height="48" class="am-test" data-test="test"><use href="#am-symbol-with-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$with_attributes_markup_expected,
+			am_get_symbol(
+				'with-dimensions',
+				[
+					'width'     => 48,
+					'class'     => 'am-test',
+					'data-test' => 'test'
+				]
+			),
+			'Should get the svg + use markup, with calculated height and additional attributes.'
 		);
 	}
 
