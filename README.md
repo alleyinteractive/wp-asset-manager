@@ -278,9 +278,9 @@ Use the `am_define_symbol` function to add a symbol to the sprite.
 ```php
 am_define_symbol(
   [
-    'handle'     => 'logomark',
-    'src'        => 'svg/logomark.svg',
-    'condition'  => 'global',
+    'handle'    => 'logomark',
+    'src'       => 'svg/logomark.svg',
+    'condition' => 'global',
   ]
 );
 ```
@@ -329,7 +329,7 @@ Use the `am_svg_attributes` filter to add global attributes that will apply to a
 ```php
 add_filter(
   'am_svg_attributes',
-  function symbol_attributes() {
+  function() {
     return [
       'aria-hidden' => 'true',
       'focusable'   => 'false',
