@@ -9,13 +9,15 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	/**
 	 * Note: These aren't stright copies of SVG contents; they have been modified
 	 * to fit the expected test return values. For example, they include closing
-	 * tags, even though the original file may not.
+	 * `<path>` tags, even though the original file may not.
 	 */
 	public $clean_with_dimensions = '<symbol id="am-symbol-with-dimensions" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
 	public $clean_no_dimensions = '<symbol id="am-symbol-no-dimensions" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
 	public $with_export_junk = '<symbol id="am-symbol-export-junk" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+	public $with_embedded_script = '<symbol id="am-symbol-embedded-script" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
 	/**
 	 * Test adjusting relative filepaths.
@@ -233,6 +235,31 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$with_export_junk_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+	}
+
+	/**
+	 * Test adding an asset with an embedded script tag.
+	 */
+	function test_asset_with_embedded_script() {
+
+		am_define_symbol(
+			[
+				'handle'    => 'embedded-script',
+				'src'       => 'danger.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$with_embedded_script_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$this->with_embedded_script
+		);
+
+		$this->assertEquals(
+			$with_embedded_script_expected,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should strip script tags before adding the symbol to the sprite sheet.'
 		);
 	}
 }

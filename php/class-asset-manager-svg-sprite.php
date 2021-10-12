@@ -352,13 +352,19 @@ class Asset_Manager_SVG_Sprite {
 			$symbol->appendChild( $symbol_viewbox );
 		}
 
+		/* phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase */
+
 		// Add the SVG's childNodes to the symbol.
-		foreach ( iterator_to_array( $svg->childNodes ) as $child_node ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			// Exclude text nodes.
-			if ( ! ( $child_node instanceof DOMText ) ) {
+		foreach ( iterator_to_array( $svg->childNodes ) as $child_node ) {
+			if (
+				! ( $child_node instanceof DOMText ) // Exclude text nodes.
+				&& 'script' !== $child_node->nodeName // Exclude <script> tags.
+			) {
 				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
 		}
+
+		/* phpcs:enable */
 
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
