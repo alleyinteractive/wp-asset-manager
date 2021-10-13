@@ -262,4 +262,38 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should strip script tags before adding the symbol to the sprite sheet.'
 		);
 	}
+
+	/**
+	 * Test defining dimensions when adding an asset without height/width attributes.
+	 */
+	function test_asset_with_defined_dimensions() {
+
+		am_define_symbol(
+			[
+				'handle'     => 'no-dimensions',
+				'src'        => 'no-dimensions.svg',
+				'condition'  => 'global',
+				'attributes' => [
+					'width'  => 48,
+					'height' => 48,
+				],
+			]
+		);
+
+		$defined_dimensions_expected = '<svg focusable="false" aria-hidden="true" width="48" height="48"><use href="#am-symbol-no-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$defined_dimensions_expected,
+			am_get_symbol( 'no-dimensions' ),
+			'Should get the svg + use markup with the defined dimensions.'
+		);
+
+		$with_height_expected = '<svg focusable="false" aria-hidden="true" width="12" height="12"><use href="#am-symbol-no-dimensions"></use></svg>';
+
+		$this->assertEquals(
+			$with_height_expected,
+			am_get_symbol( 'no-dimensions', [ 'height' => '12' ] ),
+			'Should get the svg + use markup with the dimensions calculated from defined dimensions.'
+		);
+	}
 }

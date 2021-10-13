@@ -362,15 +362,22 @@ am_use_symbol( $handle = '', $attributes = [] );
 
 **Notes**
 
-💡 Override global or defined attribute values by passing a new value to `am_get_symbol` or `am_use_symbol`; removed it entirely by passing a falsy value.
+_Attributes_
 
-SVG sizing is based on:
-1. The `height` and/or `width` attribute(s) passed to `am_get_symbol` or `am_use_symbol`
-1. The values set in the symbol's `am_define_symbol` array
+💡 Override global attributes, or those defined via `am_define_symbol`, by passing a new value to `am_use_symbol`; removed it entirely by passing a falsy value.
+
+_SVG Sizing_ 
+
+Asset Manager will attempt to establish a default size for each SVG, which will be used to calculate the dimensions if only one, or neither, of `height` or `width` is passed to `am_use_symbol`.
+
+The default size is based on (in order):
+1. The values set in the symbol's `am_define_symbol` attributes array
 1. The `height` and `width` attributes from the SVG
 1. The `viewBox` attribute values
 
-💡 The simplest way to ensure SVGs are sized as expected is to verify each file's `<svg>` element has `height` and `width` attributes.
+If Asset Manager cannot determine a symbol's dimensions, both `height` _and_ `width` will need to be declared in the `attributes` array passed to `am_use_symbol`.
+
+💡 The simplest way to ensure SVGs are sized as expected is to verify each file's `<svg>` element has `height` and `width` attributes. 
 
 _**Example**_:
 
