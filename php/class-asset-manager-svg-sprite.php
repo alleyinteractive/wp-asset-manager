@@ -276,10 +276,12 @@ class Asset_Manager_SVG_Sprite {
 			// 0. min-x, 1. min-y, 2. width, 3. height.
 			$viewbox_attr = explode( ' ', $viewbox );
 
-			return [
-				'width'  => (int) $viewbox_attr[2],
-				'height' => (int) $viewbox_attr[3],
-			];
+			if ( ! empty( $viewbox_attr[2] ) && ! empty( $viewbox_attr[3] ) ) {
+				return [
+					'width'  => (int) $viewbox_attr[2],
+					'height' => (int) $viewbox_attr[3],
+				];
+			}
 		}
 
 		// We tried...
