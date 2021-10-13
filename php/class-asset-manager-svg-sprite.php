@@ -224,7 +224,9 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		if ( file_exists( $path ) && 0 === validate_file( $path ) ) {
-			$file_contents = file_get_contents( $path ); // phpcs:ignore
+			$file_contents = function_exists( 'wpcom_vip_file_get_contents' )
+				? wpcom_vip_file_get_contents( $path )
+				: file_get_contents( $path ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 			if ( ! empty( $file_contents ) ) {
 				$doc = new DOMDocument();
