@@ -269,11 +269,13 @@ See [Conditions](#conditions) for more about Asset Manager's conditions and how 
 
 ### Setup
 
-The [wp_body_open()](https://developer.wordpress.org/reference/functions/wp_body_open/) function is required for the sprite sheet to print to the template.
+The sprite sheet is output via the [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/) hook, so be sure your templates have the [wp_body_open()](https://developer.wordpress.org/reference/functions/wp_body_open/) function at the top of the document's `<body>` element.
 
 ### Defining Symbols
 
 Use the `am_define_symbol` function to add a symbol to the sprite.
+
+This should be added via an action that fires before [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/), such as `'init'`.
 
 ```php
 am_define_symbol(

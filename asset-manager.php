@@ -51,7 +51,9 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 * @param string $handle       Handle for script.
 	 * @param string $src          URI to script.
 	 * @param array  $deps         This script's dependencies.
-	 * @param string $condition    Corresponds to a configured loading condition that, if matches, will allow the script to load. Defaults are 'global', 'single', and 'search'.
+	 * @param string $condition    Corresponds to a configured loading condition that, if matches,
+	 *                             will allow the script to load.
+	 *                             'global' is assumed if no condition is declared.
 	 * @param string $load_method  How to load this asset.
 	 * @param string $version      Version of the script.
 	 * @param string $load_hook    Hook on which to load this asset.
@@ -88,7 +90,9 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 * @param string $handle      Handle for stylesheet. This is necessary for dependency management.
 	 * @param string $src         URI to stylesheet.
 	 * @param array  $deps        List of dependencies.
-	 * @param string $condition   Corresponds to a configured loading condition that, if matches, will allow the stylesheet to load. Defaults are 'global', 'single', and 'search'.
+	 * @param string $condition   Corresponds to a configured loading condition that, if matches,
+	 *                            will allow the stylesheet to load.
+	 *                            'global' is assumed if no condition is declared.
 	 * @param string $load_method How to load this asset.
 	 * @param string $version     Version of the script.
 	 * @param string $load_hook   Hook on which to load this asset.
@@ -124,7 +128,7 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 * @param string  $src          URI to asset.
 	 * @param string  $condition    Corresponds to a configured loading condition that, if matches,
 	 *                              will allow the asset to load.
-	 *                              Defaults are 'global', 'single', and 'search'.
+	 *                              'global' is assumed if no condition is declared.
 	 * @param string  $version      Version of the asset.
 	 * @param string  $media        Media query to restrict when this asset is loaded.
 	 * @param string  $as           A hint to the browser about what type of asset this is.
@@ -154,7 +158,7 @@ if ( ! function_exists( 'am_define_symbol' ) ) :
 	 *                           completed.
 	 * @param string $condition  Corresponds to a configured loading condition that, if matches,
 	 *                           will allow the asset to be added to the sprite sheet.
-	 *                           Defaults are 'global', 'single', and 'search'.
+	 *                           'global' is assumed if no condition is declared.
 	 * @param array  $attributes An array of attribute names and values to add to the resulting <svg>
 	 *                           everywhere it is printed.
 	 */
