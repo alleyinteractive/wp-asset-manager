@@ -139,11 +139,9 @@ class Asset_Manager_SVG_Sprite {
 	public function create_sprite_sheet() {
 		$this->sprite_document = new DOMDocument();
 
-		$this->svg_root   = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
-		$svg_style        = $this->sprite_document->createAttribute( 'style' );
-		$svg_style->value = 'display:none;';
+		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		$this->svg_root->setAttribute( 'style', 'display:none;' );
 
-		$this->svg_root->appendChild( $svg_style );
 		$this->sprite_document->appendChild( $this->svg_root );
 
 		add_action( 'wp_body_open', [ $this, 'print_sprite_sheet' ], 10 );
@@ -342,18 +340,13 @@ class Asset_Manager_SVG_Sprite {
 		$symbol = $this->sprite_document->createElement( 'symbol' );
 
 		// Add the id attribute.
-		$symbol_id        = $this->sprite_document->createAttribute( 'id' );
-		$symbol_id->value = $this->format_handle_as_symbol_id( $asset['handle'] );
-		$symbol->appendChild( $symbol_id );
+		$symbol->setAttribute( 'id', $this->format_handle_as_symbol_id( $asset['handle'] ) );
 
 		// Use the viewBox attribute from the SVG asset.
 		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
 
 		if ( ! empty( $viewbox ) ) {
-			$symbol_viewbox        = $this->sprite_document->createAttribute( 'viewBox' );
-			$symbol_viewbox->value = $viewbox;
-
-			$symbol->appendChild( $symbol_viewbox );
+			$symbol->setAttribute( 'viewBox', $viewbox );
 		}
 
 		/* phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase */
