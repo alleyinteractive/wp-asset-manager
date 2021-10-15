@@ -327,6 +327,18 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test adding an asset with nested elements.
 	 */
 	function test_asset_with_nested_dom() {
+		add_filter(
+			'am_sprite_allowed_html',
+			function( $allowed_tags ) {
+				if ( empty( $allowed_tags['symbol'] ) ) {
+					$allowed_tags['symbol'] = [];
+				}
+
+				$allowed_tags['symbol']['xmlns:xlink'] = true;
+
+				return $allowed_tags;
+			}
+		);
 
 		am_define_symbol(
 			[
