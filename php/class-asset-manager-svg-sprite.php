@@ -42,7 +42,8 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_document;
 
 	/**
-	 * The allowed HTML elements and attributes for use in `wp_kses`.
+	 * The allowed HTML elements and attributes for use in `wp_kses` when printing
+	 * the output of `am_use_symbol`.
 	 *
 	 * @var array
 	 */
@@ -54,6 +55,23 @@ class Asset_Manager_SVG_Sprite {
 		],
 		'use' => [
 			'href' => true,
+		],
+	];
+
+	/**
+	 * The allowed HTML elements and attributes for use in `wp_kses` when printing
+	 * the sprite sheet.
+	 *
+	 * @var array
+	 */
+	public $sprite_allowed_html = [
+		'svg'    => [
+			'style' => true,
+			'xmlns' => true,
+		],
+		'symbol' => [
+			'id'      => true,
+			'viewbox' => true, // `viewBox` must be lowercase here.
 		],
 	];
 
@@ -86,6 +104,7 @@ class Asset_Manager_SVG_Sprite {
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new static();
+			self::$instance->setup();
 			self::$instance->create_sprite_sheet();
 		}
 
@@ -134,13 +153,32 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
+	 * Perform setup tasks.
+	 */
+	public function setup() {
+		/**
+		 * Updates allowed inline style properties.
+		 *
+		 * @param  string[] $styles Array of allowed CSS properties.
+		 * @return string[]         Modified safe inline style properties.
+		 */
+		add_filter(
+			'safe_style_css',
+			function( $styles ) {
+				$styles[] = 'display';
+				return $styles;
+			}
+		);
+	}
+
+	/**
 	 * Creates the sprite sheet.
 	 */
 	public function create_sprite_sheet() {
 		$this->sprite_document = new DOMDocument();
 
 		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
-		$this->svg_root->setAttribute( 'style', 'display:none;' );
+		$this->svg_root->setAttribute( 'style', 'display:none' );
 
 		$this->sprite_document->appendChild( $this->svg_root );
 
@@ -152,11 +190,19 @@ class Asset_Manager_SVG_Sprite {
 	 */
 	public function print_sprite_sheet() {
 		/**
-		 * Echoing unescaped due to the complexities of escaping SVG markup,
-		 * along with the relative security concerns; printing file contents
-		 * requires code access to add the file and the `am_define_symbol()`.
+		 * Filter function for patching in missing attributes and alements for escaping with
+		 * `wp_kses`, particularly `xmlns:*` attributes, which DOMDocument doesn't handle well.
+		 *
+		 * @since 0.1.3
+		 *
+		 * @param array $allowed_html wp_kses allowed HTML for the sprite sheet.
 		 */
-		echo $this->sprite_document->C14N(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$this->sprite_allowed_html = apply_filters( 'am_sprite_allowed_html', $this->sprite_allowed_html );
+
+		echo wp_kses(
+			$this->sprite_document->C14N(),
+			$this->sprite_allowed_html
+		);
 	}
 
 	/**
@@ -238,6 +284,39 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Collect elements and attributes for the `wp_kses` allowed_html used to escape the sprite sheet.
+	 *
+	 * @param DOMElement $element The element from which attributes are to be collected.
+	 * @param bool       $recurse Whether or not to recurse through childNodes.
+	 */
+	public function compile_allowed_html( $element, $recurse = true ) {
+		if ( $element instanceof DOMElement ) {
+			/* phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase */
+
+			// Be sure the element itself is allowed.
+			if ( empty( $this->sprite_allowed_html[ $element->nodeName ] ) ) {
+				$this->sprite_allowed_html[ $element->nodeName ] = [];
+			}
+
+			// Collect attributes.
+			if ( $element->hasAttributes() ) {
+				foreach ( $element->attributes as $attr ) {
+					$this->sprite_allowed_html[ $element->nodeName ][ $attr->nodeName ] = true;
+				}
+			}
+
+			// Recurse through child nodes.
+			if ( $recurse && $element->hasChildNodes() ) {
+				foreach ( iterator_to_array( $element->childNodes ) as $child_node ) {
+					$this->compile_allowed_html( $child_node );
+				}
+			}
+
+			/* phpcs:enable */
+		}
 	}
 
 	/**
@@ -360,6 +439,8 @@ class Asset_Manager_SVG_Sprite {
 				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
 		}
+
+		$this->compile_allowed_html( $symbol );
 
 		/* phpcs:enable */
 

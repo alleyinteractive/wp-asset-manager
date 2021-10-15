@@ -4,7 +4,7 @@ namespace Asset_Manager_Tests;
 
 class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
-	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">%s</svg>';
+	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">%s</svg>';
 
 	/**
 	 * Note: These aren't stright copies of SVG contents; they have been modified
@@ -82,6 +82,12 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbols to the sprite sheet.'
 		);
+
+		$this->assertEquals(
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
+		);
 	}
 
 	/**
@@ -110,6 +116,12 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$no_dimensions_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+
+		$this->assertEquals(
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
 		);
 
 		$basic_markup_expected = '<svg focusable="false" aria-hidden="true" id="define-symbol" data-test="no-dimensions" width="24" height="24"><use href="#am-symbol-no-dimensions"></use></svg>';
@@ -161,6 +173,12 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$with_dimensions_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+
+		$this->assertEquals(
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
 		);
 
 		$basic_markup_expected = '<svg focusable="false" aria-hidden="true" width="24" height="24"><use href="#am-symbol-with-dimensions"></use></svg>';
@@ -237,6 +255,12 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$with_export_junk_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
+		);
+
+		$this->assertEquals(
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
 		);
 	}
 
@@ -321,6 +345,12 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			$with_embedded_script_expected,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should copy nested SVG DOM nodes to the sprite sheet.'
+		);
+
+		$this->assertEquals(
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
 		);
 	}
 }
