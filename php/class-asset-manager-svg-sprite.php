@@ -290,9 +290,8 @@ class Asset_Manager_SVG_Sprite {
 	 * Collect elements and attributes for the `wp_kses` allowed_html used to escape the sprite sheet.
 	 *
 	 * @param DOMElement $element The element from which attributes are to be collected.
-	 * @param bool       $recurse Whether or not to recurse through childNodes.
 	 */
-	public function compile_allowed_html( $element, $recurse = true ) {
+	public function compile_allowed_html( $element ) {
 		if ( $element instanceof DOMElement ) {
 			// Be sure the element itself is allowed.
 			if ( empty( $this->sprite_allowed_html[ $element->nodeName ] ) ) {
@@ -307,7 +306,7 @@ class Asset_Manager_SVG_Sprite {
 			}
 
 			// Recurse through child nodes.
-			if ( $recurse && $element->hasChildNodes() ) {
+			if ( $element->hasChildNodes() ) {
 				foreach ( iterator_to_array( $element->childNodes ) as $child_node ) {
 					$this->compile_allowed_html( $child_node );
 				}
