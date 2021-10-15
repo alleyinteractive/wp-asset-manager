@@ -294,8 +294,6 @@ class Asset_Manager_SVG_Sprite {
 	 */
 	public function compile_allowed_html( $element, $recurse = true ) {
 		if ( $element instanceof DOMElement ) {
-			/* phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase */
-
 			// Be sure the element itself is allowed.
 			if ( empty( $this->sprite_allowed_html[ $element->nodeName ] ) ) {
 				$this->sprite_allowed_html[ $element->nodeName ] = [];
@@ -314,8 +312,6 @@ class Asset_Manager_SVG_Sprite {
 					$this->compile_allowed_html( $child_node );
 				}
 			}
-
-			/* phpcs:enable */
 		}
 	}
 
@@ -428,8 +424,6 @@ class Asset_Manager_SVG_Sprite {
 			$symbol->setAttribute( 'viewBox', $viewbox );
 		}
 
-		/* phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase */
-
 		// Add the SVG's childNodes to the symbol.
 		foreach ( iterator_to_array( $svg->childNodes ) as $child_node ) {
 			if (
@@ -441,8 +435,6 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		$this->compile_allowed_html( $symbol );
-
-		/* phpcs:enable */
 
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
