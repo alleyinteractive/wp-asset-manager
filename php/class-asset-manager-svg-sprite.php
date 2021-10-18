@@ -383,10 +383,8 @@ class Asset_Manager_SVG_Sprite {
 
 		// Add the SVG's childNodes to the symbol.
 		foreach ( iterator_to_array( $svg->childNodes ) as $child_node ) {
-			if (
-				! ( $child_node instanceof DOMText ) // Exclude text nodes.
-				&& 'script' !== $child_node->nodeName // Exclude <script> tags.
-			) {
+			// Exclude text nodes.
+			if ( ! ( $child_node instanceof DOMText ) ) {
 				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
 		}
