@@ -1,0 +1,985 @@
+<?php
+/**
+ * Allowed elements and attributes for SVG files.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Element
+ * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
+ * @link https://www.w3.org/TR/SVG2/
+ * @link https://svgwg.org/
+ *
+ * @package AssetManager
+ */
+
+/**
+ * SVG Attributes, broken out by category.
+ */
+
+// Common attributes that can be specified on any SVG element.
+$am_core_attributes = [
+	'id'        => true,
+	'lang'      => true,
+	'tabindex'  => true,
+	'xml:base'  => true,
+	'xml:lang'  => true,
+	'xml:space' => true,
+];
+
+// Attributes that can be specified on any SVG element to apply CSS styling effects.
+$am_style_attributes = [
+	'class' => true,
+	'style' => true,
+];
+
+// CSS properties that can be used as attributes on SVG elements.
+$am_presentation_attributes = [
+	'alignment-baseline'           => true,
+	'baseline-shift'               => true,
+	'clip'                         => true,
+	'clip-path'                    => true,
+	'clip-rule'                    => true,
+	'color'                        => true,
+	'color-interpolation'          => true,
+	'color-interpolation-filters'  => true,
+	'color-profile'                => true,
+	'color-rendering'              => true,
+	'cursor'                       => true,
+	'direction'                    => true,
+	'display'                      => true,
+	'dominant-baseline'            => true,
+	'enable-background'            => true,
+	'fill'                         => true,
+	'fill-opacity'                 => true,
+	'fill-rule'                    => true,
+	'filter'                       => true,
+	'flood-color'                  => true,
+	'flood-opacity'                => true,
+	'font-family'                  => true,
+	'font-size'                    => true,
+	'font-size-adjust'             => true,
+	'font-stretch'                 => true,
+	'font-style'                   => true,
+	'font-variant'                 => true,
+	'font-weight'                  => true,
+	'glyph-orientation-horizontal' => true,
+	'glyph-orientation-vertical'   => true,
+	'image-rendering'              => true,
+	'kerning'                      => true,
+	'letter-spacing'               => true,
+	'lighting-color'               => true,
+	'marker-end'                   => true,
+	'marker-mid'                   => true,
+	'marker-start'                 => true,
+	'mask'                         => true,
+	'opacity'                      => true,
+	'overflow'                     => true,
+	'pointer-events'               => true,
+	'shape-rendering'              => true,
+	'stop-color'                   => true,
+	'stop-opacity'                 => true,
+	'stroke'                       => true,
+	'stroke-dasharray'             => true,
+	'stroke-dashoffset'            => true,
+	'stroke-linecap'               => true,
+	'stroke-linejoin'              => true,
+	'stroke-miterlimit'            => true,
+	'stroke-opacity'               => true,
+	'stroke-width'                 => true,
+	'text-anchor'                  => true,
+	'text-decoration'              => true,
+	'text-rendering'               => true,
+	'transform'                    => true,
+	'transform-origin'             => true,
+	'unicode-bidi'                 => true,
+	'vector-effect'                => true,
+	'visibility'                   => true,
+	'word-spacing'                 => true,
+	'writing-mode'                 => true,
+];
+
+// Filters attributes.
+$am_filter_primitive_attributes = [
+	'height' => true,
+	'result' => true,
+	'width'  => true,
+	'x'      => true,
+	'y'      => true,
+];
+
+$am_transfer_function_attributes = [
+	'type'        => true,
+	'tableValues' => true,
+	'slope'       => true,
+	'intercept'   => true,
+	'amplitude'   => true,
+	'exponent'    => true,
+	'offset'      => true,
+];
+
+// Animation attributes.
+$am_animation_target_element_attributes = [
+	'href'       => true,
+	'xlink:href' => true, // Deprecated.
+];
+
+$am_animation_attribute_target_attributes = [
+	'attributeType' => true,
+	'attributeName' => true,
+];
+
+$am_animation_timing_attributes = [
+	'begin'       => true,
+	'dur'         => true,
+	'end'         => true,
+	'min'         => true,
+	'max'         => true,
+	'restart'     => true,
+	'repeatCount' => true,
+	'repeatDur'   => true,
+	'fill'        => true,
+];
+
+$am_animation_value_attributes = [
+	'calcMode'    => true,
+	'values'      => true,
+	'keyTimes'    => true,
+	'keySplines'  => true,
+	'from'        => true,
+	'to'          => true,
+	'by'          => true,
+	'autoReverse' => true,
+	'accelerate'  => true,
+	'decelerate'  => true,
+];
+
+$am_animation_addition_attributes = [
+	'additive'   => true,
+	'accumulate' => true,
+];
+
+// Additional attributes.
+$am_conditional_processing_attributes = [
+	'requiredExtensions' => true,
+	'requiredFeatures'   => true,
+	'systemLanguage'     => true,
+];
+
+$am_xlink_attributes = [
+	'xlink:type'    => true,
+	'xlink:role'    => true,
+	'xlink:arcrole' => true,
+	'xlink:title'   => true,
+	'xlink:show'    => true,
+	'xlink:actuate' => true,
+];
+
+$am_xmlns_attributes = [
+	'xmlns'       => true,
+	'xmlns:xlink' => true,
+	'xmlns:se'    => true,
+];
+
+// ARIA attributes.
+$am_aria_attributes = [
+	'aria-activedescendant' => true,
+	'aria-atomic'           => true,
+	'aria-autocomplete'     => true,
+	'aria-busy'             => true,
+	'aria-checked'          => true,
+	'aria-colcount'         => true,
+	'aria-colindex'         => true,
+	'aria-colspan'          => true,
+	'aria-controls'         => true,
+	'aria-current'          => true,
+	'aria-describedby'      => true,
+	'aria-details'          => true,
+	'aria-disabled'         => true,
+	'aria-dropeffect'       => true,
+	'aria-errormessage'     => true,
+	'aria-expanded'         => true,
+	'aria-flowto'           => true,
+	'aria-grabbed'          => true,
+	'aria-haspopup'         => true,
+	'aria-hidden'           => true,
+	'aria-invalid'          => true,
+	'aria-keyshortcuts'     => true,
+	'aria-label'            => true,
+	'aria-labelledby'       => true,
+	'aria-level'            => true,
+	'aria-live'             => true,
+	'aria-modal'            => true,
+	'aria-multiline'        => true,
+	'aria-multiselectable'  => true,
+	'aria-orientation'      => true,
+	'aria-owns'             => true,
+	'aria-placeholder'      => true,
+	'aria-posinset'         => true,
+	'aria-pressed'          => true,
+	'aria-readonly'         => true,
+	'aria-relevant'         => true,
+	'aria-required'         => true,
+	'aria-roledescription'  => true,
+	'aria-rowcount'         => true,
+	'aria-rowindex'         => true,
+	'aria-rowspan'          => true,
+	'aria-selected'         => true,
+	'aria-setsize'          => true,
+	'aria-sort'             => true,
+	'aria-valuemax'         => true,
+	'aria-valuemin'         => true,
+	'aria-valuenow'         => true,
+	'aria-valuetext'        => true,
+	'role'                  => true,
+];
+
+/**
+ * SVG allowed tags and attributes.
+ * Some elements accept specific attributes in addition to the categories of attributes.
+ */
+$am_svg_allowed_tags = [
+	'a'                   => array_merge(
+		$am_animation_target_element_attributes,
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'animate'             => array_merge(
+		$am_animation_addition_attributes,
+		$am_animation_attribute_target_attributes,
+		$am_animation_target_element_attributes,
+		$am_animation_target_element_attributes,
+		$am_animation_timing_attributes,
+		$am_animation_value_attributes,
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'animateMotion'       => array_merge(
+		[
+			'keyPoints' => true,
+			'path'      => true,
+			'rotate'    => true,
+		],
+		$am_animation_addition_attributes,
+		$am_animation_attribute_target_attributes,
+		$am_animation_target_element_attributes,
+		$am_animation_target_element_attributes,
+		$am_animation_timing_attributes,
+		$am_animation_value_attributes,
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'animateTransform'    => array_merge(
+		$am_animation_addition_attributes,
+		$am_animation_attribute_target_attributes,
+		$am_animation_target_element_attributes,
+		$am_animation_timing_attributes,
+		$am_animation_value_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_xlink_attributes,
+	),
+	'circle'              => array_merge(
+		[
+			'cx'         => true,
+			'cy'         => true,
+			'pathLength' => true,
+			'r'          => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'clipPath'            => array_merge(
+		[
+			'clipPathUnits' => true,
+		],
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'defs'                => array_merge(
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'desc'                => array_merge(
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'discard'             => array_merge(
+		[
+			'begiun' => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+	),
+	'ellipse'             => array_merge(
+		[
+			'cx'         => true,
+			'cy'         => true,
+			'pathLength' => true,
+			'rx'         => true,
+			'ry'         => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feBlend'             => array_merge(
+		[
+			'in'   => true,
+			'in2'  => true,
+			'mode' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feColorMatrix'       => array_merge(
+		[
+			'in'     => true,
+			'type'   => true,
+			'values' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feComponentTransfer' => array_merge(
+		[
+			'in' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feComposite'         => array_merge(
+		[
+			'in'       => true,
+			'in2'      => true,
+			'k1'       => true,
+			'k2'       => true,
+			'k3'       => true,
+			'k4'       => true,
+			'operator' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feConvolveMatrix'    => array_merge(
+		[
+			'bias'             => true,
+			'divisor'          => true,
+			'edgeMode'         => true,
+			'in'               => true,
+			'kernelMatrix'     => true,
+			'kernelUnitLength' => true,
+			'order'            => true,
+			'preserveAlpha'    => true,
+			'targetX'          => true,
+			'targetY'          => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feDiffuseLighting'   => array_merge(
+		[
+			'diffuseConstant'  => true,
+			'in'               => true,
+			'kernelUnitLength' => true,
+			'surfaceScale'     => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feDisplacementMap'   => array_merge(
+		[
+			'in'               => true,
+			'in2'              => true,
+			'scale'            => true,
+			'xChannelSelector' => true,
+			'yChannelSelector' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feDistantLight'      => array_merge(
+		[
+			'azimuth'   => true,
+			'elevation' => true,
+		],
+		$am_core_attributes,
+	),
+	'feDropShadow'        => array_merge(
+		[
+			'dx'           => true,
+			'dy'           => true,
+			'stdDeviation' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feFlood'             => array_merge(
+		[
+			'flood-color'   => true,
+			'flood-opacity' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feFuncA'             => array_merge(
+		$am_core_attributes,
+		$am_transfer_function_attributes,
+	),
+	'feFuncB'             => array_merge(
+		$am_core_attributes,
+		$am_transfer_function_attributes,
+	),
+	'feFuncG'             => array_merge(
+		$am_core_attributes,
+		$am_transfer_function_attributes,
+	),
+	'feFuncR'             => array_merge(
+		$am_core_attributes,
+		$am_transfer_function_attributes,
+	),
+	'feGaussianBlur'      => array_merge(
+		[
+			'edgeMode'     => true,
+			'in'           => true,
+			'stdDeviation' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feImage'             => array_merge(
+		[
+			'preserveAspectRatio' => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'feMerge'             => array_merge(
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feMergeNode'         => array_merge(
+		[
+			'in' => true,
+		],
+		$am_core_attributes,
+	),
+	'feMorphology'        => array_merge(
+		[
+			'in'       => true,
+			'operator' => true,
+			'radius'   => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feOffset'            => array_merge(
+		[
+			'dx' => true,
+			'dy' => true,
+			'in' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'fePointLight'        => array_merge(
+		[
+			'x' => true,
+			'y' => true,
+			'z' => true,
+		],
+		$am_core_attributes,
+	),
+	'feSpecularLighting'  => array_merge(
+		[
+			'in'               => true,
+			'kernelUnitLength' => true,
+			'specularConstant' => true,
+			'specularExponent' => true,
+			'surfaceScale'     => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feSpotLight'         => array_merge(
+		[
+			'limitingConeAngle' => true,
+			'pointsAtX'         => true,
+			'pointsAtY'         => true,
+			'pointsAtZ'         => true,
+			'specularExponent'  => true,
+			'x'                 => true,
+			'y'                 => true,
+			'z'                 => true,
+		],
+		$am_core_attributes,
+	),
+	'feTile'              => array_merge(
+		[
+			'in' => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'feTurbulence'        => array_merge(
+		[
+			'baseFrequency' => true,
+			'numOctaves'    => true,
+			'seed'          => true,
+			'stitchTiles'   => true,
+			'type'          => true,
+		],
+		$am_core_attributes,
+		$am_filter_primitive_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'filter'              => array_merge(
+		[
+			'filterRes'      => true,
+			'filterUnits'    => true,
+			'height'         => true,
+			'primitiveUnits' => true,
+			'width'          => true,
+			'x'              => true,
+			'y'              => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'foreignObject'       => array_merge(
+		[
+			'height' => true,
+			'width'  => true,
+			'x'      => true,
+			'y'      => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'g'                   => array_merge(
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'hatch'               => array_merge(
+		[
+			'hatchContentUnits' => true,
+			'hatchUnits'        => true,
+			'pitch'             => true,
+			'rotate'            => true,
+			'transform'         => true,
+			'x'                 => true,
+			'y'                 => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'hatchpath'           => array_merge(
+		[
+			'd'      => true,
+			'offset' => true,
+		],
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'image'               => array_merge(
+		[
+			'crossorigin'         => true,
+			'height'              => true,
+			'preserveAspectRatio' => true,
+			'width'               => true,
+			'x'                   => true,
+			'y'                   => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'line'                => array_merge(
+		[
+			'pathLength' => true,
+			'x1'         => true,
+			'x2'         => true,
+			'y1'         => true,
+			'y2'         => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'linearGradient'      => array_merge(
+		[
+			'gradientTransform' => true,
+			'gradientUnits'     => true,
+			'spreadMethod'      => true,
+			'x1'                => true,
+			'x2'                => true,
+			'y1'                => true,
+			'y2'                => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'marker'              => array_merge(
+		[
+			'markerHeight'        => true,
+			'markerUnits'         => true,
+			'markerWidth'         => true,
+			'orient'              => true,
+			'preserveAspectRatio' => true,
+			'refX'                => true,
+			'refY'                => true,
+			'viewbox'             => true, // `viewBox` must be lowercase.
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'mask'                => array_merge(
+		[
+			'height'           => true,
+			'maskContentUnits' => true,
+			'maskUnits'        => true,
+			'width'            => true,
+			'x'                => true,
+			'y'                => true,
+		],
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'meshgradient'        => array_merge(
+		[
+			'gradientUnits' => true,
+			'transform'     => true,
+			'type'          => true,
+			'x'             => true,
+			'y'             => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'meshpatch'           => array_merge(
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'meshrow'             => array_merge(
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'metadata'            => $am_core_attributes,
+	'mpath'               => array_merge(
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_xlink_attributes,
+	),
+	'path'                => array_merge(
+		[
+			'd'          => true,
+			'pathLength' => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'pattern'             => array_merge(
+		[
+			'height'              => true,
+			'patternContentUnits' => true,
+			'patternTransform'    => true,
+			'patternUnits'        => true,
+			'preserveAspectRatio' => true,
+			'viewbox'             => true, // `viewBox` must be lowercase.
+			'width'               => true,
+			'x'                   => true,
+			'y'                   => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'polygon'             => array_merge(
+		[
+			'pathLength' => true,
+			'points'     => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'polyline'            => array_merge(
+		[
+			'pathLength' => true,
+			'points'     => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'radialGradient'      => array_merge(
+		[
+			'cx'                => true,
+			'cy'                => true,
+			'fr'                => true,
+			'fx'                => true,
+			'fy'                => true,
+			'gradientTransform' => true,
+			'gradientUnits'     => true,
+			'r'                 => true,
+			'spreadMethod'      => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xlink_attributes,
+	),
+	'rect'                => array_merge(
+		[
+			'height'     => true,
+			'pathLength' => true,
+			'rx'         => true,
+			'ry'         => true,
+			'width'      => true,
+			'x'          => true,
+			'y'          => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'set'                 => array_merge(
+		[
+			'to' => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_animation_attribute_target_attributes,
+		$am_animation_timing_attributes,
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'stop'                => array_merge(
+		[
+			'offset'       => true,
+			'stop-color'   => true,
+			'stop-opacity' => true,
+		],
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'style'               => array_merge(
+		[
+			'media' => true,
+			'title' => true,
+			'type'  => true,
+		],
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'svg'                 => array_merge(
+		[
+			'height'              => true,
+			'preserveAspectRatio' => true,
+			'viewbox'             => true, // `viewBox` must be lowercase.
+			'width'               => true,
+			'x'                   => true,
+			'y'                   => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xmlns_attributes,
+	),
+	'switch'              => array_merge(
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'symbol'              => array_merge(
+		[
+			'height'              => true,
+			'preserveAspectRatio' => true,
+			'refX'                => true,
+			'refY'                => true,
+			'viewbox'             => true, // `viewBox` must be lowercase.
+			'width'               => true,
+			'x'                   => true,
+			'y'                   => true,
+		],
+		$am_aria_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+		$am_xmlns_attributes,
+	),
+	'text'                => array_merge(
+		[
+			'dx'           => true,
+			'dy'           => true,
+			'lengthAdjust' => true,
+			'rotate'       => true,
+			'textLength'   => true,
+			'x'            => true,
+			'y'            => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'textPath'            => array_merge(
+		[
+			'lengthAdjust' => true,
+			'method'       => true,
+			'path'         => true,
+			'side'         => true,
+			'spacing'      => true,
+			'startOffset'  => true,
+			'textLength'   => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'title'               => array_merge(
+		$am_core_attributes,
+		$am_style_attributes,
+	),
+	'tspan'               => array_merge(
+		[
+			'dx'           => true,
+			'dy'           => true,
+			'lengthAdjust' => true,
+			'rotate'       => true,
+			'textLength'   => true,
+			'x'            => true,
+			'y'            => true,
+		],
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'unknown'             => array_merge(
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+	),
+	'use'                 => array_merge(
+		[
+			'height' => true,
+			'width'  => true,
+			'x'      => true,
+			'y'      => true,
+		],
+		$am_animation_target_element_attributes,
+		$am_aria_attributes,
+		$am_conditional_processing_attributes,
+		$am_core_attributes,
+		$am_presentation_attributes,
+		$am_style_attributes,
+	),
+	'view'                => array_merge(
+		[
+			'preserveAspectRatio' => true,
+			'viewbox'             => true, // `viewBox` must be lowercase.
+			'viewTarget'          => true,
+			'zoomAndPan'          => true,
+		],
+		$am_aria_attributes,
+		$am_core_attributes,
+	),
+];

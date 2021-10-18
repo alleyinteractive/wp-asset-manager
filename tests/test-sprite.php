@@ -327,19 +327,6 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test adding an asset with nested elements.
 	 */
 	function test_asset_with_nested_dom() {
-		add_filter(
-			'am_sprite_allowed_html',
-			function( $allowed_tags ) {
-				if ( empty( $allowed_tags['symbol'] ) ) {
-					$allowed_tags['symbol'] = [];
-				}
-
-				$allowed_tags['symbol']['xmlns:xlink'] = true;
-
-				return $allowed_tags;
-			}
-		);
-
 		am_define_symbol(
 			[
 				'handle'    => 'nested',
@@ -363,6 +350,69 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
 			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
+		);
+	}
+
+	/**
+	 * Test escaping non-standard attributes.
+	 */
+	function test_escape_non_standard_attributes() {
+
+		am_define_symbol(
+			[
+				'handle'    => 'without-non-standard-attribute',
+				'src'       => 'non-standard-attribute.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$without_non_standard_attribute = '<symbol id="am-symbol-without-non-standard-attribute" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+		$without_non_standard_attribute_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$without_non_standard_attribute
+		);
+
+		$this->assertEquals(
+			$without_non_standard_attribute_expected,
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet.'
+		);
+	}
+
+	/**
+	 * Test allowing non-standard attributes with `am_sprite_allowed_tags`.
+	 */
+	function test_allow_non_standard_attribute() {
+
+		am_define_symbol(
+			[
+				'handle'    => 'with-non-standard-attribute',
+				'src'       => 'non-standard-attribute.svg',
+				'condition' => 'global',
+			]
+		);
+
+		add_filter(
+			'am_sprite_allowed_tags',
+			function( $allowed_tags ) {
+				$allowed_tags['path']['asset-manager'] = true;
+
+				return $allowed_tags;
+			}
+		);
+
+		$with_non_standard_attribute = '<symbol id="am-symbol-with-non-standard-attribute" viewBox="0 0 24 24"><path asset-manager="sprite-test" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+		$with_non_standard_attribute_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$with_non_standard_attribute
+		);
+
+		$this->assertEquals(
+			$with_non_standard_attribute_expected,
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
 	}
 }

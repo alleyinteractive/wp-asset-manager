@@ -16,7 +16,7 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
   * [Defining Symbols](#defining-symbols)
   * [Changing the Directory](#changing-the-directory)
   * [Setting Global Attributes](#setting-global-attributes)
-  * [Update `sprite_allowed_html`](#update-sprite_allowed_html)
+  * [Update `$sprite_allowed_tags`](#update-sprite_allowed_tags)
   * [Displaying a Symbol](#displaying-a-symbol)
   * [Getting a Symbol](#getting-a-symbol)
 * [Requirements](#requirements)
@@ -341,21 +341,17 @@ add_filter(
 );
 ```
 
-### Update `sprite_allowed_html`
+### Update `$sprite_allowed_tags`
 
-We use `DOMDocument` to create the sprite sheet and collect elements and attributes for use in `$sprite_allowed_html`. Use the `am_sprite_allowed_html` filter to manually add missing elements and/or attributes, such as certain namespaced attributes that are not collected by DOMDocument.
+Use the `am_sprite_allowed_tags` to filter [elements and attributes](php/svg-allowed-tags.php) used in escaping, such as certain deprecated attributes, script tags, and event handlers.
 
 ```php
 add_filter(
-  'am_sprite_allowed_html',
-  function( $sprite_allowed_html ) {
-    if ( empty( $sprite_allowed_html['symbol'] ) ) {
-      $sprite_allowed_html['symbol'] = [];
-    }
+  'am_sprite_allowed_tags',
+  function( $sprite_allowed_tags ) {
+    $sprite_allowed_tags['path']['onclick'] = true;
 
-    $sprite_allowed_html['symbol']['xmlns:xlink'] = true;
-
-    return $sprite_allowed_html;
+    return $sprite_allowed_tags;
   }
 );
 ```

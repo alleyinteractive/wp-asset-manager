@@ -5,10 +5,11 @@
  * @package AssetManager
  */
 
+// // Allowed tags and attributes for SVG.
+// require __DIR__ . '/svg-allowed-html.php';
+
 /**
  * Asset_Manager_SVG_Sprite class.
- *
- * @todo add_action: modify_svg_asset.
  */
 class Asset_Manager_SVG_Sprite {
 	use Conditions;
@@ -55,23 +56,6 @@ class Asset_Manager_SVG_Sprite {
 		],
 		'use' => [
 			'href' => true,
-		],
-	];
-
-	/**
-	 * The allowed HTML elements and attributes for use in `wp_kses` when printing
-	 * the sprite sheet.
-	 *
-	 * @var array
-	 */
-	public $sprite_allowed_html = [
-		'svg'    => [
-			'style' => true,
-			'xmlns' => true,
-		],
-		'symbol' => [
-			'id'      => true,
-			'viewbox' => true, // `viewBox` must be lowercase here.
 		],
 	];
 
@@ -189,19 +173,21 @@ class Asset_Manager_SVG_Sprite {
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
 	public function print_sprite_sheet() {
+		// Allowed tags and attributes for SVG.
+		include __DIR__ . '/svg-allowed-tags.php';
+
 		/**
-		 * Filter function for patching in missing attributes and alements for escaping with
-		 * `wp_kses`, particularly `xmlns:*` attributes, which DOMDocument doesn't handle well.
+		 * Filter function for patching in missing attributes and alements for escaping with `wp_kses`.
 		 *
 		 * @since 0.1.3
 		 *
-		 * @param array $allowed_html wp_kses allowed HTML for the sprite sheet.
+		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
-		$this->sprite_allowed_html = apply_filters( 'am_sprite_allowed_html', $this->sprite_allowed_html );
+		$sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_svg_allowed_tags );
 
 		echo wp_kses(
 			$this->sprite_document->C14N(),
-			$this->sprite_allowed_html
+			$sprite_allowed_tags
 		);
 	}
 
@@ -284,34 +270,6 @@ class Asset_Manager_SVG_Sprite {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Collect elements and attributes for the `wp_kses` allowed_html used to escape the sprite sheet.
-	 *
-	 * @param DOMElement $element The element from which attributes are to be collected.
-	 */
-	public function compile_allowed_html( $element ) {
-		if ( $element instanceof DOMElement ) {
-			// Be sure the element itself is allowed.
-			if ( empty( $this->sprite_allowed_html[ $element->nodeName ] ) ) {
-				$this->sprite_allowed_html[ $element->nodeName ] = [];
-			}
-
-			// Collect attributes.
-			if ( $element->hasAttributes() ) {
-				foreach ( $element->attributes as $attr ) {
-					$this->sprite_allowed_html[ $element->nodeName ][ $attr->nodeName ] = true;
-				}
-			}
-
-			// Recurse through child nodes.
-			if ( $element->hasChildNodes() ) {
-				foreach ( iterator_to_array( $element->childNodes ) as $child_node ) {
-					$this->compile_allowed_html( $child_node );
-				}
-			}
-		}
 	}
 
 	/**
@@ -432,8 +390,6 @@ class Asset_Manager_SVG_Sprite {
 				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
 		}
-
-		$this->compile_allowed_html( $symbol );
 
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
