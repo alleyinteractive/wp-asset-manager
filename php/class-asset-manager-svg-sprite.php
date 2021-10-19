@@ -308,8 +308,8 @@ class Asset_Manager_SVG_Sprite {
 	/**
 	 * Perform final mutations before adding an asset to sprite.
 	 *
-	 * @param array $asset Asset to mutate.
-	 * @return array The modified asset definition.
+	 * @param  array $asset Asset to mutate.
+	 * @return array        The modified asset definition.
 	 */
 	public function pre_add_asset( $asset ) {
 		$src = $this->get_the_normalized_filepath( $asset['src'] );
@@ -320,16 +320,12 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Adds an asset to the sprite sheet.
+	 * Create the <symbol> element based on a given asset.
 	 *
-	 * @param array $asset An asset definition.
-	 * @return void
+	 * @param  array $asset The asset definition.
+	 * @return array        The modified asset and the symbol element.
 	 */
-	public function add_asset( $asset ): void {
-		if ( ! $this->asset_should_add( $asset ) ) {
-			return;
-		}
-
+	public function create_symbol( $asset ) {
 		$asset = $this->pre_add_asset( $asset );
 
 		// Get the SVG file contents.
@@ -369,6 +365,27 @@ class Asset_Manager_SVG_Sprite {
 			if ( ! ( $child_node instanceof DOMText ) ) {
 				$symbol->appendChild( $this->sprite_document->importNode( $child_node, true ) );
 			}
+		}
+
+		// Return the asset too, as it may have been modified.
+		return [ $asset, $symbol ];
+	}
+
+	/**
+	 * Adds an asset to the sprite sheet.
+	 *
+	 * @param array $asset An asset definition.
+	 * @return void
+	 */
+	public function add_asset( $asset ): void {
+		if ( ! $this->asset_should_add( $asset ) ) {
+			return;
+		}
+
+		list( $asset, $symbol ) = $this->create_symbol( $asset );
+
+		if ( ! ( $symbol instanceof DOMElement ) ) {
+			return;
 		}
 
 		// Append the symbol to the SVG sprite.
