@@ -191,8 +191,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'focusable',
-			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
-			'Should add global attributes to $symbol_allowed_html.'
+			\Asset_Manager_SVG_Sprite::instance()->svg_allowed_tags['svg'],
+			'Should add global attributes to $svg_allowed_tags.'
 		);
 
 		$with_attributes_markup_expected = '<svg focusable="false" aria-hidden="true" width="48" height="48" class="am-test" data-test="test"><use href="#am-symbol-with-dimensions"></use></svg>';
@@ -212,8 +212,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'data-test',
-			\Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html['svg'],
-			'Should add attributes to $symbol_allowed_html.'
+			\Asset_Manager_SVG_Sprite::instance()->svg_allowed_tags['svg'],
+			'Should add attributes to $svg_allowed_tags.'
 		);
 
 		$this->assertEquals(

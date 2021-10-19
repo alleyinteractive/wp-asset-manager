@@ -40,23 +40,6 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_document;
 
 	/**
-	 * The allowed HTML elements and attributes for use in `wp_kses` when printing
-	 * the output of `am_use_symbol`.
-	 *
-	 * @var array
-	 */
-	public $symbol_allowed_html = [
-		'svg' => [
-			'height' => true,
-			'width'  => true,
-			'class'  => true,
-		],
-		'use' => [
-			'href' => true,
-		],
-	];
-
-	/**
 	 * Reference array of asset handles.
 	 *
 	 * @var array
@@ -137,6 +120,11 @@ class Asset_Manager_SVG_Sprite {
 	 * Perform setup tasks.
 	 */
 	public function setup() {
+		// Allowed tags and attributes for SVG.
+		include __DIR__ . '/svg-allowed-tags.php';
+
+		$this->svg_allowed_tags = $am_svg_allowed_tags ?? [];
+
 		/**
 		 * Updates allowed inline style properties.
 		 *
@@ -170,9 +158,6 @@ class Asset_Manager_SVG_Sprite {
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
 	public function print_sprite_sheet() {
-		// Allowed tags and attributes for SVG.
-		include __DIR__ . '/svg-allowed-tags.php';
-
 		/**
 		 * Filter function for patching in missing attributes and alements for escaping with `wp_kses`.
 		 *
@@ -180,7 +165,7 @@ class Asset_Manager_SVG_Sprite {
 		 *
 		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
-		$sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_svg_allowed_tags );
+		$sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $this->svg_allowed_tags );
 
 		echo wp_kses(
 			$this->sprite_document->C14N(),
@@ -221,9 +206,9 @@ class Asset_Manager_SVG_Sprite {
 	 *
 	 * @param array $attributes Asset attributes.
 	 */
-	public function update_allowed_html( $attributes ) {
+	public function update_svg_allowed_tags( $attributes ) {
 		foreach ( array_keys( $attributes ) as $attr ) {
-			$this->symbol_allowed_html['svg'][ $attr ] = true;
+			$this->svg_allowed_tags['svg'][ $attr ] = true;
 		}
 	}
 
@@ -439,7 +424,7 @@ class Asset_Manager_SVG_Sprite {
 		$local_attrs = array_map( 'esc_attr', $local_attrs );
 
 		// Ensure attributes are in allowed_html.
-		$this->update_allowed_html( $local_attrs );
+		$this->update_svg_allowed_tags( $local_attrs );
 
 		// Build a string of all attributes.
 		$attrs = '';
@@ -467,7 +452,7 @@ class Asset_Manager_SVG_Sprite {
 		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
-			echo wp_kses( $symbol_markup, $this->symbol_allowed_html );
+			echo wp_kses( $symbol_markup, $this->svg_allowed_tags );
 		}
 	}
 }
