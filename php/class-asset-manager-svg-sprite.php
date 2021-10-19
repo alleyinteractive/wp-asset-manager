@@ -5,9 +5,6 @@
  * @package AssetManager
  */
 
-// // Allowed tags and attributes for SVG.
-// require __DIR__ . '/svg-allowed-html.php';
-
 /**
  * Asset_Manager_SVG_Sprite class.
  */
