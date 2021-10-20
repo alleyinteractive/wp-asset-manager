@@ -180,7 +180,9 @@ class Asset_Manager_SVG_Sprite {
 	 * @return string         The asset handle formatted for use as the symbol id.
 	 */
 	public function format_handle_as_symbol_id( $handle ) {
-		return "am-symbol-{$handle}";
+		return empty( $handle )
+			? ''
+			: "am-symbol-{$handle}";
 	}
 
 
@@ -352,6 +354,9 @@ class Asset_Manager_SVG_Sprite {
 		// Add the id attribute.
 		$symbol->setAttribute( 'id', $this->format_handle_as_symbol_id( $asset['handle'] ) );
 
+		// DOMDocument::getElementById will only work if we set this attribute as the ID.
+		$symbol->setIdAttribute( 'id', true );
+
 		// Use the viewBox attribute from the SVG asset.
 		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
 
@@ -390,6 +395,45 @@ class Asset_Manager_SVG_Sprite {
 
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
+
+		$this->asset_handles[]                = $asset['handle'];
+		$this->sprite_map[ $asset['handle'] ] = $asset;
+	}
+
+	/**
+	 * Replace an asset with a given asset.
+	 *
+	 * @param  array $asset The asset definition.
+	 * @return void
+	 */
+	public function replace_symbol( $asset ): void {
+		if ( ! in_array( $asset['handle'], $this->asset_handles ) ) {
+			return;
+		}
+
+		// `asset_should_add` will return false if the handle is in $asset_handles.
+		$idx = array_search( $asset['handle'], $this->asset_handles, true );
+		unset( $this->asset_handles[ $idx ] );
+
+		// Clear out the sprite_map too, since the replacement may have a different configuration.
+		unset( $this->sprite_map[ $asset['handle'] ] );
+
+		if ( ! $this->asset_should_add( $asset ) ) {
+			return;
+		}
+
+		// Get the symbol to replace from the sprite sheet.
+		$existing_symbol = $this->sprite_document->getElementById(
+			$this->format_handle_as_symbol_id( $asset['handle'] )
+		);
+
+		if ( ! ( $existing_symbol instanceof DOMElement ) ) {
+			return;
+		}
+
+		// Replace the symbol.
+		list( $asset, $replacement ) = $this->create_symbol( $asset );
+		$existing_symbol->parentNode->replaceChild( $replacement, $existing_symbol );
 
 		$this->asset_handles[]                = $asset['handle'];
 		$this->sprite_map[ $asset['handle'] ] = $asset;

@@ -415,4 +415,52 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
 	}
+
+	/**
+	 * Test replacing a symbol.
+	 */
+	function test_replace_symbol() {
+		$clean_with_dimensions = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+		$with_export_junk = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+
+		am_define_symbol(
+			[
+				'handle'    => 'replace-test',
+				'src'       => 'with-dimensions.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$with_defined_symbol = sprintf(
+			$this->empty_sprite_wrapper,
+			$clean_with_dimensions
+		);
+
+		$this->assertEquals(
+			$with_defined_symbol,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should add the symbol to the sprite sheet.'
+		);
+
+		// Redefined with the same handle.
+		am_replace_symbol(
+			[
+				'handle'    => 'replace-test',
+				'src'       => 'export-junk.svg',
+				'condition' => 'global',
+			]
+		);
+
+		$with_replaced_symbol = sprintf(
+			$this->empty_sprite_wrapper,
+			$with_export_junk
+		);
+
+		$this->assertEquals(
+			$with_replaced_symbol,
+			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			'Should replace the existing symbol in the sprite sheet.'
+		);
+	}
 }

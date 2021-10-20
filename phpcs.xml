@@ -39,6 +39,7 @@
 			<property name="customPropertiesWhitelist" type="array">
 				<element value="childNodes"/>
 				<element value="nodeName"/>
+				<element value="parentNode"/>
 			</property>
 		</properties>
 	</rule>

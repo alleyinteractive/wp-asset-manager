@@ -152,7 +152,7 @@ if ( ! function_exists( 'am_define_symbol' ) ) :
 	 * Define a symbol to be added to the SVG sprite.
 	 *
 	 * @param string $handle     Handle for asset, used to refer to the symbol in `am_use_symbol`.
-	 * @param string $src        Absolute path from the current the theme root, or a relative path
+	 * @param string $src        Absolute path from the current theme root, or a relative path
 	 *                           based on the current theme root. Use the `am_modify_svg_directory`
 	 *                           filter to update the directory from which relative paths will be
 	 *                           completed.
@@ -166,6 +166,30 @@ if ( ! function_exists( 'am_define_symbol' ) ) :
 		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Asset_Manager_SVG_Sprite::instance()->add_asset( $args );
+	}
+
+endif;
+
+if ( ! function_exists( 'am_replace_symbol' ) ) :
+
+	/**
+	 * Replace a previously-defined symbol.
+	 *
+	 * @param string $handle     Handle for the asset to be replaced.
+	 * @param string $src        Absolute path from the current theme root, or a relative path
+	 *                           based on the current theme root. Use the `am_modify_svg_directory`
+	 *                           filter to update the directory from which relative paths will be
+	 *                           completed.
+	 * @param string $condition  Corresponds to a configured loading condition that, if matches,
+	 *                           will allow the asset to be added to the sprite sheet.
+	 *                           'global' is assumed if no condition is declared.
+	 * @param array  $attributes An array of attribute names and values to add to the resulting <svg>
+	 *                           everywhere it is printed.
+	 */
+	function am_replace_symbol( $handle, $src = false, $condition = 'global', $attributes = [] ) {
+		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );
+		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+		Asset_Manager_SVG_Sprite::instance()->replace_symbol( $args );
 	}
 
 endif;

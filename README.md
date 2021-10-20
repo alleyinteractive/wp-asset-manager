@@ -356,6 +356,22 @@ add_filter(
 );
 ```
 
+### Replacing a Symbol
+
+Use `am_replace_symbol` to replace a symbol already added to the sprite.
+
+This should be added via an action that fires after, or at a lower priority, than the action used for `am_define_symbol`.
+
+```php
+am_replace_symbol(
+  [
+    'handle'    => 'logomark',
+    'src'       => 'svg/logo.svg',
+    'condition' => 'global',
+  ]
+);
+```
+
 ### Displaying a Symbol
 
 `am_use_symbol` prints an `<svg>` element with the specified attributes.
