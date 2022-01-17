@@ -85,7 +85,13 @@ class Asset_Manager_Styles extends Asset_Manager {
 					printf(
 						'<style class="%1$s" type="text/css">%2$s</style>',
 						esc_attr( implode( ' ', $classes ) ),
-						file_get_contents( $stylesheet['src'] ) // phpcs:ignore
+						/**
+						 * Filter the inline stylesheet.
+						 *
+						 * @param string $contents Contents to filter.
+						 * @param array $stylesheet Stylesheet being rendered.
+						 */
+						apply_filters( 'am_inline_stylesheet', file_get_contents( $stylesheet['src'] ), $stylesheet ), // phpcs:ignore
 					);
 				} else {
 					$this->generate_asset_error( 'unsafe_inline', $stylesheet );
