@@ -75,7 +75,7 @@ jobs:
         run: |
           bash bin/install-wp-tests.sh wordpress_unit_tests root '' 127.0.0.1 $WP_VERSION
           composer global require "phpunit/phpunit=4.8.*|5.7.*"
-
+          composer global require "yoast/phpunit-polyfills=^1.0"
           # Go into the core directory and replace wp-content.
           rm -rf ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
           rsync -aWq --no-compress . ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager

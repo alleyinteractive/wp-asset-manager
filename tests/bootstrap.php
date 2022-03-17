@@ -7,6 +7,8 @@
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
+const WP_TESTS_PHPUNIT_POLYFILLS_PATH = __DIR__ . '/../vendor/yoast/phpunit-polyfills';
+
 // Constant to determine when tests are running.
 define( 'WP_IRVING_TEST', true );
 
