@@ -130,7 +130,7 @@ class Asset_Manager_Preload extends Asset_Manager {
 					esc_attr( $asset['as'] ),
 					esc_attr( $asset['media'] ),
 					empty( $asset['mime_type'] ) ? '' : sprintf( 'type="%s" ', esc_attr( $asset['mime_type'] ) ),
-					$asset['crossorigin'] ? esc_attr( 'crossorigin' ) : ''
+					! empty( $asset['crossorigin'] ) ? 'crossorigin' : ''
 				),
 				[
 					'link' => [
