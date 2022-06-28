@@ -29,6 +29,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			'handle' => 'sync-asset',
 			'src'    => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
 		];
+
 		$expected_async_result = [
 			'handle'      => 'sync-asset',
 			'src'         => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
@@ -41,10 +42,13 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			'in_footer'   => false,
 			'loaded'      => true,
 		];
+
 		am_enqueue_script( $sync_asset );
-		\Asset_Manager_Scripts::instance()->modify_load_method( 'sync-asset', 'async' );
+		am_modify_load_method( 'sync-asset', 'async' );
+
 		$actual_async_result = \Asset_Manager_Scripts::instance()->assets_by_handle['sync-asset'];
-		$this->assertContains( \Asset_Manager_Scripts::instance()->assets, $actual_async_result, 'Assets with a modified load method should be added to the asset manifest' );
+
+		$this->assertContains( $actual_async_result, \Asset_Manager_Scripts::instance()->assets, 'Assets with a modified load method should be added to the asset manifest' );
 		$this->assertEquals( $expected_async_result, $actual_async_result, 'Assets with a modified load method should have the appropriate attibute added' );
 	}
 

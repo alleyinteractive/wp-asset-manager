@@ -13,13 +13,13 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		// Enqueue test script
 		am_enqueue_script( $this->test_script );
 
-		$this->assertContains( 'my-test-asset', $wp_scripts->queue, 'Script should be enqueued' );
-		$this->assertArrayHasKey( 'my-test-asset', $wp_scripts->registered, 'Script should be registered' );
-		$this->assertArrayHasKey( 'my-test-asset', \Asset_Manager_Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
-		$this->assertContains( 'my-test-asset', \Asset_Manager_Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
+		$this->assertContains( $this->test_script['handle'], $wp_scripts->queue, 'Script should be enqueued' );
+		$this->assertArrayHasKey( $this->test_script['handle'], $wp_scripts->registered, 'Script should be registered' );
+		$this->assertArrayHasKey( $this->test_script['handle'], \Asset_Manager_Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
+		$this->assertContains( $this->test_script['handle'], \Asset_Manager_Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
 		$this->assertContains(
 			[
-				'handle'      => 'my-test-asset',
+				'handle'      => $this->test_script['handle'],
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 				'deps'        => [],
 				'condition'   => 'global',
@@ -28,7 +28,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'load_hook'   => 'wp_head',
 				'type'        => 'script',
 				'in_footer'   => false,
-				'loaded'      => 1,
+				'loaded'      => true,
 			],
 			\Asset_Manager_Scripts::instance()->assets,
 			'Script data should exist in the primary asset manifest'
