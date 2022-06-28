@@ -272,6 +272,12 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 	 * @group assets
 	 */
 	function test_add_core_dependencies() {
+		$scripts = wp_scripts();
+
+		$this->assertNotEmpty(
+			$scripts->registered['jquery'] ?? null,
+		);
+
 		$asset_with_deps = array_merge(
 			$this->test_script_two,
 			[
@@ -309,7 +315,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'loaded'      => true,
 				'load_method' => 'sync',
 				'type'        => 'script',
-				'version'     => '3.5.1',
+				'version'     => $scripts->registered['jquery']->ver ?? '',
 			],
 		];
 		$actual_assets   = \Asset_Manager_Scripts::instance()->assets;

@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [7.4]
+        php: [7.4, 8.0]
         wp_version: ["latest"]
         can_fail: [false]
 
@@ -31,9 +31,11 @@ jobs:
 
     env:
       CACHEDIR: /tmp/test-cache
-      WP_CORE_DIR: /tmp/wordpress/
+      WP_CORE_DIR: /tmp/wordpress
       WP_VERSION: ${{ matrix.wp_version }}
-      WP_MULTISITE: ${{ matrix.multisite }}
+      WP_DB_HOST: 127.0.0.1
+      WP_DB_USER: root
+      WP_DB_PASSWORD: '""'
 
     steps:
       - name: Checkout code
@@ -70,25 +72,12 @@ jobs:
           max_attempts: 5
           command: composer install
 
-      - name: Install WordPress and Copy Project
-        shell: bash
-        run: |
-          bash bin/install-wp-tests.sh wordpress_unit_tests root '' 127.0.0.1 $WP_VERSION
-          composer global require "phpunit/phpunit=4.8.*|5.7.*"
-
-          # Go into the core directory and replace wp-content.
-          rm -rf ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
-          rsync -aWq --no-compress . ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
-
       - name: Run Unit Tests
         shell: bash
         run: |
-          cd ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
-          phpunit
-          WP_MULTISITE=1 phpunit
+          composer run phpcs
+          WP_MULTISITE=1 composer run phpcs
 
       - name: Run phpcs
         shell: bash
-        run: |
-          cd ${WP_CORE_DIR}/wp-content/plugins/wp-asset-manager
-          composer run phpcs
+        run: composer run phpcs

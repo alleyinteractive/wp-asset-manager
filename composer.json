@@ -18,12 +18,21 @@
             "autoload.php"
         ]
     },
+    "extra": {
+      "wordpress-autoloader": {
+        "autoload-dev": {
+          "Asset_Manager_Tests\\": "tests/"
+        }
+      }
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "alleyinteractive/composer-wordpress-autoloader": true
-        }
+        },
+        "sort-packages": true
     },
+    "prefer-stable": true,
     "scripts": {
         "lint": "@phpcs",
         "lint:fix": "@phpcbf",
