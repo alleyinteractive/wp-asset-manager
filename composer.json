@@ -1,23 +1,35 @@
 {
     "name": "alleyinteractive/wp-asset-manager",
+    "license": "GPL-2.0-only",
+    "type": "wordpress-plugin",
     "authors": [
         {
             "name": "Alley Interactive",
             "email": "hello@alley.co"
         }
     ],
-    "type": "wordpress-plugin",
-    "license": "GPL-2.0-only",
+    "require-dev": {
+        "alleyinteractive/alley-coding-standards": "^0.3.0",
+        "mantle-framework/testkit": "^0.3",
+        "phpunit/phpunit": "^9.3.3"
+    },
     "autoload": {
         "files": [
             "autoload.php"
         ]
     },
-    "require-dev": {
-        "alleyinteractive/alley-coding-standards": "^0.3.0"
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "alleyinteractive/composer-wordpress-autoloader": true
+        }
     },
     "scripts": {
-        "phpcs" : "phpcs --standard=./phpcs.xml .",
-        "phpcbf" : "phpcbf ."
+        "lint": "@phpcs",
+        "lint:fix": "@phpcbf",
+        "phpcbf": "phpcbf .",
+        "phpcs": "phpcs --standard=./phpcs.xml .",
+        "phpunit": "phpunit",
+        "test": "@phpunit"
     }
 }
