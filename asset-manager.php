@@ -3,7 +3,6 @@
  * Asset Manager Base Plugin File.
  *
  * @package AssetManager
- * @version 0.0.1
  */
 
 /*
@@ -11,15 +10,10 @@ Plugin Name: Asset Manager
 Plugin URI: https://github.com/alleyinteractive/wordpress-assetmanager
 Description: Add more robust functionality to enqueuing static assets
 Author: Alley Interactive
-Version: 0.0.1
+Version: 1.0.0
 License: GPLv2 or later
 Author URI: https://www.alleyinteractive.com/
 */
-
-/**
- * Current version of AssetManager.
- */
-define( 'AM_VERSION', '0.0.1' );
 
 /**
  * Filesystem path to AssetManager.
