@@ -520,7 +520,7 @@ abstract class Asset_Manager {
 			$condition_include = ! is_array( $condition_include ) ? [ $condition_include ] : $condition_include;
 
 			foreach ( $condition_include as $condition_true ) {
-				if ( isset( $conditions[ $condition_true ] ) && $conditions[ $condition_true ] ) {
+				if ( ! empty( $conditions[ $condition_true ] ) ) {
 					continue;
 				} else {
 					$condition_result = false;
