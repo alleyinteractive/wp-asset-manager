@@ -86,7 +86,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 		];
 		$expected_script_output = '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>';
 		$actual_script_output   = get_echo( [ \Asset_Manager_Scripts::instance(), 'print_asset' ], [ $inline_fail ] );
-		$this->assertContains( $expected_script_output, $actual_script_output, 'Should throw an error if file provided does not exist' );
+		$this->assertStringContainsString( $expected_script_output, $actual_script_output, 'Should throw an error if file provided does not exist' );
 
 		// Inline load method with external asset
 		$inline_external        = [
@@ -96,7 +96,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 		];
 		$expected_script_output = '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>';
 		$actual_script_output   = get_echo( [ \Asset_Manager_Scripts::instance(), 'print_asset' ], [ $inline_external ] );
-		$this->assertContains( $expected_script_output, $actual_script_output, 'Should throw an error if file provided is not hosted on the same domain' );
+		$this->assertStringContainsString( $expected_script_output, $actual_script_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
 	/**
@@ -111,33 +111,33 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 					'defer-script-test',
 					'async-script-test',
 				],
-			] 
+			]
 		);
 		$defer_script = array_merge(
 			$this->test_script_two,
 			[
 				'handle'      => 'defer-script-test',
 				'load_method' => 'defer',
-			] 
+			]
 		);
 		$async_script = array_merge(
 			$this->test_script_two,
 			[
 				'handle'      => 'async-script-test',
 				'load_method' => 'async',
-			] 
+			]
 		);
 		am_enqueue_script( $sync_script );
 
 		// Defer script test
 		$defer_script['dependents'] = \Asset_Manager_Scripts::instance()->find_dependents( $defer_script );
 		$output                     = get_echo( [ \Asset_Manager_Scripts::instance(), 'post_validate_asset' ], [ $defer_script ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a defer attribute' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a defer attribute' );
 
 		// Async script test
 		$async_script['dependents'] = \Asset_Manager_Scripts::instance()->find_dependents( $async_script );
 		$output                     = get_echo( [ \Asset_Manager_Scripts::instance(), 'post_validate_asset' ], [ $async_script ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a async attribute' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a async attribute' );
 	}
 
 	/**
@@ -149,7 +149,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			[
 				'handle'      => 'async-script-test',
 				'load_method' => 'defer',
-			] 
+			]
 		);
 		\Asset_Manager_Scripts::instance()->add_to_async( $async_script );
 		$this->assertContains( 'async-script-test', \Asset_Manager_Scripts::instance()->async_scripts, 'If a script has an `async`, `defer`, or `async-defer` attribute it should be added to an internal $async_scripts property' );

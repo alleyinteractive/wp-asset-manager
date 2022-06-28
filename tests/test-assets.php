@@ -207,7 +207,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $invalid_load_hook );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $invalid_load_hook );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $dep_missing );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $dep_missing );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
 	}
 
 	/**
@@ -243,8 +243,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $unsafe_load_hook_dep );
 		am_enqueue_script( $unsafe_load_hook );
-		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $unsafe_load_hook );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
+		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ] );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
 	}
 
 	/**
@@ -265,7 +265,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		am_enqueue_script( $circular_dep );
 		am_enqueue_script( $circular_dep_two );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $circular_dep );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
 	}
 
 	/**

@@ -18,7 +18,7 @@ tests_add_filter( 'muplugins_loaded', function() {
 if ( ! function_exists( 'get_echo' ) ) :
 	function get_echo( $callable, $args = [] ) {
 		ob_start();
-		$callable(...$args);
+		$callable(...array_values($args));
 		return ob_get_clean();
 	}
 endif;

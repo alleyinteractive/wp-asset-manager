@@ -60,7 +60,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'load_method' => 'inline',
 		];
 		$style_output = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $inline_fail ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided does not exist' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided does not exist' );
 
 		// Inline load method with external asset
 		$inline_external = [
@@ -69,7 +69,7 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 			'load_method' => 'inline',
 		];
 		$style_output    = get_echo( [ \Asset_Manager_Styles::instance(), 'print_asset' ], [ $inline_external ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided is not hosted on the same domain' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
 	/**
@@ -172,6 +172,6 @@ class Asset_Manager_Styles_Tests extends Asset_Manager_Test {
 		// Defer style test
 		$defer_style['dependents'] = \Asset_Manager_Styles::instance()->find_dependents( $defer_style );
 		$output                    = get_echo( [ \Asset_Manager_Styles::instance(), 'post_validate_asset' ], [ $defer_style ] );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded stylesheet depends on a stylesheet with a defer attribute' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded stylesheet depends on a stylesheet with a defer attribute' );
 	}
 }
