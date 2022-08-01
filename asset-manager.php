@@ -18,7 +18,7 @@ Author URI: https://www.alleyinteractive.com/
 /**
  * Filesystem path to AssetManager.
  */
-define( 'AM_BASE_DIR', dirname( __FILE__ ) );
+defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', dirname( __FILE__ ) );
 
 if ( ! class_exists( 'Asset_Manager' ) ) :
 	/**
