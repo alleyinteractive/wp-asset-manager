@@ -324,6 +324,8 @@ class Asset_Manager_SVG_Sprite {
 	/**
 	 * Create the <symbol> element based on a given asset.
 	 *
+	 * @todo Simplify this so we don't have to pass the asset around.
+	 *
 	 * @param  array $asset The asset definition.
 	 * @return array        The modified asset and the symbol element.
 	 */
