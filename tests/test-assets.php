@@ -13,13 +13,13 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		// Enqueue test script
 		am_enqueue_script( $this->test_script );
 
-		$this->assertContains( 'my-test-asset', $wp_scripts->queue, 'Script should be enqueued' );
-		$this->assertArrayHasKey( 'my-test-asset', $wp_scripts->registered, 'Script should be registered' );
-		$this->assertArrayHasKey( 'my-test-asset', \Asset_Manager_Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
-		$this->assertContains( 'my-test-asset', \Asset_Manager_Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
+		$this->assertContains( $this->test_script['handle'], $wp_scripts->queue, 'Script should be enqueued' );
+		$this->assertArrayHasKey( $this->test_script['handle'], $wp_scripts->registered, 'Script should be registered' );
+		$this->assertArrayHasKey( $this->test_script['handle'], \Asset_Manager_Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
+		$this->assertContains( $this->test_script['handle'], \Asset_Manager_Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
 		$this->assertContains(
 			[
-				'handle'      => 'my-test-asset',
+				'handle'      => $this->test_script['handle'],
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 				'deps'        => [],
 				'condition'   => 'global',
@@ -28,7 +28,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'load_hook'   => 'wp_head',
 				'type'        => 'script',
 				'in_footer'   => false,
-				'loaded'      => 1,
+				'loaded'      => true,
 			],
 			\Asset_Manager_Scripts::instance()->assets,
 			'Script data should exist in the primary asset manifest'
@@ -207,7 +207,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $invalid_load_hook );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $invalid_load_hook );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $dep_missing );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $dep_missing );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
 	}
 
 	/**
@@ -243,8 +243,8 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		];
 		am_enqueue_script( $unsafe_load_hook_dep );
 		am_enqueue_script( $unsafe_load_hook );
-		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $unsafe_load_hook );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
+		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ] );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
 	}
 
 	/**
@@ -265,13 +265,19 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 		am_enqueue_script( $circular_dep );
 		am_enqueue_script( $circular_dep_two );
 		$error = get_echo( [ \Asset_Manager_Scripts::instance(), 'validate_assets' ], $circular_dep );
-		$this->assertContains( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
 	}
 
 	/**
 	 * @group assets
 	 */
 	function test_add_core_dependencies() {
+		$scripts = wp_scripts();
+
+		$this->assertNotEmpty(
+			$scripts->registered['jquery'] ?? null,
+		);
+
 		$asset_with_deps = array_merge(
 			$this->test_script_two,
 			[
@@ -309,7 +315,7 @@ class Asset_Manager_Core_Tests extends Asset_Manager_Test {
 				'loaded'      => true,
 				'load_method' => 'sync',
 				'type'        => 'script',
-				'version'     => '3.6.0',
+				'version'     => $scripts->registered['jquery']->ver ?? '',
 			],
 		];
 		$actual_assets   = \Asset_Manager_Scripts::instance()->assets;

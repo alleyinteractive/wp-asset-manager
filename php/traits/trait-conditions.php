@@ -65,7 +65,7 @@ trait Conditions {
 			return false;
 		}
 
-		// Assets already added should not be added again.
+		// Already-added assets should not be added again.
 		if ( empty( $asset['handle'] ) || in_array( $asset['handle'], $this->asset_handles, true ) ) {
 			return false;
 		}
@@ -93,7 +93,7 @@ trait Conditions {
 			$condition_include = ! is_array( $condition_include ) ? [ $condition_include ] : $condition_include;
 
 			foreach ( $condition_include as $condition_true ) {
-				if ( $conditions[ $condition_true ] ) {
+				if ( ! empty( $conditions[ $condition_true ] ) ) {
 					continue;
 				} else {
 					$condition_result = false;

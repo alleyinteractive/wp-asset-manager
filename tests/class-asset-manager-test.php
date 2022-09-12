@@ -6,27 +6,34 @@ use Asset_Manager_Scripts;
 use Asset_Manager_Styles;
 use Asset_Manager_Preload;
 use Asset_Manager_SVG_Sprite;
-use WP_UnitTestCase;
+use Mantle\Testing\Concerns\Refresh_Database;
+use Mantle\Testkit\Test_Case;
 
-abstract class Asset_Manager_Test extends WP_UnitTestCase {
+abstract class Asset_Manager_Test extends Test_Case {
+	use Refresh_Database;
 
-	public function setUp() {
-		$this->test_script     = [
-			'handle' => 'my-test-asset',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
-		];
-		$this->test_script_two = [
-			'handle' => 'test-asset-two',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
-		];
-		$this->test_style      = [
-			'handle' => 'my-test-style',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test.css',
-		];
-		$this->test_style_two  = [
-			'handle' => 'test-style-two',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
-		];
+	public $test_script = [
+		'handle' => 'my-test-asset',
+		'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
+	];
+
+	public $test_script_two = [
+		'handle' => 'test-asset-two',
+		'src'    => 'http://www.example.org/wp-content/themes/example/static/js/test-two.bundle.js',
+	];
+
+	public $test_style = [
+		'handle' => 'my-test-style',
+		'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test.css',
+	];
+
+	public $test_style_two = [
+		'handle' => 'test-style-two',
+		'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
+	];
+
+	protected function setUp(): void {
+		parent::setUp();
 
 		// Add test conditions
 		remove_all_filters( 'am_asset_conditions', 10 );
@@ -67,31 +74,10 @@ abstract class Asset_Manager_Test extends WP_UnitTestCase {
 		);
 
 		$this->reset_assets();
-		$this->add_test_user();
+		$this->acting_as( 'administrator' );
 	}
 
-	public function tearDown() {
-		$this->remove_test_user();
-	}
-
-	function add_test_user() {
-		$this->user_id = $this->factory->user->create(
-			[
-				'user_login' => 'assets-test-user',
-				'user_pass'  => 'password',
-				'user_email' => 'assets-test-user@test.com',
-				'role'       => 'administrator',
-			]
-		);
-		wp_set_current_user( $this->user_id );
-	}
-
-	function remove_test_user() {
-		$this->delete_user( $this->user_id );
-		wp_set_current_user( 0 );
-	}
-
-	function reset_assets() {
+	public function reset_assets() {
 		Asset_Manager_Scripts::instance()->assets           = [];
 		Asset_Manager_Scripts::instance()->assets_by_handle = [];
 		Asset_Manager_Scripts::instance()->asset_handles    = [];
