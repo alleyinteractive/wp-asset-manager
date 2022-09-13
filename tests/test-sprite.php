@@ -417,6 +417,34 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	}
 
 	/**
+	 * Verifies `$am_svg_allowed_tags` is formatted correctly.
+	 */
+	function test_escape_camelcase_tags_and_attributes() {
+
+		am_define_symbol(
+			[
+				'handle'    => 'without-camelcase-tags-and-attrs',
+				'src'       => 'camelcase.svg',
+				'condition' => 'global',
+			]
+		);
+
+		// Features a mix of camelCase tags and attributes.
+		$camelcase_tags_attrs = '<symbol id="am-symbol-without-camelcase-tags-and-attrs" viewBox="0 0 220 150"><rect height="100" width="100" x="0" y="0"><animate attributeName="y" attributeType="XML" dur="1s" from="0" repeatCount="5" to="50"></animate></rect><rect height="100" width="100" x="120" y="0"><animate attributeName="y" attributeType="XML" dur="1s" from="0" repeatCount="indefinite" to="50"></animate></rect><path d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z" fill="none" stroke="lightgrey"></path><circle fill="red" r="5"><animateMotion dur="10s" path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z" repeatCount="indefinite"></animateMotion></circle><clipPath id="myClip"><circle cx="40" cy="35" r="35"></circle></clipPath><use clip-path="url(#myClip)" fill="red" href="#heart"></use><defs><linearGradient gradientTransform="rotate(90)" id="myGradient"><stop offset="5%" stop-color="gold"></stop><stop offset="95%" stop-color="red"></stop></linearGradient></defs><circle cx="5" cy="5" fill="url(#myGradient)" r="4"></circle></symbol>';
+
+		$camelcase_tags_attrs_expected = sprintf(
+			$this->empty_sprite_wrapper,
+			$camelcase_tags_attrs
+		);
+
+		$this->assertEquals(
+			$camelcase_tags_attrs_expected,
+			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			'Should properly escape the SVG tags and attributes.'
+		);
+	}
+
+	/**
 	 * Test replacing a symbol.
 	 */
 	function test_replace_symbol() {

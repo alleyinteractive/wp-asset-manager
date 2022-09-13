@@ -12,6 +12,11 @@
 
 /**
  * SVG Attributes, broken out by category.
+ *
+ * From kses.php:
+ * HTML tags and attribute names are case-insensitive in HTML but must be
+ * added to the KSES allow list in lowercase. An item added to the allow list
+ * in upper or mixed case will not be recognized as permitted by KSES.
  */
 
 // Common attributes that can be specified on any SVG element.
@@ -107,7 +112,7 @@ $am_filter_primitive_attributes = [
 
 $am_transfer_function_attributes = [
 	'type'        => true,
-	'tableValues' => true,
+	'tablevalues' => true,
 	'slope'       => true,
 	'intercept'   => true,
 	'amplitude'   => true,
@@ -122,8 +127,8 @@ $am_animation_target_element_attributes = [
 ];
 
 $am_animation_attribute_target_attributes = [
-	'attributeType' => true,
-	'attributeName' => true,
+	'attributetype' => true, // @todo
+	'attributename' => true,
 ];
 
 $am_animation_timing_attributes = [
@@ -133,20 +138,20 @@ $am_animation_timing_attributes = [
 	'min'         => true,
 	'max'         => true,
 	'restart'     => true,
-	'repeatCount' => true,
-	'repeatDur'   => true,
+	'repeatcount' => true,
+	'repeatdur'   => true,
 	'fill'        => true,
 ];
 
 $am_animation_value_attributes = [
-	'calcMode'    => true,
+	'calcmode'    => true,
 	'values'      => true,
-	'keyTimes'    => true,
-	'keySplines'  => true,
+	'keytimes'    => true,
+	'keysplines'  => true,
 	'from'        => true,
 	'to'          => true,
 	'by'          => true,
-	'autoReverse' => true,
+	'autoreverse' => true,
 	'accelerate'  => true,
 	'decelerate'  => true,
 ];
@@ -158,9 +163,9 @@ $am_animation_addition_attributes = [
 
 // Additional attributes.
 $am_conditional_processing_attributes = [
-	'requiredExtensions' => true,
-	'requiredFeatures'   => true,
-	'systemLanguage'     => true,
+	'requiredextensions' => true,
+	'requiredfeatures'   => true,
+	'systemlanguage'     => true,
 ];
 
 $am_xlink_attributes = [
@@ -255,9 +260,9 @@ $am_svg_allowed_tags = [
 		$am_core_attributes,
 		$am_style_attributes,
 	),
-	'animateMotion'       => array_merge(
+	'animatemotion'       => array_merge(
 		[
-			'keyPoints' => true,
+			'keypoints' => true,
 			'path'      => true,
 			'rotate'    => true,
 		],
@@ -270,7 +275,7 @@ $am_svg_allowed_tags = [
 		$am_core_attributes,
 		$am_style_attributes,
 	),
-	'animateTransform'    => array_merge(
+	'animatetransform'    => array_merge(
 		$am_animation_addition_attributes,
 		$am_animation_attribute_target_attributes,
 		$am_animation_target_element_attributes,
@@ -284,7 +289,7 @@ $am_svg_allowed_tags = [
 		[
 			'cx'         => true,
 			'cy'         => true,
-			'pathLength' => true,
+			'pathlength' => true,
 			'r'          => true,
 		],
 		$am_aria_attributes,
@@ -293,9 +298,9 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'clipPath'            => array_merge(
+	'clippath'            => array_merge(
 		[
-			'clipPathUnits' => true,
+			'clippathunits' => true,
 		],
 		$am_conditional_processing_attributes,
 		$am_core_attributes,
@@ -324,7 +329,7 @@ $am_svg_allowed_tags = [
 		[
 			'cx'         => true,
 			'cy'         => true,
-			'pathLength' => true,
+			'pathlength' => true,
 			'rx'         => true,
 			'ry'         => true,
 		],
@@ -334,7 +339,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feBlend'             => array_merge(
+	'feblend'             => array_merge(
 		[
 			'in'   => true,
 			'in2'  => true,
@@ -345,7 +350,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feColorMatrix'       => array_merge(
+	'fecolormatrix'       => array_merge(
 		[
 			'in'     => true,
 			'type'   => true,
@@ -356,7 +361,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feComponentTransfer' => array_merge(
+	'fecomponenttransfer' => array_merge(
 		[
 			'in' => true,
 		],
@@ -365,7 +370,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feComposite'         => array_merge(
+	'fecomposite'         => array_merge(
 		[
 			'in'       => true,
 			'in2'      => true,
@@ -380,68 +385,68 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feConvolveMatrix'    => array_merge(
+	'feconvolvematrix'    => array_merge(
 		[
 			'bias'             => true,
 			'divisor'          => true,
-			'edgeMode'         => true,
+			'edgemode'         => true,
 			'in'               => true,
-			'kernelMatrix'     => true,
-			'kernelUnitLength' => true,
+			'kernelmatrix'     => true,
+			'kernelunitlength' => true,
 			'order'            => true,
-			'preserveAlpha'    => true,
-			'targetX'          => true,
-			'targetY'          => true,
+			'preservealpha'    => true,
+			'targetx'          => true,
+			'targety'          => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feDiffuseLighting'   => array_merge(
+	'fediffuselighting'   => array_merge(
 		[
-			'diffuseConstant'  => true,
+			'diffuseconstant'  => true,
 			'in'               => true,
-			'kernelUnitLength' => true,
-			'surfaceScale'     => true,
+			'kernelunitlength' => true,
+			'surfacescale'     => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feDisplacementMap'   => array_merge(
+	'fedisplacementmap'   => array_merge(
 		[
 			'in'               => true,
 			'in2'              => true,
 			'scale'            => true,
-			'xChannelSelector' => true,
-			'yChannelSelector' => true,
+			'xchannelselector' => true,
+			'ychannelselector' => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feDistantLight'      => array_merge(
+	'fedistantlight'      => array_merge(
 		[
 			'azimuth'   => true,
 			'elevation' => true,
 		],
 		$am_core_attributes,
 	),
-	'feDropShadow'        => array_merge(
+	'fedropshadow'        => array_merge(
 		[
 			'dx'           => true,
 			'dy'           => true,
-			'stdDeviation' => true,
+			'stddeviation' => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feFlood'             => array_merge(
+	'feflood'             => array_merge(
 		[
 			'flood-color'   => true,
 			'flood-opacity' => true,
@@ -451,36 +456,36 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feFuncA'             => array_merge(
+	'fefunca'             => array_merge(
 		$am_core_attributes,
 		$am_transfer_function_attributes,
 	),
-	'feFuncB'             => array_merge(
+	'fefuncb'             => array_merge(
 		$am_core_attributes,
 		$am_transfer_function_attributes,
 	),
-	'feFuncG'             => array_merge(
+	'fefuncg'             => array_merge(
 		$am_core_attributes,
 		$am_transfer_function_attributes,
 	),
-	'feFuncR'             => array_merge(
+	'fefuncr'             => array_merge(
 		$am_core_attributes,
 		$am_transfer_function_attributes,
 	),
-	'feGaussianBlur'      => array_merge(
+	'fegaussianblur'      => array_merge(
 		[
-			'edgeMode'     => true,
+			'edgemode'     => true,
 			'in'           => true,
-			'stdDeviation' => true,
+			'stddeviation' => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feImage'             => array_merge(
+	'feimage'             => array_merge(
 		[
-			'preserveAspectRatio' => true,
+			'preserveaspectratio' => true,
 		],
 		$am_animation_target_element_attributes,
 		$am_core_attributes,
@@ -489,19 +494,19 @@ $am_svg_allowed_tags = [
 		$am_style_attributes,
 		$am_xlink_attributes,
 	),
-	'feMerge'             => array_merge(
+	'femerge'             => array_merge(
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feMergeNode'         => array_merge(
+	'femergenode'         => array_merge(
 		[
 			'in' => true,
 		],
 		$am_core_attributes,
 	),
-	'feMorphology'        => array_merge(
+	'femorphology'        => array_merge(
 		[
 			'in'       => true,
 			'operator' => true,
@@ -512,7 +517,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feOffset'            => array_merge(
+	'feoffset'            => array_merge(
 		[
 			'dx' => true,
 			'dy' => true,
@@ -523,7 +528,7 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'fePointLight'        => array_merge(
+	'fepointlight'        => array_merge(
 		[
 			'x' => true,
 			'y' => true,
@@ -531,33 +536,33 @@ $am_svg_allowed_tags = [
 		],
 		$am_core_attributes,
 	),
-	'feSpecularLighting'  => array_merge(
+	'fespecularlighting'  => array_merge(
 		[
 			'in'               => true,
-			'kernelUnitLength' => true,
-			'specularConstant' => true,
-			'specularExponent' => true,
-			'surfaceScale'     => true,
+			'kernelunitlength' => true,
+			'specularconstant' => true,
+			'specularexponent' => true,
+			'surfacescale'     => true,
 		],
 		$am_core_attributes,
 		$am_filter_primitive_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feSpotLight'         => array_merge(
+	'fespotlight'         => array_merge(
 		[
-			'limitingConeAngle' => true,
-			'pointsAtX'         => true,
-			'pointsAtY'         => true,
-			'pointsAtZ'         => true,
-			'specularExponent'  => true,
+			'limitingconeangle' => true,
+			'pointsatx'         => true,
+			'pointsaty'         => true,
+			'pointsatz'         => true,
+			'specularexponent'  => true,
 			'x'                 => true,
 			'y'                 => true,
 			'z'                 => true,
 		],
 		$am_core_attributes,
 	),
-	'feTile'              => array_merge(
+	'fetile'              => array_merge(
 		[
 			'in' => true,
 		],
@@ -566,12 +571,12 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'feTurbulence'        => array_merge(
+	'feturbulence'        => array_merge(
 		[
-			'baseFrequency' => true,
-			'numOctaves'    => true,
+			'basefrequency' => true,
+			'numoctaves'    => true,
 			'seed'          => true,
-			'stitchTiles'   => true,
+			'stitchtiles'   => true,
 			'type'          => true,
 		],
 		$am_core_attributes,
@@ -581,10 +586,10 @@ $am_svg_allowed_tags = [
 	),
 	'filter'              => array_merge(
 		[
-			'filterRes'      => true,
-			'filterUnits'    => true,
+			'filterres'      => true,
+			'filterunits'    => true,
 			'height'         => true,
-			'primitiveUnits' => true,
+			'primitiveunits' => true,
 			'width'          => true,
 			'x'              => true,
 			'y'              => true,
@@ -595,7 +600,7 @@ $am_svg_allowed_tags = [
 		$am_style_attributes,
 		$am_xlink_attributes,
 	),
-	'foreignObject'       => array_merge(
+	'foreignobject'       => array_merge(
 		[
 			'height' => true,
 			'width'  => true,
@@ -617,8 +622,8 @@ $am_svg_allowed_tags = [
 	),
 	'hatch'               => array_merge(
 		[
-			'hatchContentUnits' => true,
-			'hatchUnits'        => true,
+			'hatchcontentunits' => true,
+			'hatchunits'        => true,
 			'pitch'             => true,
 			'rotate'            => true,
 			'transform'         => true,
@@ -643,7 +648,7 @@ $am_svg_allowed_tags = [
 		[
 			'crossorigin'         => true,
 			'height'              => true,
-			'preserveAspectRatio' => true,
+			'preserveaspectratio' => true,
 			'width'               => true,
 			'x'                   => true,
 			'y'                   => true,
@@ -657,7 +662,7 @@ $am_svg_allowed_tags = [
 	),
 	'line'                => array_merge(
 		[
-			'pathLength' => true,
+			'pathlength' => true,
 			'x1'         => true,
 			'x2'         => true,
 			'y1'         => true,
@@ -669,11 +674,11 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'linearGradient'      => array_merge(
+	'lineargradient'      => array_merge(
 		[
-			'gradientTransform' => true,
-			'gradientUnits'     => true,
-			'spreadMethod'      => true,
+			'gradienttransform' => true,
+			'gradientunits'     => true,
+			'spreadmethod'      => true,
 			'x1'                => true,
 			'x2'                => true,
 			'y1'                => true,
@@ -687,14 +692,14 @@ $am_svg_allowed_tags = [
 	),
 	'marker'              => array_merge(
 		[
-			'markerHeight'        => true,
-			'markerUnits'         => true,
-			'markerWidth'         => true,
+			'markerheight'        => true,
+			'markerunits'         => true,
+			'markerwidth'         => true,
 			'orient'              => true,
-			'preserveAspectRatio' => true,
-			'refX'                => true,
-			'refY'                => true,
-			'viewbox'             => true, // `viewBox` must be lowercase.
+			'preserveaspectratio' => true,
+			'refx'                => true,
+			'refy'                => true,
+			'viewbox'             => true,
 		],
 		$am_aria_attributes,
 		$am_conditional_processing_attributes,
@@ -705,8 +710,8 @@ $am_svg_allowed_tags = [
 	'mask'                => array_merge(
 		[
 			'height'           => true,
-			'maskContentUnits' => true,
-			'maskUnits'        => true,
+			'maskcontentunits' => true,
+			'maskunits'        => true,
 			'width'            => true,
 			'x'                => true,
 			'y'                => true,
@@ -718,7 +723,7 @@ $am_svg_allowed_tags = [
 	),
 	'meshgradient'        => array_merge(
 		[
-			'gradientUnits' => true,
+			'gradientunits' => true,
 			'transform'     => true,
 			'type'          => true,
 			'x'             => true,
@@ -748,7 +753,7 @@ $am_svg_allowed_tags = [
 	'path'                => array_merge(
 		[
 			'd'          => true,
-			'pathLength' => true,
+			'pathlength' => true,
 		],
 		$am_aria_attributes,
 		$am_conditional_processing_attributes,
@@ -759,11 +764,11 @@ $am_svg_allowed_tags = [
 	'pattern'             => array_merge(
 		[
 			'height'              => true,
-			'patternContentUnits' => true,
-			'patternTransform'    => true,
-			'patternUnits'        => true,
-			'preserveAspectRatio' => true,
-			'viewbox'             => true, // `viewBox` must be lowercase.
+			'patterncontentunits' => true,
+			'patterntransform'    => true,
+			'patternunits'        => true,
+			'preserveaspectratio' => true,
+			'viewbox'             => true,
 			'width'               => true,
 			'x'                   => true,
 			'y'                   => true,
@@ -777,7 +782,7 @@ $am_svg_allowed_tags = [
 	),
 	'polygon'             => array_merge(
 		[
-			'pathLength' => true,
+			'pathlength' => true,
 			'points'     => true,
 		],
 		$am_aria_attributes,
@@ -788,7 +793,7 @@ $am_svg_allowed_tags = [
 	),
 	'polyline'            => array_merge(
 		[
-			'pathLength' => true,
+			'pathlength' => true,
 			'points'     => true,
 		],
 		$am_aria_attributes,
@@ -797,17 +802,17 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'radialGradient'      => array_merge(
+	'radialgradient'      => array_merge(
 		[
 			'cx'                => true,
 			'cy'                => true,
 			'fr'                => true,
 			'fx'                => true,
 			'fy'                => true,
-			'gradientTransform' => true,
-			'gradientUnits'     => true,
+			'gradienttransform' => true,
+			'gradientunits'     => true,
 			'r'                 => true,
-			'spreadMethod'      => true,
+			'spreadmethod'      => true,
 		],
 		$am_animation_target_element_attributes,
 		$am_core_attributes,
@@ -818,7 +823,7 @@ $am_svg_allowed_tags = [
 	'rect'                => array_merge(
 		[
 			'height'     => true,
-			'pathLength' => true,
+			'pathlength' => true,
 			'rx'         => true,
 			'ry'         => true,
 			'width'      => true,
@@ -863,8 +868,8 @@ $am_svg_allowed_tags = [
 	'svg'                 => array_merge(
 		[
 			'height'              => true,
-			'preserveAspectRatio' => true,
-			'viewbox'             => true, // `viewBox` must be lowercase.
+			'preserveaspectratio' => true,
+			'viewbox'             => true,
 			'width'               => true,
 			'x'                   => true,
 			'y'                   => true,
@@ -885,10 +890,10 @@ $am_svg_allowed_tags = [
 	'symbol'              => array_merge(
 		[
 			'height'              => true,
-			'preserveAspectRatio' => true,
-			'refX'                => true,
-			'refY'                => true,
-			'viewbox'             => true, // `viewBox` must be lowercase.
+			'preserveaspectratio' => true,
+			'refx'                => true,
+			'refy'                => true,
+			'viewbox'             => true,
 			'width'               => true,
 			'x'                   => true,
 			'y'                   => true,
@@ -903,9 +908,9 @@ $am_svg_allowed_tags = [
 		[
 			'dx'           => true,
 			'dy'           => true,
-			'lengthAdjust' => true,
+			'lengthadjust' => true,
 			'rotate'       => true,
-			'textLength'   => true,
+			'textlength'   => true,
 			'x'            => true,
 			'y'            => true,
 		],
@@ -915,15 +920,15 @@ $am_svg_allowed_tags = [
 		$am_presentation_attributes,
 		$am_style_attributes,
 	),
-	'textPath'            => array_merge(
+	'textpath'            => array_merge(
 		[
-			'lengthAdjust' => true,
+			'lengthadjust' => true,
 			'method'       => true,
 			'path'         => true,
 			'side'         => true,
 			'spacing'      => true,
-			'startOffset'  => true,
-			'textLength'   => true,
+			'startoffset'  => true,
+			'textlength'   => true,
 		],
 		$am_animation_target_element_attributes,
 		$am_aria_attributes,
@@ -940,9 +945,9 @@ $am_svg_allowed_tags = [
 		[
 			'dx'           => true,
 			'dy'           => true,
-			'lengthAdjust' => true,
+			'lengthadjust' => true,
 			'rotate'       => true,
-			'textLength'   => true,
+			'textlength'   => true,
 			'x'            => true,
 			'y'            => true,
 		],
@@ -974,10 +979,10 @@ $am_svg_allowed_tags = [
 	),
 	'view'                => array_merge(
 		[
-			'preserveAspectRatio' => true,
-			'viewbox'             => true, // `viewBox` must be lowercase.
-			'viewTarget'          => true,
-			'zoomAndPan'          => true,
+			'preserveaspectratio' => true,
+			'viewbox'             => true,
+			'viewtarget'          => true,
+			'zoomandpan'          => true,
 		],
 		$am_aria_attributes,
 		$am_core_attributes,
