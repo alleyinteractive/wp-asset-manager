@@ -103,6 +103,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 				'attributes' => [
 					'id'        => 'define-symbol',
 					'data-test' => 'no-dimensions',
+					// Override global attribute
+					'focusable' => null,
 				],
 			]
 		);
@@ -124,7 +126,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should properly escape the sprite sheet.'
 		);
 
-		$basic_markup_expected = '<svg focusable="false" aria-hidden="true" id="define-symbol" data-test="no-dimensions" width="24" height="24"><use href="#am-symbol-no-dimensions"></use></svg>';
+		// Global `aria-hidden` preserved for now.
+		$basic_markup_expected = '<svg aria-hidden="true" id="define-symbol" data-test="no-dimensions" width="24" height="24"><use href="#am-symbol-no-dimensions"></use></svg>';
 
 		$this->assertEquals(
 			$basic_markup_expected,
@@ -132,7 +135,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should get the svg + use markup.'
 		);
 
-		$with_attributes_markup_expected = '<svg focusable="false" data-test="test" width="48" height="48"><use href="#am-symbol-no-dimensions"></use></svg>';
+		$with_attributes_markup_expected = '<svg data-test="test" width="48" height="48"><use href="#am-symbol-no-dimensions"></use></svg>';
 
 		$this->assertEquals(
 			$with_attributes_markup_expected,
