@@ -396,7 +396,7 @@ am_use_symbol( $handle = '', $attributes = [] );
 
 _Attributes_
 
-💡 Override global attributes, or those defined via `am_define_symbol`, by passing a new value to `am_use_symbol`; removed it entirely by passing a falsy value.
+💡 Override global attributes, or those defined via `am_define_symbol`, by passing a new value to `am_use_symbol`; remove it entirely by passing a falsy value.
 
 _SVG Sizing_ 
 
