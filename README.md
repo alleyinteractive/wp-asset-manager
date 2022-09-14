@@ -327,11 +327,11 @@ add_filter(
 
 ### Setting Global Attributes
 
-Use the `am_svg_attributes` filter to add global attributes that will apply to all symbols.
+Use the `am_global_svg_attributes` filter to add global attributes that will apply to all symbols.
 
 ```php
 add_filter(
-  'am_svg_attributes',
+  'am_global_svg_attributes',
   function() {
     return [
       'aria-hidden' => 'true',
