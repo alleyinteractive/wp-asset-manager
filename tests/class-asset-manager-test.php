@@ -67,7 +67,7 @@ abstract class Asset_Manager_Test extends Test_Case {
 
 		$this->global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
 		add_filter(
-			'am_svg_attributes',
+			'am_global_svg_attributes',
 			function( $attrs ) {
 				return array_merge( $attrs, $this->global_attributes );
 			}

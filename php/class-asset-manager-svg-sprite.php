@@ -26,7 +26,7 @@ class Asset_Manager_SVG_Sprite {
 	public static $_svg_directory; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
-	 * Array fo attributes to add to each symbol.
+	 * Array for attributes to add to each symbol.
 	 *
 	 * @var array
 	 */
@@ -110,7 +110,7 @@ class Asset_Manager_SVG_Sprite {
 			 *     @type array $attribute Attribute name-value pairs.
 			 * }
 			 */
-			static::$_global_attributes = apply_filters( 'am_svg_attributes', [] );
+			static::$_global_attributes = apply_filters( 'am_global_svg_attributes', [] );
 		}
 
 		return static::$_global_attributes;
