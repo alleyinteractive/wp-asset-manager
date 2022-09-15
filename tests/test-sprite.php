@@ -48,7 +48,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should create an empty sprite sheet.'
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -56,7 +56,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-dimensions',
 				'src'       => 'with-dimensions.svg',
@@ -64,7 +64,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'export-junk',
 				'src'       => 'export-junk.svg',
@@ -95,7 +95,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_add_asset_no_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -143,7 +143,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 				'no-dimensions',
 				[
 					'height'      => 48,
-					// Overrides attributes passed to `am_define_symbol()`.
+					// Overrides attributes passed to `am_register_symbol()`.
 					'id'          => null,
 					'data-test'   => 'test',
 					// Override global attribute
@@ -159,7 +159,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_with_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-dimensions',
 				'src'       => 'with-dimensions.svg',
@@ -241,7 +241,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_export_junk() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'export-junk',
 				'src'       => 'export-junk.svg',
@@ -272,7 +272,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_embedded_script() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'embedded-script',
 				'src'       => 'danger.svg',
@@ -297,7 +297,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_defined_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -330,7 +330,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test adding an asset with nested elements.
 	 */
 	function test_asset_with_nested_dom() {
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'nested',
 				'src'       => 'nested.svg',
@@ -361,7 +361,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_escape_non_standard_attributes() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'without-non-standard-attribute',
 				'src'       => 'non-standard-attribute.svg',
@@ -388,7 +388,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_allow_non_standard_attribute() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-non-standard-attribute',
 				'src'       => 'non-standard-attribute.svg',
@@ -424,7 +424,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_escape_camelcase_tags_and_attributes() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'without-camelcase-tags-and-attrs',
 				'src'       => 'camelcase.svg',
@@ -455,7 +455,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$with_export_junk = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'replace-test',
 				'src'       => 'with-dimensions.svg',

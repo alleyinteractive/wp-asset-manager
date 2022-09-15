@@ -140,7 +140,7 @@ endif;
 
 add_action( 'after_setup_theme', [ 'Asset_Manager_Preload', 'instance' ], 10 );
 
-if ( ! function_exists( 'am_define_symbol' ) ) :
+if ( ! function_exists( 'am_register_symbol' ) ) :
 
 	/**
 	 * Define a symbol to be added to the SVG sprite.
@@ -156,7 +156,7 @@ if ( ! function_exists( 'am_define_symbol' ) ) :
 	 * @param array  $attributes An array of attribute names and values to add to the resulting <svg>
 	 *                           everywhere it is printed.
 	 */
-	function am_define_symbol( $handle, $src = false, $condition = 'global', $attributes = [] ) {
+	function am_register_symbol( $handle, $src = false, $condition = 'global', $attributes = [] ) {
 		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Asset_Manager_SVG_Sprite::instance()->add_asset( $args );

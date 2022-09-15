@@ -252,7 +252,7 @@ Provides fine-grained control over displaying SVG assets in WordPress templates.
 
 Asset Manager will add an SVG file's contents to the sprite if:
 
-1. The symbol is registered via `am_define_symbol` with a valid file path
+1. The symbol is registered via `am_register_symbol` with a unique handle and valid file path
 2. The symbol's `condition` is truthy
 
 ```html
@@ -272,14 +272,14 @@ See [Conditions](#conditions) for more about Asset Manager's conditions and how 
 
 The sprite sheet is output via the [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/) hook, so be sure your templates have the [wp_body_open()](https://developer.wordpress.org/reference/functions/wp_body_open/) function at the top of the document's `<body>` element.
 
-### Defining Symbols
+### Registering Symbols
 
-Use the `am_define_symbol` function to add a symbol to the sprite.
+Use the `am_register_symbol` function to add a symbol to the sprite. Like `wp_register_script` and `wp_register_style`, an attempt to register an already registered symbol will be ignored.
 
 This should be added via an action that fires before [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/), such as `'init'`.
 
 ```php
-am_define_symbol(
+am_register_symbol(
   [
     'handle'    => 'logomark',
     'src'       => 'svg/logomark.svg',
@@ -360,7 +360,7 @@ add_filter(
 
 Use `am_replace_symbol` to replace a symbol already added to the sprite.
 
-This should be added via an action that fires after, or at a lower priority, than the action used for `am_define_symbol`.
+This should be added via an action that fires after, or at a lower priority, than the action used for `am_register_symbol`.
 
 ```php
 am_replace_symbol(
@@ -396,14 +396,14 @@ am_use_symbol( $handle = '', $attributes = [] );
 
 _Attributes_
 
-💡 Override global attributes, or those defined via `am_define_symbol`, by passing a new value to `am_use_symbol`; remove it entirely by passing a falsy value.
+💡 Override global attributes, or those defined via `am_register_symbol`, by passing a new value to `am_use_symbol`; remove it entirely by passing a falsy value.
 
 _SVG Sizing_ 
 
 Asset Manager will attempt to establish a default size for each SVG, which will be used to calculate the dimensions if only one, or neither, of `height` or `width` is passed to `am_use_symbol`.
 
 The default size is based on (in order):
-1. The values set in the symbol's `am_define_symbol` attributes array
+1. The values set in the symbol's `am_register_symbol` attributes array
 1. The `height` and `width` attributes from the SVG
 1. The `viewBox` attribute values
 
