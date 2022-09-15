@@ -356,21 +356,27 @@ add_filter(
 );
 ```
 
-### Replacing a Symbol
+### Removing a Symbol
 
-Use `am_replace_symbol` to replace a symbol already added to the sprite.
+Use `am_deregister_symbol` to remove a registered a symbol.
 
 This should be added via an action that fires after, or at a lower priority, than the action used for `am_register_symbol`.
 
 ```php
-am_replace_symbol(
-  [
-    'handle'    => 'logomark',
-    'src'       => 'svg/logo.svg',
-    'condition' => 'global',
-  ]
-);
+am_deregister_symbol( $handle = '' );
 ```
+
+**`$handle`**
+
+> `string`
+> 
+> The handle with which the symbol was registered.
+
+**Return**
+
+> `bool`
+>
+> Whether the symbol has been deregistered and removed from the sprite. `true` on success, or if the symbol hadn't been previously registered; `false` on failure.
 
 ### Displaying a Symbol
 

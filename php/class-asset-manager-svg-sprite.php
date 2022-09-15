@@ -403,42 +403,39 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Replace an asset with a given asset.
+	 * Remove a registered symbol.
 	 *
-	 * @param  array $asset The asset definition.
-	 * @return void
+	 * @param  array $handle The symbol handle.
+	 * @return bool Whether the symbol was removed, or wasn't registered.
 	 */
-	public function replace_symbol( $asset ): void {
-		if ( ! in_array( $asset['handle'], $this->asset_handles ) ) {
-			return;
+	public function remove_asset( $handle ): bool {
+		if ( ! in_array( $handle, $this->asset_handles ) ) {
+			// Success: Handle not previously registered.
+			return true;
 		}
 
-		// `asset_should_add` will return false if the handle is in $asset_handles.
-		$idx = array_search( $asset['handle'], $this->asset_handles, true );
+		// Remove the registered asset handle.
+		$idx = array_search( $handle, $this->asset_handles, true );
 		unset( $this->asset_handles[ $idx ] );
 
-		// Clear out the sprite_map too, since the replacement may have a different configuration.
-		unset( $this->sprite_map[ $asset['handle'] ] );
+		// Remove the entry in the sprite_map.
+		unset( $this->sprite_map[ $handle ] );
 
-		if ( ! $this->asset_should_add( $asset ) ) {
-			return;
-		}
-
-		// Get the symbol to replace from the sprite sheet.
+		// Get the registered symbol from the sprite sheet.
 		$existing_symbol = $this->sprite_document->getElementById(
-			$this->format_handle_as_symbol_id( $asset['handle'] )
+			$this->format_handle_as_symbol_id( $handle )
 		);
 
 		if ( ! ( $existing_symbol instanceof DOMElement ) ) {
-			return;
+			// Success: There's nothing to remove.
+			return true;
 		}
 
-		// Replace the symbol.
-		list( $asset, $replacement ) = $this->create_symbol( $asset );
-		$existing_symbol->parentNode->replaceChild( $replacement, $existing_symbol );
+		// Remove the symbol.
+		$symbol_was_removed = $existing_symbol->parentNode->removeChild( $existing_symbol );
 
-		$this->asset_handles[]                = $asset['handle'];
-		$this->sprite_map[ $asset['handle'] ] = $asset;
+		// `removeChild` returns the old child on success.
+		return ! empty( $symbol_was_removed );
 	}
 
 	/**

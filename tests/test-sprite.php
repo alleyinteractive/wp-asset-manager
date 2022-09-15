@@ -451,13 +451,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test replacing a symbol.
 	 */
 	function test_replace_symbol() {
-		$clean_with_dimensions = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+		$clean_with_dimensions = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
-		$with_export_junk = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+		$with_export_junk = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
 		am_register_symbol(
 			[
-				'handle'    => 'replace-test',
+				'handle'    => 'deregister-test',
 				'src'       => 'with-dimensions.svg',
 				'condition' => 'global',
 			]
@@ -474,24 +474,24 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should add the symbol to the sprite sheet.'
 		);
 
-		// Redefined with the same handle.
-		am_replace_symbol(
-			[
-				'handle'    => 'replace-test',
-				'src'       => 'export-junk.svg',
-				'condition' => 'global',
-			]
-		);
+		// Remove.
+		$symbol_was_removed = am_deregister_symbol( 'deregister-test' );
 
-		$with_replaced_symbol = sprintf(
+		$with_removed_symbol = sprintf(
 			$this->empty_sprite_wrapper,
-			$with_export_junk
+			''
 		);
 
 		$this->assertEquals(
-			$with_replaced_symbol,
+			$with_removed_symbol,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			'Should replace the existing symbol in the sprite sheet.'
+			'Should remove the symbol from the sprite sheet.'
 		);
+
+		$this->assertTrue( $symbol_was_removed );
+
+		// Returns true if the symbol hasn't been registered.
+		$symbol_not_exist = am_deregister_symbol( 'nonexistent' );
+		$this->assertTrue( $symbol_not_exist );
 	}
 }
