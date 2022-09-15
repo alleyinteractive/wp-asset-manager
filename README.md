@@ -378,6 +378,22 @@ am_deregister_symbol( $handle = '' );
 >
 > Whether the symbol has been deregistered and removed from the sprite. `true` on success, or if the symbol hadn't been previously registered; `false` on failure.
 
+#### Replacing a symbol
+
+Prior to re-registering a symbol, verify the symbol to be replaced is removed.
+
+```php
+if ( am_deregister_symbol( 'logomark' ) ) {
+  am_register_symbol(
+    [
+      'handle'    => 'logomark',
+      'src'       => 'svg/logomark-alt.svg',
+      'condition' => 'global',
+    ]
+  );
+}
+```
+
 ### Displaying a Symbol
 
 `am_use_symbol` prints an `<svg>` element with the specified attributes.
