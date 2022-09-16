@@ -419,7 +419,7 @@ class Asset_Manager_SVG_Sprite {
 	 * @param  array $handle The symbol handle.
 	 * @return bool Whether the symbol was removed, or wasn't registered.
 	 */
-	public function remove_asset( $handle ): bool {
+	public function remove_symbol( $handle ): bool {
 		if ( ! in_array( $handle, $this->asset_handles ) ) {
 			// Success: Handle not previously registered.
 			return true;

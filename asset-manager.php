@@ -172,7 +172,7 @@ if ( ! function_exists( 'am_deregister_symbol' ) ) :
 	 * @param string $handle Handle for the asset to be removed.
 	 */
 	function am_deregister_symbol( $handle = '' ) {
-		return Asset_Manager_SVG_Sprite::instance()->remove_asset( $handle );
+		return Asset_Manager_SVG_Sprite::instance()->remove_symbol( $handle );
 	}
 
 endif;
