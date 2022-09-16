@@ -107,7 +107,8 @@ class Asset_Manager_SVG_Sprite {
 			 * @param array $attributes {
 			 *     A list of attributes to be added to all SVG symbols.
 			 *
-			 *     @type array $attribute Attribute name-value pairs.
+			 *     @type array<string, string> The key represents an HTML attribute.
+			 *                                 The value represents attribute's value.
 			 * }
 			 */
 			static::$_global_attributes = apply_filters( 'am_global_svg_attributes', [] );
@@ -126,7 +127,7 @@ class Asset_Manager_SVG_Sprite {
 		$this->svg_allowed_tags = $am_svg_allowed_tags ?? [];
 
 		/**
-		 * Updates allowed inline style properties.
+		 * Ensures the sprite's `style` attribute isn't escaped.
 		 *
 		 * @param  string[] $styles Array of allowed CSS properties.
 		 * @return string[]         Modified safe inline style properties.
