@@ -354,7 +354,7 @@ add_filter(
 
 ### Update `$sprite_allowed_tags`
 
-Use the `am_sprite_allowed_tags` to filter [elements and attributes](php/svg-allowed-tags.php) used in escaping the sprite, such as certain deprecated attributes, script tags, and event handlers.
+Use the `am_sprite_allowed_tags` to filter [elements and attributes](php/kses-svg.php) used in escaping the sprite, such as certain deprecated attributes, script tags, and event handlers.
 
 ```php
 add_filter(

@@ -54,6 +54,18 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_map = [];
 
 	/**
+	 * Allowed tags and attributes for echoing <svg> and <use> elements.
+	 *
+	 * @var array
+	 */
+	public $kses_svg_allowed_tags = [
+		'svg' => [],
+		'use' => [
+			'href' => true,
+		],
+	];
+
+	/**
 	 * Constructor.
 	 */
 	private function __construct() {
@@ -121,11 +133,6 @@ class Asset_Manager_SVG_Sprite {
 	 * Perform setup tasks.
 	 */
 	public function setup() {
-		// Allowed tags and attributes for SVG.
-		include __DIR__ . '/svg-allowed-tags.php';
-
-		$this->svg_allowed_tags = $am_svg_allowed_tags ?? [];
-
 		/**
 		 * Ensures the sprite's `style` attribute isn't escaped.
 		 *
@@ -159,18 +166,21 @@ class Asset_Manager_SVG_Sprite {
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
 	public function print_sprite_sheet() {
+		// Allowed tags and attributes for SVG.
+		include __DIR__ . '/kses-svg.php';
+
 		/**
-		 * Filter function for patching in missing attributes and alements for escaping with `wp_kses`.
+		 * Filter function for patching in missing attributes and elements for escaping with `wp_kses`.
 		 *
 		 * @since 0.1.3
 		 *
 		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
-		$sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $this->svg_allowed_tags );
+		$kses_sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_kses_svg ?? [] );
 
 		echo wp_kses(
 			$this->sprite_document->C14N(),
-			$sprite_allowed_tags
+			$kses_sprite_allowed_tags
 		);
 	}
 
@@ -205,13 +215,13 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Update allowed HTML.
+	 * Update allowed SVG.
 	 *
 	 * @param array $attributes Asset attributes.
 	 */
 	public function update_svg_allowed_tags( $attributes ) {
 		foreach ( array_keys( $attributes ) as $attr ) {
-			$this->svg_allowed_tags['svg'][ $attr ] = true;
+			$this->kses_svg_allowed_tags['svg'][ $attr ] = true;
 		}
 	}
 
@@ -513,7 +523,7 @@ class Asset_Manager_SVG_Sprite {
 		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
-			echo wp_kses( $symbol_markup, $this->svg_allowed_tags );
+			echo wp_kses( $symbol_markup, $this->kses_svg_allowed_tags );
 		}
 	}
 }
