@@ -48,7 +48,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should create an empty sprite sheet.'
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -56,7 +56,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-dimensions',
 				'src'       => 'with-dimensions.svg',
@@ -64,7 +64,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'export-junk',
 				'src'       => 'export-junk.svg',
@@ -95,7 +95,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_add_asset_no_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -143,7 +143,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 				'no-dimensions',
 				[
 					'height'      => 48,
-					// Overrides attributes passed to `am_define_symbol()`.
+					// Overrides attributes passed to `am_register_symbol()`.
 					'id'          => null,
 					'data-test'   => 'test',
 					// Override global attribute
@@ -159,7 +159,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_with_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-dimensions',
 				'src'       => 'with-dimensions.svg',
@@ -194,8 +194,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'focusable',
-			\Asset_Manager_SVG_Sprite::instance()->svg_allowed_tags['svg'],
-			'Should add global attributes to $svg_allowed_tags.'
+			\Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
+			'Should add global attributes to $kses_svg_allowed_tags.'
 		);
 
 		$with_attributes_markup_expected = '<svg focusable="false" aria-hidden="true" width="48" height="48" class="am-test" data-test="test"><use href="#am-symbol-with-dimensions"></use></svg>';
@@ -215,8 +215,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'data-test',
-			\Asset_Manager_SVG_Sprite::instance()->svg_allowed_tags['svg'],
-			'Should add attributes to $svg_allowed_tags.'
+			\Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
+			'Should add attributes to $kses_svg_allowed_tags.'
 		);
 
 		$this->assertEquals(
@@ -241,7 +241,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_export_junk() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'export-junk',
 				'src'       => 'export-junk.svg',
@@ -272,7 +272,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_embedded_script() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'embedded-script',
 				'src'       => 'danger.svg',
@@ -297,7 +297,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_asset_with_defined_dimensions() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'     => 'no-dimensions',
 				'src'        => 'no-dimensions.svg',
@@ -330,7 +330,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test adding an asset with nested elements.
 	 */
 	function test_asset_with_nested_dom() {
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'nested',
 				'src'       => 'nested.svg',
@@ -361,7 +361,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_escape_non_standard_attributes() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'without-non-standard-attribute',
 				'src'       => 'non-standard-attribute.svg',
@@ -388,7 +388,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_allow_non_standard_attribute() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'with-non-standard-attribute',
 				'src'       => 'non-standard-attribute.svg',
@@ -424,7 +424,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 */
 	function test_escape_camelcase_tags_and_attributes() {
 
-		am_define_symbol(
+		am_register_symbol(
 			[
 				'handle'    => 'without-camelcase-tags-and-attrs',
 				'src'       => 'camelcase.svg',
@@ -451,13 +451,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	 * Test replacing a symbol.
 	 */
 	function test_replace_symbol() {
-		$clean_with_dimensions = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+		$clean_with_dimensions = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
-		$with_export_junk = '<symbol id="am-symbol-replace-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
+		$with_export_junk = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
-		am_define_symbol(
+		am_register_symbol(
 			[
-				'handle'    => 'replace-test',
+				'handle'    => 'deregister-test',
 				'src'       => 'with-dimensions.svg',
 				'condition' => 'global',
 			]
@@ -474,24 +474,24 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			'Should add the symbol to the sprite sheet.'
 		);
 
-		// Redefined with the same handle.
-		am_replace_symbol(
-			[
-				'handle'    => 'replace-test',
-				'src'       => 'export-junk.svg',
-				'condition' => 'global',
-			]
-		);
+		// Remove.
+		$symbol_was_removed = am_deregister_symbol( 'deregister-test' );
 
-		$with_replaced_symbol = sprintf(
+		$with_removed_symbol = sprintf(
 			$this->empty_sprite_wrapper,
-			$with_export_junk
+			''
 		);
 
 		$this->assertEquals(
-			$with_replaced_symbol,
+			$with_removed_symbol,
 			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			'Should replace the existing symbol in the sprite sheet.'
+			'Should remove the symbol from the sprite sheet.'
 		);
+
+		$this->assertTrue( $symbol_was_removed );
+
+		// Returns true if the symbol hasn't been registered.
+		$symbol_not_exist = am_deregister_symbol( 'nonexistent' );
+		$this->assertTrue( $symbol_not_exist );
 	}
 }

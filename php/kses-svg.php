@@ -240,7 +240,7 @@ $am_aria_attributes = [
  * SVG allowed tags and attributes.
  * Some elements accept specific attributes in addition to the categories of attributes.
  */
-$am_svg_allowed_tags = [
+$am_kses_svg = [
 	'a'                   => array_merge(
 		$am_animation_target_element_attributes,
 		$am_aria_attributes,

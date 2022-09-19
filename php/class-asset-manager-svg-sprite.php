@@ -54,6 +54,18 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_map = [];
 
 	/**
+	 * Allowed tags and attributes for echoing <svg> and <use> elements.
+	 *
+	 * @var array
+	 */
+	public $kses_svg_allowed_tags = [
+		'svg' => [],
+		'use' => [
+			'href' => true,
+		],
+	];
+
+	/**
 	 * Constructor.
 	 */
 	private function __construct() {
@@ -107,7 +119,8 @@ class Asset_Manager_SVG_Sprite {
 			 * @param array $attributes {
 			 *     A list of attributes to be added to all SVG symbols.
 			 *
-			 *     @type array $attribute Attribute name-value pairs.
+			 *     @type array<string, string> The key represents an HTML attribute.
+			 *                                 The value represents attribute's value.
 			 * }
 			 */
 			static::$_global_attributes = apply_filters( 'am_global_svg_attributes', [] );
@@ -120,13 +133,8 @@ class Asset_Manager_SVG_Sprite {
 	 * Perform setup tasks.
 	 */
 	public function setup() {
-		// Allowed tags and attributes for SVG.
-		include __DIR__ . '/svg-allowed-tags.php';
-
-		$this->svg_allowed_tags = $am_svg_allowed_tags ?? [];
-
 		/**
-		 * Updates allowed inline style properties.
+		 * Ensures the sprite's `style` attribute isn't escaped.
 		 *
 		 * @param  string[] $styles Array of allowed CSS properties.
 		 * @return string[]         Modified safe inline style properties.
@@ -158,18 +166,21 @@ class Asset_Manager_SVG_Sprite {
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
 	public function print_sprite_sheet() {
+		// Allowed tags and attributes for SVG.
+		include __DIR__ . '/kses-svg.php';
+
 		/**
-		 * Filter function for patching in missing attributes and alements for escaping with `wp_kses`.
+		 * Filter function for patching in missing attributes and elements for escaping with `wp_kses`.
 		 *
 		 * @since 0.1.3
 		 *
 		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
-		$sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $this->svg_allowed_tags );
+		$kses_sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_kses_svg ?? [] );
 
 		echo wp_kses(
 			$this->sprite_document->C14N(),
-			$sprite_allowed_tags
+			$kses_sprite_allowed_tags
 		);
 	}
 
@@ -204,13 +215,13 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Update allowed HTML.
+	 * Update allowed SVG.
 	 *
 	 * @param array $attributes Asset attributes.
 	 */
 	public function update_svg_allowed_tags( $attributes ) {
 		foreach ( array_keys( $attributes ) as $attr ) {
-			$this->svg_allowed_tags['svg'][ $attr ] = true;
+			$this->kses_svg_allowed_tags['svg'][ $attr ] = true;
 		}
 	}
 
@@ -403,42 +414,39 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
-	 * Replace an asset with a given asset.
+	 * Remove a registered symbol.
 	 *
-	 * @param  array $asset The asset definition.
-	 * @return void
+	 * @param  array $handle The symbol handle.
+	 * @return bool Whether the symbol was removed, or wasn't registered.
 	 */
-	public function replace_symbol( $asset ): void {
-		if ( ! in_array( $asset['handle'], $this->asset_handles ) ) {
-			return;
+	public function remove_symbol( $handle ): bool {
+		if ( ! in_array( $handle, $this->asset_handles ) ) {
+			// Success: Handle not previously registered.
+			return true;
 		}
 
-		// `asset_should_add` will return false if the handle is in $asset_handles.
-		$idx = array_search( $asset['handle'], $this->asset_handles, true );
+		// Remove the registered asset handle.
+		$idx = array_search( $handle, $this->asset_handles, true );
 		unset( $this->asset_handles[ $idx ] );
 
-		// Clear out the sprite_map too, since the replacement may have a different configuration.
-		unset( $this->sprite_map[ $asset['handle'] ] );
+		// Remove the entry in the sprite_map.
+		unset( $this->sprite_map[ $handle ] );
 
-		if ( ! $this->asset_should_add( $asset ) ) {
-			return;
-		}
-
-		// Get the symbol to replace from the sprite sheet.
+		// Get the registered symbol from the sprite sheet.
 		$existing_symbol = $this->sprite_document->getElementById(
-			$this->format_handle_as_symbol_id( $asset['handle'] )
+			$this->format_handle_as_symbol_id( $handle )
 		);
 
 		if ( ! ( $existing_symbol instanceof DOMElement ) ) {
-			return;
+			// Success: There's nothing to remove.
+			return true;
 		}
 
-		// Replace the symbol.
-		list( $asset, $replacement ) = $this->create_symbol( $asset );
-		$existing_symbol->parentNode->replaceChild( $replacement, $existing_symbol );
+		// Remove the symbol.
+		$symbol_was_removed = $existing_symbol->parentNode->removeChild( $existing_symbol );
 
-		$this->asset_handles[]                = $asset['handle'];
-		$this->sprite_map[ $asset['handle'] ] = $asset;
+		// `removeChild` returns the old child on success.
+		return ! empty( $symbol_was_removed );
 	}
 
 	/**
@@ -515,7 +523,7 @@ class Asset_Manager_SVG_Sprite {
 		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
-			echo wp_kses( $symbol_markup, $this->svg_allowed_tags );
+			echo wp_kses( $symbol_markup, $this->kses_svg_allowed_tags );
 		}
 	}
 }
