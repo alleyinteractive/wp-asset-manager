@@ -96,7 +96,7 @@ class Asset_Manager_SVG_Sprite {
 			 * Filter function for updating the directory upon which a symbol's relative
 			 * path will be based.
 			 *
-			 * @since 0.1.3
+			 * @since 1.1.0
 			 *
 			 * @param string $path The absolute root for relative SVG paths.
 			 */
@@ -114,7 +114,7 @@ class Asset_Manager_SVG_Sprite {
 			/**
 			 * Filter function for configuring attributes to be added to all SVG symbols.
 			 *
-			 * @since 0.1.3
+			 * @since 1.1.0
 			 *
 			 * @param array $attributes {
 			 *     A list of attributes to be added to all SVG symbols.
@@ -172,7 +172,7 @@ class Asset_Manager_SVG_Sprite {
 		/**
 		 * Filter function for patching in missing attributes and elements for escaping with `wp_kses`.
 		 *
-		 * @since 0.1.3
+		 * @since 1.1.0
 		 *
 		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
