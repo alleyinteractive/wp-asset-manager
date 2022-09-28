@@ -5,6 +5,7 @@ namespace Asset_Manager_Tests;
 use Asset_Manager_Scripts;
 use Asset_Manager_Styles;
 use Asset_Manager_Preload;
+use Asset_Manager_SVG_Sprite;
 use Mantle\Testing\Concerns\Refresh_Database;
 use Mantle\Testkit\Test_Case;
 
@@ -56,6 +57,22 @@ abstract class Asset_Manager_Test extends Test_Case {
 			}
 		);
 
+		$this->svg_directory = dirname( __FILE__ ) . '/mocks/';
+		add_filter(
+			'am_modify_svg_directory',
+			function() {
+				return $this->svg_directory;
+			}
+		);
+
+		$this->global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
+		add_filter(
+			'am_global_svg_attributes',
+			function( $attrs ) {
+				return array_merge( $attrs, $this->global_attributes );
+			}
+		);
+
 		$this->reset_assets();
 		$this->acting_as( 'administrator' );
 	}
@@ -71,6 +88,22 @@ abstract class Asset_Manager_Test extends Test_Case {
 		Asset_Manager_Preload::instance()->assets           = [];
 		Asset_Manager_Preload::instance()->assets_by_handle = [];
 		Asset_Manager_Preload::instance()->asset_handles    = [];
+
+		Asset_Manager_SVG_Sprite::instance()->asset_handles       = [];
+		Asset_Manager_SVG_Sprite::instance()->sprite_map          = [];
+		Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html = [
+			'svg' => [
+				'height' => true,
+				'width'  => true,
+				'class'  => true,
+			],
+			'use' => [
+				'href' => true,
+			],
+		];
+		Asset_Manager_SVG_Sprite::instance()->global_attributes   = [];
+		Asset_Manager_SVG_Sprite::$_svg_directory                 = null;
+		Asset_Manager_SVG_Sprite::instance()->create_sprite_sheet();
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );

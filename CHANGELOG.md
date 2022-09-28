@@ -1,6 +1,31 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0
+
+Adds support for registering SVG assets to be added to a template's sprite sheet, with methods for displaying those assets
+
+## 1.0.0
+
+Stable release 🎊
+
+No large changes since [v0.1.3](https://github.com/alleyinteractive/wp-asset-manager/releases/tag/0.1.3) other than switching the unit tests over to Mantle Teskit
+
+## 0.1.3
+
+**Added**
+
+* `am_inline_stylesheet` filter for inline stylesheets
+
+## 0.1.2
+
+**Added**
+
+* GPL License
+* Caching for `am_asset_conditions`
+* Composer Autoloader
+* GitHub Actions CI
+
 ## 0.1.1
 
 **Added**

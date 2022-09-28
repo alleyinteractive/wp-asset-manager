@@ -11,6 +11,18 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
   * [Enqueue Options](#enqueue-options)
 * [Preload Function](#preload-function)
   * [Preload Options](#preload-options)
+* [SVG Sprite](#svg-sprite)
+  * [Setup](#setup)
+    * [Admin pages](#admin-pages)
+  * [Defining Symbols](#registering-symbols)
+  * [Changing the Directory](#changing-the-svg-directory)
+  * [Setting Global Attributes](#setting-global-attributes)
+  * [Update `$sprite_allowed_tags`](#update-sprite_allowed_tags)
+  * [Removing a Symbol](#removing-a-symbol)
+    * [Replacing a Symbol](#replacing-a-symbol)
+  * [Displaying a Symbol](#displaying-a-symbol)
+    * [Notes on SVG sizing](#notes-on-svg-sizing)
+  * [Getting a Symbol](#getting-a-symbol)
 * [Requirements](#requirements)
 * [Downloads and Versioning](#downloads-and-versioning)
 * [Contributing to Development](#contributing-to-development)
@@ -78,17 +90,23 @@ The `condition` parameter determines under which condition(s) the asset should l
 
 **`include`**
 
-`string|array` Requires that all conditions be truthy in order for the asset to load.
+> `string|array`
+> 
+> Requires that all conditions be truthy in order for the asset to load.
 
 The `include` property is implied if the `condition` parameter is a string or array of strings; otherwise the `condition` parameter must contain the `include` property.
 
 **`include_any`**
 
-`string|array` Allows for _any_ condition to be truthy, instead of requiring that all conditions be.
+> `string|array`
+> 
+> Allows for _any_ condition to be truthy, instead of requiring that all conditions be.
 
 **`exclude`**
 
-`string|array` Requires that all conditions be falsey in order for the asset to load. This is skipped if neither `include` nor `include_any` are truthy.
+> `string|array`
+> 
+> Requires that all conditions be falsey in order for the asset to load. This is skipped if neither `include` nor `include_any` are truthy.
 
 #### Custom Conditions
 
@@ -222,22 +240,256 @@ This function will also automatically add the `crossorigin` attribute for fonts,
 
 ### Preload Options
 
-| Name          | Description                                                        | Default     |
-|:--------------|:-------------------------------------------------------------------|:-----------:|
-| `handle`      | The handle for the asset ❗️                                        |             |
-| `src`         | The URI for the asset ❗️                                           |             |
-| `condition`   | The condition for which this asset should load                     | `'global'`  |
-| `version`     | The asset version                                                  | `'1.0.0'`   |
-| `as`          | The `as` attribute's value ([info][preload-types]) ❗️              |             |
-| `mime_type`   | The `type` attribute's value ([info][mime-types])  ❗️              |             |
-| `media`       | The media attribute value used to conditionally preload the asset  | `'all'`     |
+| Name          | Description                                                        | Required    | Default     |
+|:--------------|:-------------------------------------------------------------------|:-----------:|:-----------:|
+| `handle`      | The handle for the asset                                           | •           |             |
+| `src`         | The URI for the asset                                              | •           |             |
+| `condition`   | The condition for which this asset should load                     |             | `'global'`  |
+| `version`     | The asset version                                                  |             | `'1.0.0'`   |
+| `as`          | The `as` attribute's value ([info][preload-types])                 | •           |             |
+| `mime_type`   | The `type` attribute's value ([info][mime-types])                  | •           |             |
+| `media`       | The media attribute value used to conditionally preload the asset  |             | `'all'`     |
 
-❗️ Required
+## SVG Sprite
+
+Allows for fine-grained control over SVG assets in WordPress templates by creating a sprite of registered symbols and providing helper functions for displaying them.
+
+Asset Manager will add an SVG file's contents to the sprite if:
+
+1. The symbol is registered via `am_register_symbol` with a unique handle and valid file path
+2. The symbol's `condition` is truthy
+
+See [Conditions](#conditions) for more about Asset Manager's conditions and how to update them.
+
+### Setup
+
+The sprite is printed via the [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/) hook, so be sure your templates have the [wp_body_open()](https://developer.wordpress.org/reference/functions/wp_body_open/) function at the top of the document's `<body>` element.
+
+#### Admin pages
+
+Prints the sprite to admin pages via the `in_admin_header` hook, which is the most similar admin hook to `wp_body_open`. Symbols registered with condition(s) not matching admin pages will not be added to the sprite.
+
+```php
+/**
+ * Add SVG symbols to the admin page content.
+ */
+function print_admin_sprite() {
+  if ( class_exists( 'Asset_Manager_SVG_Sprite' ) ) {
+    Asset_Manager_SVG_Sprite::instance()->print_sprite_sheet();
+  }
+}
+add_action( 'in_admin_header', 'print_admin_sprite' );
+```
+
+### Registering Symbols
+
+Use the `am_register_symbol` function to add a symbol to the sprite. Like `wp_register_script` and `wp_register_style`, an attempt to re-register a symbol with an existing handle will be ignored.
+
+**Symbols should be registered via an action that fires before [`wp_body_open`](https://developer.wordpress.org/reference/hooks/wp_body_open/).**
+
+```php
+am_register_symbol(
+  [
+    'handle'    => 'logomark',
+    'src'       => 'svg/logomark.svg',
+    'condition' => 'global',
+  ]
+);
+```
+
+Options can be passed in as an array or individual parameters.
+
+**`$handle`**
+
+> `string`
+>
+> Handle for the asset. Should be unique.
+
+**`$src`** 
+
+> `string`
+>
+> Absolute path to the SVG file, or a relative path based on the current theme root. Use the `am_modify_svg_directory` filter to update the directory from which relative paths will be completed.
+
+**`$condition`** 
+
+> `string|array`
+>
+> Loading condition(s) that, when matched, will allow the asset to be added to the sprite.
+
+**`$attributes`** 
+
+> `array`
+>
+> An array of HTML attribute names and values to add to the resulting `<svg>` everywhere it is rendered.
+
+### Changing the SVG directory
+
+Use the `am_modify_svg_directory` filter to update the directory from which relative paths will be completed.
+
+**Default**: The current theme root.
+
+```php
+add_filter(
+  'am_modify_svg_directory',
+  function( $theme_root ) {
+    return $theme_root . '/svg/';
+  }
+);
+```
+
+### Setting Global Attributes
+
+Use the `am_global_svg_attributes` filter to add global attributes that will apply to all symbols.
+
+**Default**: `[]`
+
+```php
+add_filter(
+  'am_global_svg_attributes',
+  function() {
+    return [
+      'aria-hidden' => 'true',
+      'focusable'   => 'false',
+    ];
+  }
+);
+```
+
+### Update `$sprite_allowed_tags`
+
+Use the `am_sprite_allowed_tags` to filter [elements and attributes](php/kses-svg.php) used in escaping the sprite, such as certain deprecated attributes, script tags, and event handlers.
+
+```php
+add_filter(
+  'am_sprite_allowed_tags',
+  function( $sprite_allowed_tags ) {
+    $sprite_allowed_tags['path']['onclick'] = true;
+
+    return $sprite_allowed_tags;
+  }
+);
+```
+
+### Removing a Symbol
+
+Use `am_deregister_symbol` to remove a registered a symbol.
+
+This should be added via an action that fires after, or at a lower priority, than the action used for `am_register_symbol`.
+
+```php
+am_deregister_symbol( $handle = '' );
+```
+
+**`$handle`**
+
+> `string`
+> 
+> The handle with which the symbol was registered.
+
+**Return**
+
+> `bool`
+>
+> Whether the symbol has been deregistered and removed from the sprite. `true` on success, or if the symbol hadn't been previously registered; `false` on failure.
+
+#### Replacing a symbol
+
+Prior to re-registering a symbol, verify the symbol to be replaced is not registered.
+
+```php
+if ( am_deregister_symbol( 'logomark' ) ) {
+  am_register_symbol(
+    [
+      'handle'    => 'logomark',
+      'src'       => 'svg/logomark-alt.svg',
+      'condition' => 'global',
+    ]
+  );
+}
+```
+
+### Displaying a Symbol
+
+`am_use_symbol` prints an `<svg>` element with the specified attributes.
+
+```php
+am_use_symbol( $handle = '', $attributes = [] );
+```
+
+**`$handle`**
+
+> `string`
+> 
+> The handle with which the symbol was registered.
+
+**`$attributes`**
+
+> `array` 
+> 
+> An array of attribute-value pairs to add to the resulting SVG markup.
+> 
+> Override global attributes, or those defined via `am_register_symbol`, by declaring a new value here; remove it entirely by passing a falsy value.
+
+#### Notes on SVG sizing
+
+Asset Manager will attempt to establish a default size for each SVG, which will be used to calculate the dimensions if only one, or neither, of `height` or `width` is passed to `am_use_symbol`.
+
+The default size is based on (in order):
+1. The values set in the symbol's `am_register_symbol` attributes array
+1. The `height` and `width` attributes from the SVG
+1. The `viewBox` attribute values
+
+If Asset Manager cannot determine a symbol's dimensions, both `height` _and_ `width` will need to be declared in the `attributes` array passed to `am_use_symbol`.
+
+**The simplest way to ensure SVGs are sized as expected is to verify each file's `<svg>` element either has both `height` and `width` attributes or a viewBox attribute.**
+
+_**Example**_:
+
+```php
+am_use_symbol(
+  'logomark',
+  [
+    'width' => 200,
+    'class' => 'header-logo',
+  ]
+);
+```
+
+_**Output**_:
+
+```html
+<svg width="200" height="27.67" class="header-logo" aria-hidden="true" focusable="false">
+  <use href="#am-symbol-logomark"></use>
+</svg>
+```
+
+### Getting a Symbol
+
+`am_get_symbol` returns a string containing the `<svg>` element with the specified attributes.
+
+```php
+$symbol_markup = am_get_symbol( $handle = '', $attributes = [] );
+```
+
+This function uses the same arguments as `am_use_symbol`.
+
+_**Example**_:
+
+```php
+$logomark_svg_markup = am_get_symbol(
+  'logomark',
+  [
+    'width' => 200,
+    'class' => 'header-logo',
+  ]
+);
+```
 
 ## Requirements
 
-* WordPress: 4.7+
-* PHP: 7.0+
+* WordPress: 5.2.0+
+* PHP: 7.4+
 
 ## Downloads and Versioning.
 

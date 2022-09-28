@@ -11,6 +11,7 @@
  * Asset manager class.
  */
 abstract class Asset_Manager {
+	use Conditions, Asset_Error;
 
 	/**
 	 * Array of assets to insert
@@ -150,13 +151,6 @@ abstract class Asset_Manager {
 			'load_assets'     => 15,
 		],
 	];
-
-	/**
-	 * Storage of the asset conditions.
-	 *
-	 * @var array
-	 */
-	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Default print function throws error (and prints nothing)
@@ -474,121 +468,6 @@ abstract class Asset_Manager {
 	}
 
 	/**
-	 * Determine if an asset should be added (enqueued) or not.
-	 *
-	 * @param string $asset Type of asset.
-	 * @return bool|WP_Error
-	 */
-	public function asset_should_add( $asset ) {
-		/**
-		 * Filter function for preventing an asset from loading, regardless of conditions
-		 *
-		 * @since  0.0.1
-		 *
-		 * @param bool  $add_asset Whether or not to forcefully prevent asset from loading
-		 * @param array $asset     Asset to prevent from loading
-		 */
-		if ( ! apply_filters( 'am_asset_should_add', true, $asset ) ) {
-			return false;
-		}
-
-		// Already-added assets should not be added again.
-		if ( empty( $asset['handle'] ) || in_array( $asset['handle'], $this->asset_handles, true ) ) {
-			return false;
-		}
-
-		// If there's no condition, asset should load.
-		if ( empty( $asset['condition'] ) ) {
-			return true;
-		}
-
-		$conditions       = static::get_conditions();
-		$condition_result = true;
-
-		// Default functionality of condition is 'include'.
-		if ( ! empty( $asset['condition']['include'] ) ) {
-			$condition_include = $asset['condition']['include'];
-		} elseif ( ! empty( $asset['condition']['include_any'] ) ) {
-			$condition_include_any = $asset['condition']['include_any'];
-		} elseif ( empty( $asset['condition']['exclude'] ) ) {
-			$condition_include = $asset['condition'];
-		}
-
-		// Check 'include' conditions (all must be true for asset to load)
-		// There might only be an 'exclude' condition, so check empty() first.
-		if ( ! empty( $condition_include ) ) {
-			$condition_include = ! is_array( $condition_include ) ? [ $condition_include ] : $condition_include;
-
-			foreach ( $condition_include as $condition_true ) {
-				if ( ! empty( $conditions[ $condition_true ] ) ) {
-					continue;
-				} else {
-					$condition_result = false;
-					break;
-				}
-			}
-		}
-
-		// Check for 'include_any' to allow for matching of _any_ condition instead of all conditions.
-		if ( ! empty( $condition_include_any ) ) {
-			$condition_result      = false;
-			$condition_include_any = ! is_array( $condition_include_any ) ? [ $condition_include_any ] : $condition_include_any;
-
-			foreach ( $condition_include_any as $condition_true ) {
-				if ( $conditions[ $condition_true ] ) {
-					$condition_result = true;
-				}
-			}
-		}
-
-		// Check 'exclude' conditions (all must be false for asset to load)
-		// Verify $condition_result is true. If it's already false, we don't need to check excludes.
-		if ( ! empty( $asset['condition']['exclude'] ) && $condition_result ) {
-			$condition_exclude = ! is_array( $asset['condition']['exclude'] ) ? [ $asset['condition']['exclude'] ] : $asset['condition']['exclude'];
-
-			foreach ( $condition_exclude as $condition_false ) {
-				if ( ! $conditions[ $condition_false ] ) {
-					continue;
-				} else {
-					$condition_result = false;
-					break;
-				}
-			}
-		}
-
-		return $condition_result;
-	}
-
-	/**
-	 * Get the available conditions for loading assets.
-	 */
-	public static function get_conditions() {
-		if ( ! isset( static::$_conditions ) || ( defined( 'WP_IRVING_TEST' ) && WP_IRVING_TEST ) ) {
-			/**
-			 * Filter function for getting available conditions to check for whether or not a given asset should load
-			 *
-			 * @since  0.0.1
-			 *
-			 * @param array $conditions {
-			 *     List of available conditions
-			 *
-			 *     @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
-			 * }
-			 */
-			static::$_conditions = apply_filters(
-				'am_asset_conditions',
-				[
-					'global' => true,
-					'single' => is_single(),
-					'search' => is_search(),
-				]
-			);
-		}
-
-		return static::$_conditions;
-	}
-
-	/**
 	 * Verify an asset should load in the current load cycle
 	 *
 	 * This function primarily checks to see if the $load_hook matches the currently active WordPress hook.
@@ -613,81 +492,5 @@ abstract class Asset_Manager {
 		$asset_loaded = ! empty( $asset['loaded'] ) ? $asset['loaded'] : false;
 
 		return $dom_position_matches && $has_src && ! $asset_loaded;
-	}
-
-	/**
-	 * Generate and echo a WP_Error based on a provided error code
-	 *
-	 * @param array        $code  Error code.
-	 * @param array        $asset Offending asset.
-	 * @param array|string $info  Additional information about a dependency or dependent.
-	 */
-	public function generate_asset_error( $code, $asset, $info = false ) {
-		// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
-		switch ( $code ) {
-			case 'circular_dependency':
-				$message = sprintf( __( 'You have a circular dependency in your enqueues. <strong>%1$s</strong> and <strong>%2$s</strong> require each other as dependencies.', 'am' ), $asset['handle'], $info );
-				break;
-
-			case 'invalid_load_hook':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong> is using an invalid load_hook. The asset is configured to load on hook <strong>%2$s</strong>, but this hook does not exist.', 'am' ), $asset['handle'], $asset['load_hook'] );
-				break;
-
-			case 'unsafe_load_hook':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong>, configured to load on hook <strong>%2$s</strong>, is loading after an asset that depends on it: <strong>%3$s</strong>, configured to load on hook <strong>%4$s</strong>', 'am' ), $asset['handle'], $asset['load_hook'], $info['handle'], $info['load_hook'] );
-				break;
-
-			case 'missing':
-				$message = sprintf( __( 'A dependency you listed for this asset is invalid. <strong>%1$s</strong> lists <strong>%2$s</strong> as a dependency, but that asset is not configured to load on this page.', 'am' ), $asset['handle'], $info );
-				break;
-
-			case 'cannot_print':
-				$message = sprintf( __( 'Asset of type <strong>%1$s</strong> does not exist or does not have a print_asset() function configured.', 'am' ), $asset['type'] );
-				break;
-
-			case 'invalid_enqueue_function':
-				$message = sprintf( __( 'You attempted to enqueue an asset with function %1$s, which does not exist.', 'am' ), $info );
-				break;
-
-			case 'unsafe_load_method':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong> uses the <strong>%2$s</strong> load method, meaning there is no guarantee it will be available for its dependent asset <strong>%3$s</strong>, using <strong>%4$s</strong> load method.', 'am' ), $asset['handle'], $asset['load_method'], $info['handle'], $info['load_method'] );
-				break;
-
-			case 'unsafe_inline':
-				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'am' ), $asset['src'] );
-				break;
-
-			case 'invalid_preload_as_attribute':
-				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'] );
-				break;
-
-			default:
-				$message = sprintf( __( 'Something went wrong when enqueueing <strong>%s</strong>.', 'am' ), $asset['handle'] );
-				break;
-		}
-		// phpcs:enable
-
-		$this->format_error( new WP_Error( $code, $message, $asset ) );
-	}
-
-	/**
-	 * Display an error to the user
-	 *
-	 * @param WP_Error $error Error to display to user.
-	 */
-	public function format_error( $error ) {
-		if ( current_user_can( 'manage_options' ) ) {
-			$code = $error->get_error_code();
-			echo wp_kses(
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-				'<div class="enqueue-error"><strong>ENQUEUE ERROR</strong>: <em>' . $code . '</em> - ' . $error->get_error_message( $code ) . ' Bad asset: <br><pre>' . print_r( $error->get_error_data( $code ), true ) . '</pre></div>',
-				[
-					'div'    => [ 'class' ],
-					'strong' => [],
-					'em'     => [],
-					'pre'    => [],
-				]
-			);
-		}
 	}
 }
