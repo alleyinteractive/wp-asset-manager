@@ -435,7 +435,7 @@ abstract class Asset_Manager {
 	 * @return void
 	 */
 	public function add_core_asset( $handle, $load_method = 'sync' ) {
-		if ( ! is_string ( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
+		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
 			return;
 		}
 
