@@ -435,10 +435,14 @@ abstract class Asset_Manager {
 	 * @return void
 	 */
 	public function add_core_asset( $handle, $load_method = 'sync' ) {
-		global ${$this->core_assets_global};
-		$core_assets_ref    = ${$this->core_assets_global}->registered;
-		$in_footer          = isset( ${$this->core_assets_global}->in_footer ) ? ${$this->core_assets_global}->in_footer : [];
-		$core_asset_handles = array_keys( ${$this->core_assets_global}->registered );
+		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
+			return;
+		}
+
+		$core_assets        = $GLOBALS[ $this->core_assets_global ] ?? [];
+		$core_assets_ref    = $core_assets->registered ?? [];
+		$in_footer          = $core_assets->in_footer ?? [];
+		$core_asset_handles = array_keys( $core_assets_ref );
 
 		/*
 		 * Add assets that are wp_enqueued_* for custom enqueues,
