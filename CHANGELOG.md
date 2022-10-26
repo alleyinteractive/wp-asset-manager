@@ -1,7 +1,7 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.0
+## 1.1.1
 
 Adds support for registering SVG assets to be added to a template's sprite sheet, with methods for displaying those assets
 
