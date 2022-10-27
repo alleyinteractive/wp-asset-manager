@@ -1,6 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.2
+
+* Updates the requirements on `mantle-framework/testkit` to permit the latest version (#36)
+* Addresses PHP 8 compatibility issue with the global usage in `Asset_Manager::add_core_asset()` (#37)
+* Fixes a bug where `get_svg()` returns false for local files on WP VIP environments (#39)
+
 ## 1.1.1
 
 Adds support for registering SVG assets to be added to a template's sprite sheet, with methods for displaying those assets
