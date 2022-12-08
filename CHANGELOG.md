@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Next
+
+* Fixes a bug where `print_asset()` fails for local files on WP VIP environments (#40)
+
 ## 1.1.2
 
 * Updates the requirements on `mantle-framework/testkit` to permit the latest version (#36)
