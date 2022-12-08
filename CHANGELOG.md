@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Next
+
+* Adds `am_symbol_is_registered` for determining if a symbol is registered (#41)
+
 ## 1.1.2
 
 * Updates the requirements on `mantle-framework/testkit` to permit the latest version (#36)
