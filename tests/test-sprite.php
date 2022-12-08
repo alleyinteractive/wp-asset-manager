@@ -72,6 +72,10 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 			]
 		);
 
+		$this->assertTrue( am_symbol_is_registered( 'no-dimensions' ) );
+		$this->assertTrue( am_symbol_is_registered( 'with-dimensions' ) );
+		$this->assertTrue( am_symbol_is_registered( 'export-junk' ) );
+
 		$add_assets_expected = sprintf(
 			$this->empty_sprite_wrapper,
 			$this->clean_no_dimensions . $this->clean_with_dimensions . $this->with_export_junk
@@ -489,6 +493,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 		);
 
 		$this->assertTrue( $symbol_was_removed );
+		$this->assertFalse( am_symbol_is_registered( 'deregister-test' ) );
 
 		// Returns true if the symbol hasn't been registered.
 		$symbol_not_exist = am_deregister_symbol( 'nonexistent' );
