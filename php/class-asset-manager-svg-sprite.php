@@ -146,6 +146,8 @@ class Asset_Manager_SVG_Sprite {
 				return $styles;
 			}
 		);
+
+		add_filter( 'wp_kses_allowed_html', [ $this, 'extend_kses_post_with_use_svg' ] );
 	}
 
 	/**
@@ -448,6 +450,17 @@ class Asset_Manager_SVG_Sprite {
 	}
 
 	/**
+	 * Filter allowed HTML to allow svg & use tags and attributes.
+	 *
+	 * @param array $allowed Allowed tags, attributes, and/or entities.
+	 * @return array filtered tags.
+	 */
+	public function extend_kses_post_with_use_svg( $allowed ) {
+		$use_svg_tags = $this->kses_svg_allowed_tags;
+		return array_merge_recursive( $allowed, $use_svg_tags );
+	}
+
+	/**
 	 * Returns the SVG markup for displaying a symbol.
 	 *
 	 * @param  string $handle The symbol handle.
@@ -521,7 +534,7 @@ class Asset_Manager_SVG_Sprite {
 		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
-			echo wp_kses( $symbol_markup, $this->kses_svg_allowed_tags );
+			echo wp_kses_post( $symbol_markup );
 		}
 	}
 }
