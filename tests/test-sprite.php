@@ -141,20 +141,28 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$with_attributes_markup_expected = '<svg data-test="test" width="48" height="48"><use href="#am-symbol-no-dimensions"></use></svg>';
 
+		$with_attributes_markup_actual = am_get_symbol(
+			'no-dimensions',
+			[
+				'height'      => 48,
+				// Overrides attributes passed to `am_register_symbol()`.
+				'id'          => null,
+				'data-test'   => 'test',
+				// Override global attribute
+				'aria-hidden' => false,
+			]
+		);
+
 		$this->assertEquals(
 			$with_attributes_markup_expected,
-			am_get_symbol(
-				'no-dimensions',
-				[
-					'height'      => 48,
-					// Overrides attributes passed to `am_register_symbol()`.
-					'id'          => null,
-					'data-test'   => 'test',
-					// Override global attribute
-					'aria-hidden' => false,
-				]
-			),
+			$with_attributes_markup_actual,
 			'Should get the svg + use markup, with calculated height, global attributes, and additional attributes.'
+		);
+
+		$this->assertEquals(
+			$with_attributes_markup_expected,
+			wp_kses_post( $with_attributes_markup_actual ),
+			'Should properly escape the svg + use markup and attributes.'
 		);
 	}
 
@@ -322,11 +330,18 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 		);
 
 		$with_height_expected = '<svg focusable="false" aria-hidden="true" width="12" height="12"><use href="#am-symbol-no-dimensions"></use></svg>';
+		$with_height_actual   = am_get_symbol( 'no-dimensions', [ 'height' => '12' ] );
 
 		$this->assertEquals(
 			$with_height_expected,
-			am_get_symbol( 'no-dimensions', [ 'height' => '12' ] ),
+			$with_height_actual,
 			'Should get the svg + use markup with the dimensions calculated from defined dimensions.'
+		);
+
+		$this->assertEquals(
+			$with_height_expected,
+			wp_kses_post( $with_height_actual ),
+			'Should properly escape the svg + use markup.'
 		);
 	}
 
