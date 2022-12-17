@@ -205,4 +205,22 @@ if ( ! function_exists( 'am_use_symbol' ) ) :
 
 endif;
 
+if ( ! function_exists( 'am_symbol_is_registered' ) ) :
+
+	/**
+	 * Returns true if a symbol is registered.
+	 *
+	 * @param  string $handle The registered SVG asset handle.
+	 * @return bool           Whether the symbol is registered.
+	 */
+	function am_symbol_is_registered( $handle ) {
+		if ( empty( $handle ) ) {
+			return false;
+		}
+
+		return in_array( $handle, Asset_Manager_SVG_Sprite::instance()->asset_handles, true );
+	}
+
+endif;
+
 add_action( 'after_setup_theme', [ 'Asset_Manager_SVG_Sprite', 'instance' ], 10 );
