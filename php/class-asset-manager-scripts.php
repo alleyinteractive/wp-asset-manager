@@ -188,9 +188,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 						wp_json_encode( $script['src'] )
 					);
 				} elseif ( 0 === validate_file( $script['src'] ) && file_exists( $script['src'] ) ) {
-					$file_contents = function_exists( 'wpcom_vip_file_get_contents' )
-						? wpcom_vip_file_get_contents( $script['src'] )
-						: file_get_contents( $script['src'] ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+					$file_contents = file_get_contents( $script['src'] ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 					printf(
 						'<script class="%1$s" type="text/javascript">%2$s</script>',
