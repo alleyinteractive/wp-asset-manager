@@ -1,11 +1,19 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Next
+## 1.2.0
 
-* Fixes a bug where `print_asset()` fails for local files on WP VIP environments (#40)
-* Adds `am_symbol_is_registered` for determining if a symbol is registered (#41)
-* Filters allowed svg+use tags & attributes globally (#43)
+**Added**
+
+* `am_symbol_is_registered` for determining if a symbol is registered (#41)
+
+**Changed**
+
+* Filters kses allowed svg+use tags & attributes (#43)
+
+**Fixed**
+
+* `print_asset()` no longer fails for local files on WP VIP environments (#40)
 
 ## 1.1.2
 

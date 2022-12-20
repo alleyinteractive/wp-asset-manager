@@ -14,8 +14,9 @@ Asset Manager is a toolkit for managing front-end assets and more tightly contro
 * [SVG Sprite](#svg-sprite)
   * [Setup](#setup)
     * [Admin pages](#admin-pages)
-  * [Defining Symbols](#registering-symbols)
-  * [Changing the Directory](#changing-the-svg-directory)
+  * [Registering Symbols](#registering-symbols)
+  * [Verifying a symbol is registered](#verifying-a-symbol-is-registered)
+  * [Changing the SVG Directory](#changing-the-svg-directory)
   * [Setting Global Attributes](#setting-global-attributes)
   * [Update `$sprite_allowed_tags`](#update-sprite_allowed_tags)
   * [Removing a Symbol](#removing-a-symbol)
@@ -322,6 +323,24 @@ Options can be passed in as an array or individual parameters.
 > `array`
 >
 > An array of HTML attribute names and values to add to the resulting `<svg>` everywhere it is rendered.
+
+### Verifying a symbol is registered
+
+```php
+am_symbol_is_registered( $handle = '' );
+```
+
+**`$handle`**
+
+> `string`
+> 
+> The handle with which the symbol should be registered.
+
+**Return**
+
+> `bool`
+>
+> Whether the symbol has been registered.
 
 ### Changing the SVG directory
 
