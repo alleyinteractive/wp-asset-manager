@@ -1,6 +1,51 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0
+
+**Added**
+
+* `am_symbol_is_registered` for determining if a symbol is registered (#41)
+
+**Changed**
+
+* Filters kses allowed svg+use tags & attributes (#43)
+
+**Fixed**
+
+* `print_asset()` no longer fails for local files on WP VIP environments (#40)
+
+## 1.1.2
+
+* Updates the requirements on `mantle-framework/testkit` to permit the latest version (#36)
+* Addresses PHP 8 compatibility issue with the global usage in `Asset_Manager::add_core_asset()` (#37)
+* Fixes a bug where `get_svg()` returns false for local files on WP VIP environments (#39)
+
+## 1.1.1
+
+Adds support for registering SVG assets to be added to a template's sprite sheet, with methods for displaying those assets
+
+## 1.0.0
+
+Stable release 🎊
+
+No large changes since [v0.1.3](https://github.com/alleyinteractive/wp-asset-manager/releases/tag/0.1.3) other than switching the unit tests over to Mantle Teskit
+
+## 0.1.3
+
+**Added**
+
+* `am_inline_stylesheet` filter for inline stylesheets
+
+## 0.1.2
+
+**Added**
+
+* GPL License
+* Caching for `am_asset_conditions`
+* Composer Autoloader
+* GitHub Actions CI
+
 ## 0.1.1
 
 **Added**
