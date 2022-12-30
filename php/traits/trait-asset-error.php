@@ -70,7 +70,16 @@ trait Asset_Error {
 	 * @param WP_Error $error Error to display to user.
 	 */
 	public function format_error( $error ) {
-		if ( current_user_can( 'manage_options' ) ) {
+		$show_error = current_user_can( 'manage_options' );
+
+		/**
+		 * Filter whether to show errors to the user.
+		 *
+		 * @param $show_error bool     Whether to show errors to the user.
+		 * @param $error      WP_Error The error to display to the user.
+		 */
+		$show_error = apply_filters( 'am_show_enqueue_error', $show_error, $error );
+		if ( $show_error ) {
 			$code = $error->get_error_code();
 			echo wp_kses(
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
