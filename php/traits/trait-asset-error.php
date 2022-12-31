@@ -70,7 +70,7 @@ trait Asset_Error {
 	 * @param WP_Error $error Error to display to user.
 	 */
 	public function format_error( $error ) {
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'am_view_asset_error', $error ) ) {
 			$code = $error->get_error_code();
 			echo wp_kses(
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
