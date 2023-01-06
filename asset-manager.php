@@ -224,3 +224,25 @@ if ( ! function_exists( 'am_symbol_is_registered' ) ) :
 endif;
 
 add_action( 'after_setup_theme', [ 'Asset_Manager_SVG_Sprite', 'instance' ], 10 );
+
+if ( ! function_exists( 'am_map_meta_caps' ) ) :
+
+	/**
+	 * Map plugin meta capabilities.
+	 *
+	 * @param string[] $caps Primitive capabilities required of the user.
+	 * @param string   $cap  Capability being checked.
+	 * @return string[] Updated primitive capabilities.
+	 */
+	function am_map_meta_caps( $caps, $cap ) {
+		// By default, require the 'manage_options' capability to view asset errors.
+		if ( 'am_view_asset_error' === $cap ) {
+			$caps = [ 'manage_options' ];
+		}
+
+		return $caps;
+	}
+
+endif;
+
+add_filter( 'map_meta_cap', 'am_map_meta_caps', 10, 2 );
