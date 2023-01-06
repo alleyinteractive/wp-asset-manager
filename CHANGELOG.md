@@ -1,6 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.0
+
+**Changed**
+
+* Use `am_view_asset_error` meta capability -- mapped to `manage_options` by default -- to determine whether to display errors messages related to asset enqueuing.
+
 ## 1.2.0
 
 **Added**
