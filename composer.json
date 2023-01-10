@@ -10,7 +10,7 @@
     ],
     "require-dev": {
         "alleyinteractive/alley-coding-standards": "^1.0",
-        "mantle-framework/testkit": "^0.7",
+        "mantle-framework/testkit": "^0.10",
         "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {
