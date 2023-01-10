@@ -193,7 +193,12 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * @return array        The $asset.
 	 */
 	public function set_asset_types( $asset ) {
-		$path_parts  = pathinfo( $asset['src'] );
+		$path_parts = pathinfo( $asset['src'] );
+
+		if ( empty( $path_parts['extension'] ) ) {
+			return $asset;
+		}
+
 		$asset_types = $this->asset_types[ $path_parts['extension'] ] ?? [];
 
 		if ( ! empty( $asset_types ) ) {
@@ -204,4 +209,3 @@ class Asset_Manager_Preload extends Asset_Manager {
 		return $asset;
 	}
 }
-
