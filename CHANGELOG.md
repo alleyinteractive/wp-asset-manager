@@ -1,6 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.1
+
+* Check for array key before using when preloading assets (#47).
+* Upgrades to `mantle-framework/testkit` v0.10.1 (#47).
+
 ## 1.3.0
 
 **Changed**

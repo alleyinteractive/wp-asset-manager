@@ -1,16 +1,18 @@
 {
     "name": "alleyinteractive/wp-asset-manager",
+    "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
+    "keywords": ["wordpress", "wordpress-plugin"],
     "license": "GPL-2.0-only",
     "type": "wordpress-plugin",
     "authors": [
         {
             "name": "Alley Interactive",
-            "email": "hello@alley.co"
+            "email": "info@alley.com"
         }
     ],
     "require-dev": {
         "alleyinteractive/alley-coding-standards": "^1.0",
-        "mantle-framework/testkit": "^0.7",
+        "mantle-framework/testkit": "^0.10",
         "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {

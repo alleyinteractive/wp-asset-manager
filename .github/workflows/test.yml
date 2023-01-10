@@ -1,83 +1,23 @@
 name: Unit Tests
 
 on:
-  pull_request:
   push:
     branches:
+      - develop
       - production
-      - release/*
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
-  tests:
-    runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    continue-on-error: ${{ matrix.can_fail }}
+  php-tests:
     strategy:
-      fail-fast: true
       matrix:
-        php: [7.4, 8.0]
-        wp_version: ["latest"]
-        can_fail: [false]
-
-    name: ${{ matrix.php }} @ ${{ matrix.wp_version }}
-
-    env:
-      CACHEDIR: /tmp/test-cache
-      WP_CORE_DIR: /tmp/wordpress
-      WP_VERSION: ${{ matrix.wp_version }}
-      WP_DB_HOST: 127.0.0.1
-      WP_DB_USER: root
-      WP_DB_PASSWORD: '""'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Set up caching
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-composer-dependencies
-        with:
-          path: |
-            ${{ steps.composer-cache.outputs.dir }}
-            /tmp/test-cache
-          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.php }}-composer-
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
-          tools: composer:v2
-          coverage: none
-
-      - name: Install dependencies
-        uses: nick-invision/retry@v2
-        with:
-          timeout_minutes: 5
-          max_attempts: 5
-          command: composer install
-
-      - name: Run Unit Tests
-        shell: bash
-        run: |
-          composer run phpunit
-          WP_MULTISITE=1 composer run phpunit
-
-      - name: Run phpcs
-        shell: bash
-        run: composer run phpcs
+        php: [8.0]
+        wordpress: ["latest"]
+        multisite: [true, false]
+    uses: alleyinteractive/.github/.github/workflows/php-tests.yml@main
+    with:
+      php: ${{ matrix.php }}
+      wordpress: ${{ matrix.wordpress }}
+      multisite: ${{ matrix.multisite }}
