@@ -867,6 +867,7 @@ $am_kses_svg = [
 	),
 	'svg'                 => array_merge(
 		[
+			'focusable'           => true,
 			'height'              => true,
 			'preserveaspectratio' => true,
 			'viewbox'             => true,

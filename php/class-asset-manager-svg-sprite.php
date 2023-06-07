@@ -142,7 +142,10 @@ class Asset_Manager_SVG_Sprite {
 		add_filter(
 			'safe_style_css',
 			function( $styles ) {
-				$styles[] = 'display';
+				$styles[] = 'left';
+				$styles[] = 'overflow';
+				$styles[] = 'position';
+				$styles[] = 'visibility';
 				return $styles;
 			}
 		);
@@ -157,7 +160,14 @@ class Asset_Manager_SVG_Sprite {
 		$this->sprite_document = new DOMDocument();
 
 		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
-		$this->svg_root->setAttribute( 'style', 'display:none' );
+
+		$this->svg_root->setAttribute( 'style', 'left:-9999px;overflow:hidden;position:absolute;visibility:hidden' );
+
+		$this->svg_root->setAttribute( 'focusable', 'false' );
+		$this->svg_root->setAttribute( 'height', '0' );
+		$this->svg_root->setAttribute( 'role', 'none' );
+		$this->svg_root->setAttribute( 'viewBox', '0 0 0 0' );
+		$this->svg_root->setAttribute( 'width', '0' );
 
 		$this->sprite_document->appendChild( $this->svg_root );
 
