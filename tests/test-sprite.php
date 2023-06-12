@@ -4,7 +4,7 @@ namespace Asset_Manager_Tests;
 
 class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
-	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">%s</svg>';
+	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" height="0" role="none" style="left:-9999px;overflow:hidden;position:absolute;visibility:hidden" viewBox="0 0 0 0" width="0">%s</svg>';
 
 	/**
 	 * Note: These aren't stright copies of SVG contents; they have been modified
