@@ -1,6 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.3
+
+* Removes `visibility:hidden` SVG sprite style declaration, which breaks some SVG element references (#50)
+* Upgrades to `mantle-framework/testkit` v0.11.1 (#50)
+
 ## 1.3.2
 
 **Changed**
