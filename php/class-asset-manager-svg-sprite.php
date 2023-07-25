@@ -145,7 +145,6 @@ class Asset_Manager_SVG_Sprite {
 				$styles[] = 'left';
 				$styles[] = 'overflow';
 				$styles[] = 'position';
-				$styles[] = 'visibility';
 				return $styles;
 			}
 		);
@@ -161,7 +160,7 @@ class Asset_Manager_SVG_Sprite {
 
 		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 
-		$this->svg_root->setAttribute( 'style', 'left:-9999px;overflow:hidden;position:absolute;visibility:hidden' );
+		$this->svg_root->setAttribute( 'style', 'left:-9999px;overflow:hidden;position:absolute' );
 
 		$this->svg_root->setAttribute( 'focusable', 'false' );
 		$this->svg_root->setAttribute( 'height', '0' );
