@@ -40,6 +40,13 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_document;
 
 	/**
+	 * The sprite document.
+	 *
+	 * @var DOMElement
+	 */
+	public $svg_root;
+
+	/**
 	 * Reference array of asset handles.
 	 *
 	 * @var array
