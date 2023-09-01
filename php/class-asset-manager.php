@@ -35,6 +35,13 @@ abstract class Asset_Manager {
 	public $assets_by_handle = [];
 
 	/**
+	 * Boolean to define whether or not to ignore errors when enqueueing assets
+	 *
+	 * @var bool
+	 */
+	public $be_quiet = false;
+
+	/**
 	 * Reference to default assets in WP core
 	 *
 	 * @var array
@@ -207,7 +214,7 @@ abstract class Asset_Manager {
 		 *
 		 * @param bool $ignore_errors Whether or not to ignore errors
 		 */
-		$this->be_quiet = apply_filters( 'am_ignore_asset_errors', false );
+		$this->be_quiet = (bool) apply_filters( 'am_ignore_asset_errors', false );
 
 		if ( ! empty( $this->asset_type ) ) {
 			$this->wp_enqueue_function = 'wp_enqueue_' . $this->asset_type;

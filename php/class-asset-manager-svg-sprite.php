@@ -40,6 +40,13 @@ class Asset_Manager_SVG_Sprite {
 	public $sprite_document;
 
 	/**
+	 * The sprite document.
+	 *
+	 * @var DOMElement
+	 */
+	public $svg_root;
+
+	/**
 	 * Reference array of asset handles.
 	 *
 	 * @var array
@@ -59,7 +66,10 @@ class Asset_Manager_SVG_Sprite {
 	 * @var array
 	 */
 	public $kses_svg_allowed_tags = [
-		'svg' => [],
+		'svg' => [
+			'focusable'   => true,
+			'aria-hidden' => true,
+		],
 		'use' => [
 			'href' => true,
 		],
@@ -111,22 +121,22 @@ class Asset_Manager_SVG_Sprite {
 	 */
 	public function get_global_attributes() {
 		if ( ! isset( static::$_global_attributes ) ) {
-			/**
-			 * Filter function for configuring attributes to be added to all SVG symbols.
-			 *
-			 * @since 1.1.0
-			 *
-			 * @param array $attributes {
-			 *     A list of attributes to be added to all SVG symbols.
-			 *
-			 *     @type array<string, string> The key represents an HTML attribute.
-			 *                                 The value represents attribute's value.
-			 * }
-			 */
-			static::$_global_attributes = apply_filters( 'am_global_svg_attributes', [] );
+			static::$_global_attributes = [];
 		}
 
-		return static::$_global_attributes;
+		/**
+		 * Filter function for configuring attributes to be added to all SVG symbols.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array $attributes {
+		 *     A list of attributes to be added to all SVG symbols.
+		 *
+		 *     @type array<string, string> The key represents an HTML attribute.
+		 *                                 The value represents attribute's value.
+		 * }
+		 */
+		return apply_filters( 'am_global_svg_attributes', static::$_global_attributes );
 	}
 
 	/**
