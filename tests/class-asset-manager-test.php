@@ -32,6 +32,9 @@ abstract class Asset_Manager_Test extends Test_Case {
 		'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
 	];
 
+	public $global_attributes;
+	public $svg_directory;
+
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -91,18 +94,17 @@ abstract class Asset_Manager_Test extends Test_Case {
 
 		Asset_Manager_SVG_Sprite::instance()->asset_handles       = [];
 		Asset_Manager_SVG_Sprite::instance()->sprite_map          = [];
-		Asset_Manager_SVG_Sprite::instance()->symbol_allowed_html = [
+		Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags = [
 			'svg' => [
-				'height' => true,
-				'width'  => true,
-				'class'  => true,
+				'focusable'   => true,
+				'aria-hidden' => true,
 			],
 			'use' => [
 				'href' => true,
 			],
 		];
-		Asset_Manager_SVG_Sprite::instance()->global_attributes   = [];
-		Asset_Manager_SVG_Sprite::$_svg_directory                 = null;
+		Asset_Manager_SVG_Sprite::$_global_attributes = null;
+		Asset_Manager_SVG_Sprite::$_svg_directory     = null;
 		Asset_Manager_SVG_Sprite::instance()->create_sprite_sheet();
 
 		wp_deregister_script( 'my-test-asset' );
