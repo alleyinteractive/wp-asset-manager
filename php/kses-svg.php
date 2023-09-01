@@ -27,6 +27,7 @@ $am_core_attributes = [
 	'xml:base'  => true,
 	'xml:lang'  => true,
 	'xml:space' => true,
+	'xml:xlink' => true,
 ];
 
 // Attributes that can be specified on any SVG element to apply CSS styling effects.
@@ -311,6 +312,7 @@ $am_kses_svg = [
 		$am_core_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
+		$am_xmlns_attributes,
 	),
 	'desc'                => array_merge(
 		$am_core_attributes,
@@ -619,6 +621,7 @@ $am_kses_svg = [
 		$am_core_attributes,
 		$am_presentation_attributes,
 		$am_style_attributes,
+		$am_xmlns_attributes,
 	),
 	'hatch'               => array_merge(
 		[
