@@ -361,8 +361,8 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 		 * In PHP 8.2 the def and g tags have xmlns:xlink attributes, while in PHP 8.0 they do not. This address that issue.
 		 * Further, in PHP 8.0 the symbol tag has the xmlns:xlink attribute, while in PHP 8.2 that has been removed.
 		 */
-		$def_g_attribute               = ( version_compare(phpversion(), '8.2.0', '<') ? '' : ' xmlns:xlink="http://www.w3.org/1999/xlink"' );
-		$symbol_attribute              = ( version_compare(phpversion(), '8.2.0', '>') ? '' : ' xmlns:xlink="http://www.w3.org/1999/xlink"' );
+		$def_g_attribute               = ( version_compare(phpversion(), '8.1.0', '<') ? '' : ' xmlns:xlink="http://www.w3.org/1999/xlink"' );
+		$symbol_attribute              = ( version_compare(phpversion(), '8.1.0', '>') ? '' : ' xmlns:xlink="http://www.w3.org/1999/xlink"' );
 		$nested_dom                    = sprintf( $this->nested_dom, $def_g_attribute, $symbol_attribute );
 		$with_embedded_script_expected = sprintf( $this->empty_sprite_wrapper, $nested_dom );
 
