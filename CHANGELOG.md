@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.5
+
+* Removes default kses allowed SVG attributes
+
 ## 1.3.4
 
 * Fix PHP 8.2 deprecations.

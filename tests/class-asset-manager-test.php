@@ -95,10 +95,7 @@ abstract class Asset_Manager_Test extends Test_Case {
 		Asset_Manager_SVG_Sprite::instance()->asset_handles       = [];
 		Asset_Manager_SVG_Sprite::instance()->sprite_map          = [];
 		Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags = [
-			'svg' => [
-				'focusable'   => true,
-				'aria-hidden' => true,
-			],
+			'svg' => [],
 			'use' => [
 				'href' => true,
 			],
