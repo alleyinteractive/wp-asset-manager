@@ -66,10 +66,7 @@ class Asset_Manager_SVG_Sprite {
 	 * @var array
 	 */
 	public $kses_svg_allowed_tags = [
-		'svg' => [
-			'focusable'   => true,
-			'aria-hidden' => true,
-		],
+		'svg' => [],
 		'use' => [
 			'href' => true,
 		],
