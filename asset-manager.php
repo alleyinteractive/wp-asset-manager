@@ -10,7 +10,7 @@ Plugin Name: Asset Manager
 Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
 Description: Add more robust functionality to enqueuing static assets
 Author: Alley Interactive
-Version: 1.3.3
+Version: 1.3.6
 License: GPLv2 or later
 Author URI: https://www.alleyinteractive.com/
 */
@@ -19,6 +19,19 @@ Author URI: https://www.alleyinteractive.com/
  * Filesystem path to AssetManager.
  */
 defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', dirname( __FILE__ ) );
+
+if ( ! function_exists( 'am_validate_path' ) ) {
+	/**
+	 * Helper function to validate a path before doing something with it.
+	 *
+	 * @param string $path The path to validate.
+	 *
+	 * @return bool True if the path is valid, false otherwise.
+	 */
+	function am_validate_path( string $path ) : bool {
+		return in_array( validate_file( $path ), [ 0, 2 ], true ) && file_exists( $path );
+	}
+}
 
 if ( ! class_exists( 'Asset_Manager' ) ) :
 	/**

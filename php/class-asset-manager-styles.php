@@ -81,7 +81,7 @@ class Asset_Manager_Styles extends Asset_Manager {
 		if ( ! empty( $stylesheet['src'] ) && ! in_array( $stylesheet['load_method'], $this->wp_enqueue_methods, true ) ) {
 			if ( 'inline' === $stylesheet['load_method'] ) {
 				// Validate inline styles.
-				if ( 0 === validate_file( $stylesheet['src'] ) && file_exists( $stylesheet['src'] ) ) {
+				if ( am_validate_path( $stylesheet['src'] ) ) {
 					printf(
 						'<style class="%1$s" type="text/css">%2$s</style>',
 						esc_attr( implode( ' ', $classes ) ),

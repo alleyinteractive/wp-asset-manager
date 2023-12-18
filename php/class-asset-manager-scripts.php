@@ -187,7 +187,7 @@ class Asset_Manager_Scripts extends Asset_Manager {
 						esc_js( $script['handle'] ),
 						wp_json_encode( $script['src'] )
 					);
-				} elseif ( 0 === validate_file( $script['src'] ) && file_exists( $script['src'] ) ) {
+				} elseif ( am_validate_path( $script['src'] ) ) {
 					$file_contents = file_get_contents( $script['src'] ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 					printf(
