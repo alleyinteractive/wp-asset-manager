@@ -266,7 +266,7 @@ class Asset_Manager_SVG_Sprite {
 			return '';
 		}
 
-		if ( file_exists( $path ) && 0 === validate_file( $path ) ) {
+		if ( am_validate_path( $path ) ) {
 			$file_contents = file_get_contents( $path ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 			if ( ! empty( $file_contents ) ) {

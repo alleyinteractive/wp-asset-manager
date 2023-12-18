@@ -1,3 +1,4 @@
+.idea
 .vscode
 tests/php/build
 tests/php/wp-unit-test

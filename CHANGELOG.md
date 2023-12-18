@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.6
+
+* Adds support for running the plugin on a Windows hosting environment (#57)
+
 ## 1.3.5
 
 * Removes default kses allowed SVG attributes
