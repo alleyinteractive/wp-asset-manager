@@ -30,13 +30,14 @@
 			<property name="prefixes" type="array">
 				<element value="am_"/>
 				<element value="Asset_Manager"/>
+				<element value="Alley\WP\"/>
 			</property>
 		</properties>
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidVariableName">
 		<properties>
-			<property name="customPropertiesWhitelist" type="array">
+			<property name="allowed_custom_properties" type="array">
 				<element value="childNodes"/>
 				<element value="nodeName"/>
 				<element value="parentNode"/>

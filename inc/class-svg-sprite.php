@@ -80,7 +80,7 @@ class SVG_Sprite {
 		 */
 		add_filter(
 			'safe_style_css',
-			function( $styles ) {
+			function ( $styles ) {
 				$styles[] = 'left';
 				$styles[] = 'overflow';
 				$styles[] = 'position';

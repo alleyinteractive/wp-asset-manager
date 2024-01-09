@@ -2,6 +2,8 @@
 /**
  * Asset Manager Base Plugin File.
  *
+ * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+ *
  * @package AssetManager
  */
 
@@ -15,10 +17,12 @@ License: GPLv2 or later
 Author URI: https://www.alleyinteractive.com/
 */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Filesystem path to AssetManager.
  */
-defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', dirname( __FILE__ ) );
+defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', __DIR__ );
 
 if ( ! function_exists( 'am_validate_path' ) ) {
 	/**
@@ -28,27 +32,16 @@ if ( ! function_exists( 'am_validate_path' ) ) {
 	 *
 	 * @return bool True if the path is valid, false otherwise.
 	 */
-	function am_validate_path( string $path ) : bool {
+	function am_validate_path( string $path ): bool {
 		return in_array( validate_file( $path ), [ 0, 2 ], true ) && file_exists( $path );
 	}
 }
 
-if ( ! class_exists( 'Asset_Manager' ) ) :
-	/**
-	 * Load traits.
-	 */
-	require_once AM_BASE_DIR . '/php/traits/trait-conditions.php';
-	require_once AM_BASE_DIR . '/php/traits/trait-asset-error.php';
-
-	/**
-	 * Load base classes
-	 */
-	require_once AM_BASE_DIR . '/php/class-asset-manager.php';
-	require_once AM_BASE_DIR . '/php/class-asset-manager-scripts.php';
-	require_once AM_BASE_DIR . '/php/class-asset-manager-styles.php';
-	require_once AM_BASE_DIR . '/php/class-asset-manager-preload.php';
-	require_once AM_BASE_DIR . '/php/class-asset-manager-svg-sprite.php';
-endif;
+// Setup the aliases to the legacy Asset Manager classes.
+class_alias( 'Asset_Manager_Scripts', Scripts::class );
+class_alias( 'Asset_Manager_Styles', Styles::class );
+class_alias( 'Asset_Manager_Preload', Preload::class );
+class_alias( 'Asset_Manager_SVG_Sprite', SVG_Sprite::class );
 
 if ( ! function_exists( 'am_enqueue_script' ) ) :
 
