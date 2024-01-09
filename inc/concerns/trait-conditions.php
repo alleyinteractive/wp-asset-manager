@@ -5,6 +5,8 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager\Concerns;
+
 /**
  * Trait for getting and evalutaing asset conditions.
  */

@@ -5,18 +5,12 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager_Scripts
  */
-class Asset_Manager_Scripts extends Asset_Manager {
-
-	/**
-	 * Holds references to the singleton instances.
-	 *
-	 * @var array
-	 */
-	private static $instance;
-
+class Scripts extends Asset_Manager {
 	/**
 	 * Scripts loaded via async or defer
 	 *
@@ -62,23 +56,10 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	/**
 	 * Constructor.
 	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
-	}
+	protected function __construct() {
+		parent::__construct();
 
-	/**
-	 * Get an instance of the class.
-	 *
-	 * @return Asset_Manager_Scripts
-	 */
-	public static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			self::$instance = new static();
-			self::$instance->add_hooks();
-			self::$instance->manage_async();
-			self::$instance->set_defaults();
-		}
-		return self::$instance;
+		$this->manage_async();
 	}
 
 	/**

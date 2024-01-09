@@ -5,18 +5,14 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager_SVG_Sprite class.
  */
-class Asset_Manager_SVG_Sprite {
-	use Conditions;
-
-	/**
-	 * Holds references to the singleton instances.
-	 *
-	 * @var array
-	 */
-	private static $instance;
+class SVG_Sprite {
+	use Concerns\Singleton;
+	use Concerns\Conditions;
 
 	/**
 	 * Directory from which relative paths will be completed.
@@ -75,23 +71,26 @@ class Asset_Manager_SVG_Sprite {
 	/**
 	 * Constructor.
 	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
-	}
+	protected function __construct() {
+		/**
+		 * Ensures the sprite's `style` attribute isn't escaped.
+		 *
+		 * @param  string[] $styles Array of allowed CSS properties.
+		 * @return string[]         Modified safe inline style properties.
+		 */
+		add_filter(
+			'safe_style_css',
+			function( $styles ) {
+				$styles[] = 'left';
+				$styles[] = 'overflow';
+				$styles[] = 'position';
+				return $styles;
+			}
+		);
 
-	/**
-	 * Get an instance of the class.
-	 *
-	 * @return Asset_Manager_SVG_Sprite
-	 */
-	public static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			self::$instance = new static();
-			self::$instance->setup();
-			self::$instance->create_sprite_sheet();
-		}
+		add_filter( 'wp_kses_allowed_html', [ $this, 'extend_kses_post_with_use_svg' ] );
 
-		return self::$instance;
+		$this->create_sprite_sheet();
 	}
 
 	/**
@@ -134,29 +133,6 @@ class Asset_Manager_SVG_Sprite {
 		 * }
 		 */
 		return apply_filters( 'am_global_svg_attributes', static::$_global_attributes );
-	}
-
-	/**
-	 * Perform setup tasks.
-	 */
-	public function setup() {
-		/**
-		 * Ensures the sprite's `style` attribute isn't escaped.
-		 *
-		 * @param  string[] $styles Array of allowed CSS properties.
-		 * @return string[]         Modified safe inline style properties.
-		 */
-		add_filter(
-			'safe_style_css',
-			function( $styles ) {
-				$styles[] = 'left';
-				$styles[] = 'overflow';
-				$styles[] = 'position';
-				return $styles;
-			}
-		);
-
-		add_filter( 'wp_kses_allowed_html', [ $this, 'extend_kses_post_with_use_svg' ] );
 	}
 
 	/**
