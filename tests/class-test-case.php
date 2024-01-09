@@ -1,15 +1,14 @@
 <?php
 
-namespace Asset_Manager_Tests;
+namespace Alley\WP\Asset_Manager\Tests;
 
-use Asset_Manager_Scripts;
-use Asset_Manager_Styles;
-use Asset_Manager_Preload;
-use Asset_Manager_SVG_Sprite;
+use Alley\WP\Asset_Manager\Scripts;
+use Alley\WP\Asset_Manager\Styles;
+use Alley\WP\Asset_Manager\Preload;
+use Alley\WP\Asset_Manager\SVG_Sprite;
 use Mantle\Testing\Concerns\Refresh_Database;
-use Mantle\Testkit\Test_Case;
 
-abstract class Asset_Manager_Test extends Test_Case {
+abstract class Test_Case extends \Mantle\Testkit\Test_Case {
 	use Refresh_Database;
 
 	public $test_script = [
@@ -81,28 +80,28 @@ abstract class Asset_Manager_Test extends Test_Case {
 	}
 
 	public function reset_assets() {
-		Asset_Manager_Scripts::instance()->assets           = [];
-		Asset_Manager_Scripts::instance()->assets_by_handle = [];
-		Asset_Manager_Scripts::instance()->asset_handles    = [];
-		Asset_Manager_Styles::instance()->assets            = [];
-		Asset_Manager_Styles::instance()->assets_by_handle  = [];
-		Asset_Manager_Styles::instance()->asset_handles     = [];
-		Asset_Manager_Styles::instance()->loadcss_added     = false;
-		Asset_Manager_Preload::instance()->assets           = [];
-		Asset_Manager_Preload::instance()->assets_by_handle = [];
-		Asset_Manager_Preload::instance()->asset_handles    = [];
+		Scripts::instance()->assets           = [];
+		Scripts::instance()->assets_by_handle = [];
+		Scripts::instance()->asset_handles    = [];
+		Styles::instance()->assets            = [];
+		Styles::instance()->assets_by_handle  = [];
+		Styles::instance()->asset_handles     = [];
+		Styles::instance()->loadcss_added     = false;
+		Preload::instance()->assets           = [];
+		Preload::instance()->assets_by_handle = [];
+		Preload::instance()->asset_handles    = [];
 
-		Asset_Manager_SVG_Sprite::instance()->asset_handles       = [];
-		Asset_Manager_SVG_Sprite::instance()->sprite_map          = [];
-		Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags = [
+		SVG_Sprite::instance()->asset_handles       = [];
+		SVG_Sprite::instance()->sprite_map          = [];
+		SVG_Sprite::instance()->kses_svg_allowed_tags = [
 			'svg' => [],
 			'use' => [
 				'href' => true,
 			],
 		];
-		Asset_Manager_SVG_Sprite::$_global_attributes = null;
-		Asset_Manager_SVG_Sprite::$_svg_directory     = null;
-		Asset_Manager_SVG_Sprite::instance()->create_sprite_sheet();
+		SVG_Sprite::$_global_attributes = null;
+		SVG_Sprite::$_svg_directory     = null;
+		SVG_Sprite::instance()->create_sprite_sheet();
 
 		wp_deregister_script( 'my-test-asset' );
 		wp_deregister_script( 'test-asset-two' );

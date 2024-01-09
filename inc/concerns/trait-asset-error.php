@@ -7,6 +7,8 @@
 
 namespace Alley\WP\Asset_Manager\Concerns;
 
+use WP_Error;
+
 /**
  * Trait for generating and formatting asset errors.
  */

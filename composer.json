@@ -17,10 +17,10 @@
     "extra": {
       "wordpress-autoloader": {
         "autoload": {
-          "Asset_Manager\\": "inc/"
+          "Alley\\WP\\Asset_Manager\\": "inc/"
         },
         "autoload-dev": {
-          "Asset_Manager_Tests\\": "tests/"
+          "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
         }
       }
     },

@@ -7,6 +7,9 @@
 
 namespace Alley\WP\Asset_Manager;
 
+use DOMDocument;
+
+
 /**
  * Asset_Manager_SVG_Sprite class.
  */
