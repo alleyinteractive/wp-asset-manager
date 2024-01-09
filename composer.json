@@ -17,7 +17,7 @@
     "extra": {
       "wordpress-autoloader": {
         "autoload": {
-          "Alley\\WP\\Asset_Manager\\": "inc/"
+          "Alley\\WP\\Asset_Manager\\": "src/"
         },
         "autoload-dev": {
           "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"

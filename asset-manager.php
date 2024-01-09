@@ -7,16 +7,6 @@
  * @package AssetManager
  */
 
-/*
-Plugin Name: Asset Manager
-Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
-Description: Add more robust functionality to enqueuing static assets
-Author: Alley Interactive
-Version: 1.4.0
-License: GPLv2 or later
-Author URI: https://www.alleyinteractive.com/
-*/
-
 /**
  * Filesystem path to AssetManager.
  */
@@ -28,14 +18,14 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 } else {
 	add_action(
 		'admin_notices',
-		function() {
+		function () {
 			?>
 			<div class="notice notice-error">
 				<p>
 					<?php
 					esc_html_e(
-						'Asset Manager is not installed. Please run `composer install` from the plugin directory.',
-						'asset-manager'
+						'Asset Manager is not installed. Please switch to a tagged release or track the `production-built` branch.',
+						'am'
 					);
 					?>
 				</p>
@@ -54,7 +44,7 @@ class_alias( \Alley\WP\Asset_Manager\Preload::class, 'Asset_Manager_Preload' );
 class_alias( \Alley\WP\Asset_Manager\SVG_Sprite::class, 'Asset_Manager_SVG_Sprite' );
 
 // Require the helpers that are used to interact with the plugin.
-require_once __DIR__ . '/inc/helpers.php';
+require_once __DIR__ . '/src/helpers.php';
 
 /**
  * Map plugin meta capabilities.

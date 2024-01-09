@@ -1,6 +1,15 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0
+
+* Migrates code into the `Alley\WP\Asset_Manager` namespace. Legacy classes such
+  as `Asset_Manager_Scripts` and `Asset_Manager_Styles` are aliased to their new
+  namespace for backward compatibility. Helper functions are left un-namespaced.
+* Adds a dependency on Composer autoloader. For submodules, you can track the
+  `production-built` branch of the plugin or any tagged release (which will be
+  built) to include the dependencies.
+
 ## 1.3.6
 
 * Adds support for running the plugin on a Windows hosting environment (#57)

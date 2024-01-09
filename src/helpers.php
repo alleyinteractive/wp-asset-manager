@@ -22,7 +22,7 @@ if ( ! function_exists( 'am_validate_path' ) ) {
 	 *
 	 * @return bool True if the path is valid, false otherwise.
 	 */
-	function am_validate_path( string $path ) : bool {
+	function am_validate_path( string $path ): bool {
 		return in_array( validate_file( $path ), [ 0, 2 ], true ) && file_exists( $path );
 	}
 }

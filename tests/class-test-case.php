@@ -31,8 +31,9 @@ abstract class Test_Case extends \Mantle\Testkit\Test_Case {
 		'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
 	];
 
-	public $global_attributes;
-	public $svg_directory;
+	public array $global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
+
+	public string $svg_directory;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -41,39 +42,23 @@ abstract class Test_Case extends \Mantle\Testkit\Test_Case {
 		remove_all_filters( 'am_asset_conditions', 10 );
 		add_filter(
 			'am_asset_conditions',
-			function() {
-				return [
-					'global'            => true,
-					'article_post_type' => true,
-					'single'            => true,
-					'archive'           => false,
-					'has_slideshow'     => false,
-					'has_video'         => false,
-				];
-			}
-		);
-		add_filter(
-			'am_inline_script_context',
-			function() {
-				return 'assetContext';
-			}
+			fn () => [
+				'global'            => true,
+				'article_post_type' => true,
+				'single'            => true,
+				'archive'           => false,
+				'has_slideshow'     => false,
+				'has_video'         => false,
+			]
 		);
 
-		$this->svg_directory = dirname( __FILE__ ) . '/mocks/';
-		add_filter(
-			'am_modify_svg_directory',
-			function() {
-				return $this->svg_directory;
-			}
-		);
+		add_filter( 'am_inline_script_context', fn () => 'assetContext' );
 
+		$this->svg_directory = __DIR__ . '/mocks/';
+
+		add_filter( 'am_modify_svg_directory', fn () => $this->svg_directory );
 		$this->global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
-		add_filter(
-			'am_global_svg_attributes',
-			function( $attrs ) {
-				return array_merge( $attrs, $this->global_attributes );
-			}
-		);
+		add_filter( 'am_global_svg_attributes', fn ( $attrs ) => array_merge( $attrs, $this->global_attributes ) );
 
 		$this->reset_assets();
 		$this->acting_as( 'administrator' );
@@ -99,7 +84,7 @@ abstract class Test_Case extends \Mantle\Testkit\Test_Case {
 				'href' => true,
 			],
 		];
-		SVG_Sprite::$_global_attributes = null;
+		SVG_Sprite::$_global_attributes = [];
 		SVG_Sprite::$_svg_directory     = null;
 		SVG_Sprite::instance()->create_sprite_sheet();
 

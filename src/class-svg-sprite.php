@@ -8,7 +8,8 @@
 namespace Alley\WP\Asset_Manager;
 
 use DOMDocument;
-
+use DOMElement;
+use DOMText;
 
 /**
  * Asset_Manager_SVG_Sprite class.
@@ -22,21 +23,21 @@ class SVG_Sprite {
 	 *
 	 * @var string
 	 */
-	public static $_svg_directory; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+	public static ?string $_svg_directory; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Array for attributes to add to each symbol.
 	 *
 	 * @var array
 	 */
-	public static $_global_attributes; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+	public static ?array $_global_attributes; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * The sprite document.
 	 *
 	 * @var DOMDocument
 	 */
-	public $sprite_document;
+	public DOMDocument $sprite_document;
 
 	/**
 	 * The sprite document.
@@ -57,14 +58,14 @@ class SVG_Sprite {
 	 *
 	 * @var array
 	 */
-	public $sprite_map = [];
+	public array $sprite_map = [];
 
 	/**
 	 * Allowed tags and attributes for echoing <svg> and <use> elements.
 	 *
 	 * @var array
 	 */
-	public $kses_svg_allowed_tags = [
+	public array $kses_svg_allowed_tags = [
 		'svg' => [],
 		'use' => [
 			'href' => true,
@@ -83,12 +84,10 @@ class SVG_Sprite {
 		 */
 		add_filter(
 			'safe_style_css',
-			function ( $styles ) {
-				$styles[] = 'left';
-				$styles[] = 'overflow';
-				$styles[] = 'position';
-				return $styles;
-			}
+			fn ( $styles ) => [
+				...array_values( $styles ),
+				[ 'left', 'overflow', 'position' ],
+			],
 		);
 
 		add_filter( 'wp_kses_allowed_html', [ $this, 'extend_kses_post_with_use_svg' ] );
@@ -395,7 +394,7 @@ class SVG_Sprite {
 			return;
 		}
 
-		list( $asset, $symbol ) = $this->create_symbol( $asset );
+		[ $asset, $symbol ] = $this->create_symbol( $asset );
 
 		if ( ! ( $symbol instanceof DOMElement ) ) {
 			return;
