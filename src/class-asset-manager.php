@@ -5,13 +5,17 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager
  *
  * Asset manager class.
  */
 abstract class Asset_Manager {
-	use Conditions, Asset_Error;
+	use Concerns\Asset_Error;
+	use Concerns\Singleton;
+	use Concerns\Conditions;
 
 	/**
 	 * Array of assets to insert
@@ -186,8 +190,9 @@ abstract class Asset_Manager {
 	/**
 	 * Constructor
 	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
+	protected function __construct() {
+		$this->add_hooks();
+		$this->set_defaults();
 	}
 
 	/**
@@ -350,7 +355,7 @@ abstract class Asset_Manager {
 			if ( ! empty( $current_asset['deps'] ) && in_array( $asset['handle'], $current_asset['deps'], true ) ) {
 				$dependents[] = $current_asset['handle'];
 			}
-		};
+		}
 
 		return $dependents;
 	}
@@ -403,7 +408,7 @@ abstract class Asset_Manager {
 					) {
 						$this->generate_asset_error( 'circular_dependency', $asset, $this_dep['handle'] );
 					}
-				};
+				}
 			}
 
 			// Perform any type-specific validation checks or array mutation after validation.

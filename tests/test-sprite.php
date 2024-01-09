@@ -1,8 +1,10 @@
 <?php
 
-namespace Asset_Manager_Tests;
+namespace Alley\WP\Asset_Manager\Tests;
 
-class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
+use Alley\WP\Asset_Manager\SVG_Sprite;
+
+class Asset_Manager_Sprite_Tests extends Test_Case {
 
 	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" height="0" role="none" style="left:-9999px;overflow:hidden;position:absolute" viewBox="0 0 0 0" width="0">%s</svg>';
 
@@ -25,13 +27,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	function test_get_the_normalized_filepath() {
 		$this->assertEquals(
 			$this->svg_directory . 'relative/path.svg',
-			\Asset_Manager_SVG_Sprite::instance()->get_the_normalized_filepath( 'relative/path.svg' ),
+			SVG_Sprite::instance()->get_the_normalized_filepath( 'relative/path.svg' ),
 			'Should build the correct file path from a relative path.'
 		);
 
 		$this->assertEquals(
 			'/absolute/path.svg',
-			\Asset_Manager_SVG_Sprite::instance()->get_the_normalized_filepath( '/absolute/path.svg' ),
+			SVG_Sprite::instance()->get_the_normalized_filepath( '/absolute/path.svg' ),
 			'Should build the correct file path from an absolute path.'
 		);
 	}
@@ -42,7 +44,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 	function test_add_assets() {
 		$this->assertEquals(
 			sprintf( $this->empty_sprite_wrapper, '' ),
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should create an empty sprite sheet.'
 		);
 
@@ -81,13 +83,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$add_assets_expected,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbols to the sprite sheet.'
 		);
 
 		$this->assertEquals(
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -118,13 +120,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$no_dimensions_expected,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
 
 		$this->assertEquals(
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -184,13 +186,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$with_dimensions_expected,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
 
 		$this->assertEquals(
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -204,7 +206,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'focusable',
-			\Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
+			SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
 			'Should add global attributes to $kses_svg_allowed_tags.'
 		);
 
@@ -225,7 +227,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertArrayHasKey(
 			'data-test',
-			\Asset_Manager_SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
+			SVG_Sprite::instance()->kses_svg_allowed_tags['svg'],
 			'Should add attributes to $kses_svg_allowed_tags.'
 		);
 
@@ -266,13 +268,13 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$with_export_junk_expected,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
 
 		$this->assertEquals(
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			SVG_Sprite::instance()->sprite_document->C14N(),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -297,7 +299,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$without_embedded_script_expected,
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the script tag and disallowed attribute.'
 		);
 	}
@@ -365,7 +367,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$without_non_standard_attribute_expected,
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -401,7 +403,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$with_non_standard_attribute_expected,
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
 	}
@@ -429,7 +431,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$camelcase_tags_attrs_expected,
-			get_echo( [ \Asset_Manager_SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the SVG tags and attributes.'
 		);
 	}
@@ -457,7 +459,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$with_defined_symbol,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should add the symbol to the sprite sheet.'
 		);
 
@@ -471,7 +473,7 @@ class Asset_Manager_Sprite_Tests extends Asset_Manager_Test {
 
 		$this->assertEquals(
 			$with_removed_symbol,
-			\Asset_Manager_SVG_Sprite::instance()->sprite_document->C14N(),
+			SVG_Sprite::instance()->sprite_document->C14N(),
 			'Should remove the symbol from the sprite sheet.'
 		);
 

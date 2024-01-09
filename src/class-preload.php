@@ -5,18 +5,12 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager_Preload class.
  */
-class Asset_Manager_Preload extends Asset_Manager {
-
-	/**
-	 * Holds references to the singleton instances.
-	 *
-	 * @var array
-	 */
-	private static $instance;
-
+class Preload extends Asset_Manager {
 	/**
 	 * Types of files that can be preloaded; corresponds to allowed `as` attribute values.
 	 *
@@ -72,27 +66,6 @@ class Asset_Manager_Preload extends Asset_Manager {
 			'mime_type' => 'font/woff2',
 		],
 	];
-
-	/**
-	 * Constructor.
-	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
-	}
-
-	/**
-	 * Get an instance of the class.
-	 *
-	 * @return Asset_Manager_Preload
-	 */
-	public static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			self::$instance = new static();
-			self::$instance->add_hooks();
-			self::$instance->set_defaults();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * Print a single asset
