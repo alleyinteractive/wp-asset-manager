@@ -152,7 +152,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			$this->test_script_two,
 			[
 				'handle'      => 'async-script-test',
-				'load_method' => 'defer',
+				'load_method' => 'async-defer',
 			]
 		);
 		\Asset_Manager_Scripts::instance()->add_to_async( $async_script );
