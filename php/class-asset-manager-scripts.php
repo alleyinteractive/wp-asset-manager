@@ -209,10 +209,6 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	 * @return array
 	 */
 	public function pre_add_asset( $script ) {
-		// Register/enqueue script with new 'strategy' argument if load method is async or defer.
-		if ( in_array( $script['load_method'], $this->wp_enqueue_methods, true ) ) {
-			$script['args']['strategy'] = $script['load_method'];
-		}
 		return $script;
 	}
 
