@@ -16,12 +16,15 @@
  * Requires at least: 6.3
  */
 
-// Check the minimum required WordPress version
+// Check the minimum required WordPress version.
 if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
     add_action( 'admin_notices', 'am_minimum_wp_version_notice' );
     return;
 }
 
+/**
+ * Display an admin notice if the minimum required WordPress version is not met.
+ */
 function am_minimum_wp_version_notice() {
     $message = sprintf(
         __( 'Asset Manager requires WordPress version %s or higher. Please update WordPress to use this plugin.', 'am' ),

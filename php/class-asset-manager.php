@@ -299,11 +299,12 @@ abstract class Asset_Manager {
 			// Enqueue asset if applicable.
 			if ( in_array( $args['load_method'], $this->wp_enqueue_methods, true ) && empty( $args['loaded'] ) ) {
 				if ( function_exists( $wp_enqueue_function ) ) {
-					$enqueue_options = [];
 					if ( 'style' === $args['type'] ) {
 						$enqueue_options = $args['media'];
 					} else {
-						$enqueue_options['in_footer'] = $args['in_footer'];
+						$enqueue_options = [
+							'in_footer' => $args['in_footer'],
+						];
 						if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
 							$enqueue_options['strategy'] = $args['load_method'];
 						}
