@@ -164,17 +164,17 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 	}
 
 	/**
-     * Test defer attribute handling.
-     */
+	 * Test defer attribute handling.
+	 */
     public function test_defer_attribute() {
 
 		// Enqueue the script with the defer attribute.
 		am_enqueue_script( $this->test_script['handle'], $this->test_script['src'], [], 'global', 'defer' );
 
-        // Get the script tag output.
-        $script_output = get_echo( 'wp_print_scripts', [ $this->test_script['handle'] ] );
+		// Get the script tag output.
+		$script_output = get_echo( 'wp_print_scripts', [ $this->test_script['handle'] ] );
 
 		// Check if the script tag has the defer attribute.
-        $this->assertStringContainsString( 'data-wp-strategy="defer"', $script_output );
+		$this->assertStringContainsString( 'defer"', $script_output );
     }
 }

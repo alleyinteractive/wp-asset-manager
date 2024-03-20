@@ -5,33 +5,15 @@
  * @package AssetManager
  */
 
-/**
- * Plugin Name: Asset Manager
- * Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
- * Description: Add more robust functionality to enqueuing static assets
- * Author: Alley Interactive
- * Version: 1.3.7
- * License: GPLv2 or later
- * Author URI: https://www.alleyinteractive.com/
- * Requires at least: 6.3
- */
-
-// Check the minimum required WordPress version.
-if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-    add_action( 'admin_notices', 'am_minimum_wp_version_notice' );
-    return;
-}
-
-/**
- * Display an admin notice if the minimum required WordPress version is not met.
- */
-function am_minimum_wp_version_notice() {
-    $message = sprintf(
-        __( 'Asset Manager requires WordPress version %s or higher. Please update WordPress to use this plugin.', 'am' ),
-        '6.3'
-    );
-    printf( '<div class="notice notice-error"><p>%s</p></div>', $message );
-}
+/*
+Plugin Name: Asset Manager
+Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
+Description: Add more robust functionality to enqueuing static assets
+Author: Alley Interactive
+Version: 1.3.7
+License: GPLv2 or later
+Author URI: https://www.alleyinteractive.com/
+*/
 
 /**
  * Filesystem path to AssetManager.

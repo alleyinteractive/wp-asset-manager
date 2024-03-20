@@ -302,11 +302,15 @@ abstract class Asset_Manager {
 					if ( 'style' === $args['type'] ) {
 						$enqueue_options = $args['media'];
 					} else {
-						$enqueue_options = [
-							'in_footer' => $args['in_footer'],
-						];
-						if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-							$enqueue_options['strategy'] = $args['load_method'];
+						if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
+							$enqueue_options = $args['in_footer'];
+						} else {
+							$enqueue_options = [
+								'in_footer' => $args['in_footer'],
+							];
+							if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+								$enqueue_options['strategy'] = $args['load_method'];
+							}
 						}
 					}
 

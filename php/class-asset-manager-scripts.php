@@ -252,8 +252,14 @@ class Asset_Manager_Scripts extends Asset_Manager {
 	 * @param array $script Script to add.
 	 */
 	public function add_to_async( $script ) {
+		// For version of WordPress 6.3+ async and defer can use the core strategy for loading.
+		if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
+			$load_methods_to_async = [ 'async', 'defer', 'async-defer' ];
+		} else {
+			$load_methods_to_async = [ 'async-defer' ];
+		}
 		if (
-			( 'async-defer' === $script['load_method'] ) &&
+			in_array( $script['load_method'], $load_methods_to_async, true ) &&
 			! in_array( $script['handle'], $this->async_scripts, true )
 		) {
 			$this->async_scripts[] = $script['handle'];
