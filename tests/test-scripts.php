@@ -165,8 +165,9 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 
 	/**
 	 * Test defer attribute handling.
+	 * @group assets
 	 */
-    public function test_defer_attribute() {
+	public function test_defer_attribute() {
 
 		// Enqueue the script with the defer attribute.
 		am_enqueue_script( $this->test_script['handle'], $this->test_script['src'], [], 'global', 'defer' );
@@ -176,5 +177,5 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 
 		// Check if the script tag has the defer attribute.
 		$this->assertStringContainsString( 'defer"', $script_output );
-    }
+	}
 }
