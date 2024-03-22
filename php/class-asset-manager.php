@@ -299,13 +299,34 @@ abstract class Asset_Manager {
 			// Enqueue asset if applicable.
 			if ( in_array( $args['load_method'], $this->wp_enqueue_methods, true ) && empty( $args['loaded'] ) ) {
 				if ( function_exists( $wp_enqueue_function ) ) {
+
+					// If this is for a style, just pass the media argument.
+					if ( 'style' === $args['type'] ) {
+						$enqueue_options = $args['media'];
+					} else {
+						// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
+						if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
+							$enqueue_options = $args['in_footer'];
+						} else {
+							// We are on a version of WordPress 6.3+ so the last argument is an array.
+							$enqueue_options = [
+								'in_footer' => $args['in_footer'],
+							];
+							// If the load method is async or defer, set the strategy.
+							if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+								$enqueue_options['strategy'] = $args['load_method'];
+							}
+						}
+					}
+
 					$wp_enqueue_function(
 						$args['handle'],
 						$args['src'],
 						$args['deps'],
 						$args['version'],
-						'style' === $args['type'] ? $args['media'] : $args['in_footer']
+						$enqueue_options
 					);
+
 					$args['loaded'] = true;
 				} else {
 					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', false, $wp_enqueue_function ) ) );

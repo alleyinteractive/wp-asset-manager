@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.7
+
+* Adds support for async and defer using the 'strategy' argument added for wp_enqueue_script in WordPress 6.3.
+
 ## 1.3.6
 
 * Adds support for running the plugin on a Windows hosting environment (#57)

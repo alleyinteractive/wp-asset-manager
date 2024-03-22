@@ -11,12 +11,12 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 		$async_asset  = [
 			'handle'      => 'async-asset',
 			'src'         => get_stylesheet_directory_uri() . '/static/js/async-test.js',
-			'load_method' => 'async',
+			'load_method' => 'async-defer',
 		];
 		$original_tag = '<script type="text/javascript" src="http://example.com/wp-content/themes/twentytwelve/static/js/async-test.js"></script>';
 		am_enqueue_script( $async_asset );
 		\Asset_Manager_Scripts::instance()->add_to_async( $async_asset );
-		$expected_async_tag = '<script type="text/javascript" async src="http://example.com/wp-content/themes/twentytwelve/static/js/async-test.js"></script>';
+		$expected_async_tag = '<script type="text/javascript" async defer src="http://example.com/wp-content/themes/twentytwelve/static/js/async-test.js"></script>';
 		$actual_async_tag   = \Asset_Manager_Scripts::instance()->add_attributes( $original_tag, 'async-asset' );
 		$this->assertEquals( $expected_async_tag, $actual_async_tag, 'add_to_async should add the approprate attribute (async or defer) to a script' );
 	}
@@ -152,7 +152,7 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 			$this->test_script_two,
 			[
 				'handle'      => 'async-script-test',
-				'load_method' => 'defer',
+				'load_method' => 'async-defer',
 			]
 		);
 		\Asset_Manager_Scripts::instance()->add_to_async( $async_script );
@@ -161,5 +161,21 @@ class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 		// Should not add the same script twice
 		\Asset_Manager_Scripts::instance()->add_to_async( $async_script );
 		$this->assertContains( 'async-script-test', \Asset_Manager_Scripts::instance()->async_scripts, 'A script should not be added to the $async_scripts property twice' );
+	}
+
+	/**
+	 * Test defer attribute handling.
+	 * @group assets
+	 */
+	public function test_defer_attribute() {
+
+		// Enqueue the script with the defer attribute.
+		am_enqueue_script( $this->test_script['handle'], $this->test_script['src'], [], 'global', 'defer' );
+
+		// Get the script tag output.
+		$script_output = get_echo( 'wp_print_scripts', [ $this->test_script['handle'] ] );
+
+		// Check if the script tag has the defer attribute.
+		$this->assertStringContainsString( 'defer"', $script_output );
 	}
 }
