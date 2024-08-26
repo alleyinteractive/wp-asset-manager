@@ -189,10 +189,14 @@ class Asset_Manager_Preload extends Asset_Manager {
 	 * A MIME type isn't required, but will prevent the browser downloading an
 	 * asset it doesn't support.
 	 *
-	 * @param  array $asset The asset for which the types are needed.
-	 * @return array        The $asset.
+	 * @param array $asset The asset for which the types are needed.
+	 * @return array
 	 */
 	public function set_asset_types( $asset ) {
+		if ( empty( $asset ) || ! isset( $asset['src'] ) ) {
+			return $asset;
+		}
+
 		$path_parts = pathinfo( $asset['src'] );
 
 		if ( empty( $path_parts['extension'] ) ) {
@@ -201,8 +205,8 @@ class Asset_Manager_Preload extends Asset_Manager {
 
 		$asset_types = $this->asset_types[ $path_parts['extension'] ] ?? [];
 
+		// Force these values through.
 		if ( ! empty( $asset_types ) ) {
-			// Force these values through.
 			return array_replace( $asset, $asset_types );
 		}
 

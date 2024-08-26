@@ -87,6 +87,14 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 	 * @group preload
 	 */
 	function test_set_asset_types() {
+		$actual_output = \Asset_Manager_Preload::instance()->set_asset_types( [] );
+
+		$this->assertEquals(
+			$actual_output,
+			[],
+			"Should return an empty array if no arguments are passed"
+		);
+
 		// Adds the expected attributes for preloading a CSS file.
 		$expected_style  = array_merge(
 			$this->test_style,
