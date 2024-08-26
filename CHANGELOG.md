@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 1.3.8 (unreleased)
 
 * Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
-* Add: Add `convertDeprecationsToExceptions` to `phpunit.xml`.
+* Add: `convertDeprecationsToExceptions` to `phpunit.xml`.
 
 ## 1.3.7
 
