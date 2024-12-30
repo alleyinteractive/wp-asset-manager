@@ -101,7 +101,7 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 * @param string                  $load_hook   Hook on which to load this asset.
 	 * @param string                  $media       Media query to restrict when this asset is loaded.
 	 */
-	function am_enqueue_style( string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', string $version = '1.0.0', string $load_hook = 'wp_head', ?string $media = null ): void {
+	function am_enqueue_style( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', string $version = '1.0.0', string $load_hook = 'wp_head', ?string $media = null ): void {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook', 'media' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 
@@ -148,7 +148,7 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 * @param boolean            $crossorigin  Preload this asset cross-origin.
 	 * @param string             $mime_type    The MIME type for the preloaded asset.
 	 */
-	function am_preload( string $handle, ?string $src = null, array|string $condition = 'global', string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
+	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
 		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Preload::instance()->add_asset( $args );
@@ -179,7 +179,7 @@ if ( ! function_exists( 'am_register_symbol' ) ) :
 	 * @param array                     $attributes An array of attribute names and values to add to the resulting <svg>
 	 *                                              everywhere it is printed.
 	 */
-	function am_register_symbol( string $handle, ?string $src = null, array|string $condition = 'global', array $attributes = [] ): void {
+	function am_register_symbol( array|string $handle, ?string $src = null, array|string $condition = 'global', array $attributes = [] ): void {
 		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		SVG_Sprite::instance()->add_asset( $args );
