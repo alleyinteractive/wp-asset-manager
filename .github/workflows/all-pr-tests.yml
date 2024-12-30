@@ -20,13 +20,14 @@ jobs:
       matrix:
         php: [8.2, 8.3]
         wordpress: ["latest"]
+        multisite: ["true", "false"]
     runs-on: ubuntu-latest
     # Cancel any existing runs of this workflow
     concurrency:
-      group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}-P${{ matrix.php }}-WP${{ matrix.wordpress }}
+      group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}-P${{ matrix.php }}-WP${{ matrix.wordpress }}-MS${{ matrix.multisite }}
       cancel-in-progress: true
     # Name the job in the matrix
-    name: "PR Tests PHP ${{ matrix.php }} WordPress ${{ matrix.wordpress }}"
+    name: "PR Tests PHP ${{ matrix.php }} WordPress ${{ matrix.wordpress }} Multisite ${{ matrix.multisite }}"
     steps:
       - uses: actions/checkout@v4
 
@@ -41,6 +42,7 @@ jobs:
           php-version: '${{ matrix.php }}'
           wordpress-version: '${{ matrix.wordpress }}'
           skip-wordpress-install: 'true'
+          wordpress-multisite: '${{ matrix.multisite }}'
   # This required job ensures that all PR checks have passed before merging.
   all-pr-checks-passed:
     name: All PR checks passed
