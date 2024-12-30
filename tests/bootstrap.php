@@ -5,9 +5,9 @@
  * @package WP_Irving
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 \Mantle\Testing\manager()
+	->maybe_rsync_plugin()
+	->with_sqlite()
 	->loaded( fn () => require dirname( __DIR__ ) . '/wp-asset-manager.php' )
 	->install();
 

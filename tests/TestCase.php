@@ -8,7 +8,7 @@ use Alley\WP\Asset_Manager\Preload;
 use Alley\WP\Asset_Manager\SVG_Sprite;
 use Mantle\Testing\Concerns\Refresh_Database;
 
-abstract class Test_Case extends \Mantle\Testkit\Test_Case {
+abstract class TestCase extends \Mantle\Testkit\Test_Case {
 	use Refresh_Database;
 
 	public $test_script = [

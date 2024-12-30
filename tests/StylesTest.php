@@ -6,7 +6,7 @@ use Alley\WP\Asset_Manager\Preload;
 use Alley\WP\Asset_Manager\Scripts;
 use Alley\WP\Asset_Manager\Styles;
 
-class Asset_Manager_Styles_Tests extends Test_Case {
+class StylesTest extends Test_Case {
 
 	/**
 	 * @group assets

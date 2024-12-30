@@ -4,7 +4,7 @@ namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Scripts;
 
-class Asset_Manager_Core_Tests extends Test_Case {
+class AssetsTest extends Test_Case {
 
 	/**
 	 * @group assets

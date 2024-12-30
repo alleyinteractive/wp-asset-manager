@@ -4,7 +4,7 @@ namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Preload;
 
-class Asset_Manager_Preload_Tests extends Test_Case {
+class PreloadTest extends Test_Case {
 
 	/**
 	 * @group preload

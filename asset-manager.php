@@ -43,9 +43,6 @@ class_alias( \Alley\WP\Asset_Manager\Styles::class, 'Asset_Manager_Styles' );
 class_alias( \Alley\WP\Asset_Manager\Preload::class, 'Asset_Manager_Preload' );
 class_alias( \Alley\WP\Asset_Manager\SVG_Sprite::class, 'Asset_Manager_SVG_Sprite' );
 
-// Require the helpers that are used to interact with the plugin.
-require_once __DIR__ . '/src/helpers.php';
-
 /**
  * Map plugin meta capabilities.
  *

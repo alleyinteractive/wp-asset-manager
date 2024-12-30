@@ -4,7 +4,7 @@ namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\SVG_Sprite;
 
-class Asset_Manager_Sprite_Tests extends Test_Case {
+class SpriteTest extends Test_Case {
 
 	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" height="0" role="none" style="left:-9999px;overflow:hidden;position:absolute" viewBox="0 0 0 0" width="0">%s</svg>';
 
