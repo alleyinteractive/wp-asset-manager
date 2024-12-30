@@ -3,12 +3,11 @@
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Scripts;
+use PHPUnit\Framework\Attributes\Group;
 
-class AssetsTest extends Test_Case {
+class AssetsTest extends TestCase {
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_add_asset() {
 		global $wp_scripts;
 
@@ -37,9 +36,7 @@ class AssetsTest extends Test_Case {
 		);
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_load_asset() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
@@ -64,9 +61,7 @@ class AssetsTest extends Test_Case {
 		$wp_current_filter = $old_filter;
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_asset_should_add() {
 		// If no handle, should return false
 		$no_handle = Scripts::instance()->asset_should_add( [ 'src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js' ] );
@@ -120,9 +115,7 @@ class AssetsTest extends Test_Case {
 		$this->assertTrue( $condition_include_exclude, 'If script has a condition with both `include` and `exclude` keys, it should check all `include` conditions are true and all `exclude` conditions are false' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_asset_should_load() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
@@ -172,9 +165,7 @@ class AssetsTest extends Test_Case {
 		$wp_current_filter = $old_filter;
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_find_dependents() {
 		$asset_with_deps         = array_merge(
 			$this->test_script_two,
@@ -197,9 +188,7 @@ class AssetsTest extends Test_Case {
 		$this->assertEquals( $expected_dependents, $actual_dependents, 'Should return an array of assets that depend on this one' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_invalid_load_hook() {
 		// Invalid load hook
 		$invalid_load_hook = [
@@ -212,9 +201,7 @@ class AssetsTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_missing_dependency() {
 		// Missing dependency
 		$dep_missing = [
@@ -227,9 +214,7 @@ class AssetsTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_unsafe_load_hook() {
 		// Unsafe load hook
 		$unsafe_load_hook_dep = [
@@ -249,9 +234,7 @@ class AssetsTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_circular_dependency() {
 		// Unsafe load hook
 		$circular_dep     = [
@@ -270,9 +253,7 @@ class AssetsTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_add_core_dependencies() {
 		$scripts = wp_scripts();
 

@@ -5,12 +5,11 @@ namespace Alley\WP\Asset_Manager\Tests;
 use Alley\WP\Asset_Manager\Preload;
 use Alley\WP\Asset_Manager\Scripts;
 use Alley\WP\Asset_Manager\Styles;
+use PHPUnit\Framework\Attributes\Group;
 
-class StylesTest extends Test_Case {
+class StylesTest extends TestCase {
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_src            = [
@@ -76,9 +75,7 @@ class StylesTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_pre_add_asset() {
 		$async_style = array_merge(
 			$this->test_style,
@@ -154,9 +151,7 @@ class StylesTest extends Test_Case {
 		);
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_post_validate_asset() {
 		$sync_style  = array_merge(
 			$this->test_style,

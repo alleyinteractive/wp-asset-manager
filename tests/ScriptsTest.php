@@ -3,12 +3,11 @@
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Scripts;
+use PHPUnit\Framework\Attributes\Group;
 
-class ScriptsTest extends Test_Case {
+class ScriptsTest extends TestCase {
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_add_attributes() {
 		$async_asset  = [
 			'handle'      => 'async-asset',
@@ -23,9 +22,7 @@ class ScriptsTest extends Test_Case {
 		$this->assertEquals( $expected_async_tag, $actual_async_tag, 'add_to_async should add the approprate attribute (async or defer) to a script' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_modify_load_method() {
 		$sync_asset            = [
 			'handle' => 'sync-asset',
@@ -54,9 +51,7 @@ class ScriptsTest extends Test_Case {
 		$this->assertEquals( $expected_async_result, $actual_async_result, 'Assets with a modified load method should have the appropriate attibute added' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_array           = [
@@ -105,9 +100,7 @@ class ScriptsTest extends Test_Case {
 		$this->assertStringContainsString( $expected_script_output, $actual_script_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_post_validate_asset() {
 		$sync_script  = array_merge(
 			$this->test_script,
@@ -146,9 +139,7 @@ class ScriptsTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a async attribute' );
 	}
 
-	/**
-	 * @group assets
-	 */
+	#[Group( 'assets' )]
 	function test_add_to_async() {
 		$async_script = array_merge(
 			$this->test_script_two,
@@ -167,8 +158,8 @@ class ScriptsTest extends Test_Case {
 
 	/**
 	 * Test defer attribute handling.
-	 * @group assets
 	 */
+	#[Group( 'assets' )]
 	public function test_defer_attribute() {
 
 		// Enqueue the script with the defer attribute.

@@ -23,6 +23,11 @@
             "src/helpers.php"
         ]
     },
+    "autoload-dev": {
+      "psr-4": {
+        "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
+      }
+    },
     "config": {
         "allow-plugins": {
             "alleyinteractive/composer-wordpress-autoloader": true,

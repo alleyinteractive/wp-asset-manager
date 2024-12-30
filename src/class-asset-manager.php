@@ -308,19 +308,17 @@ abstract class Asset_Manager {
 					// If this is for a style, just pass the media argument.
 					if ( 'style' === $args['type'] ) {
 						$enqueue_options = $args['media'];
-					} else {
+					} elseif ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
 						// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
-						if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-							$enqueue_options = $args['in_footer'];
-						} else {
-							// We are on a version of WordPress 6.3+ so the last argument is an array.
-							$enqueue_options = [
-								'in_footer' => $args['in_footer'],
-							];
-							// If the load method is async or defer, set the strategy.
-							if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-								$enqueue_options['strategy'] = $args['load_method'];
-							}
+						$enqueue_options = $args['in_footer'];
+					} else {
+						// We are on a version of WordPress 6.3+ so the last argument is an array.
+						$enqueue_options = [
+							'in_footer' => $args['in_footer'],
+						];
+						// If the load method is async or defer, set the strategy.
+						if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+							$enqueue_options['strategy'] = $args['load_method'];
 						}
 					}
 

@@ -3,12 +3,11 @@
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Preload;
+use PHPUnit\Framework\Attributes\Group;
 
-class PreloadTest extends Test_Case {
+class PreloadTest extends TestCase {
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_preload_asset() {
 		// Basic CSS preload.
 		// The `print_asset` function does no option parsing, so all expected values are required.
@@ -30,9 +29,7 @@ class PreloadTest extends Test_Case {
 		);
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_post_validate_asset() {
 		// Adds the expected attributes for preloading a font.
 		$font_asset     = [
@@ -71,9 +68,7 @@ class PreloadTest extends Test_Case {
 		);
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_print_asset() {
 		// Throws an error for missing `as` value.
 		$unknown_asset = [
@@ -85,11 +80,9 @@ class PreloadTest extends Test_Case {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_as_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_set_asset_types() {
-		$actual_output = \Asset_Manager_Preload::instance()->set_asset_types( [] );
+		$actual_output = Preload::instance()->set_asset_types( [] );
 
 		$this->assertEquals(
 			$actual_output,
