@@ -1,9 +1,12 @@
 {
     "name": "alleyinteractive/wp-asset-manager",
     "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
-    "keywords": ["wordpress", "wordpress-plugin"],
     "license": "GPL-2.0-only",
     "type": "wordpress-plugin",
+    "keywords": [
+        "wordpress",
+        "wordpress-plugin"
+    ],
     "authors": [
         {
             "name": "Alley Interactive",
@@ -12,26 +15,31 @@
     ],
     "require-dev": {
         "alleyinteractive/alley-coding-standards": "^2.0",
-        "mantle-framework/testkit": "^0.12"
+        "mantle-framework/testkit": "^1.2"
     },
-    "extra": {
-      "wordpress-autoloader": {
-        "autoload": {
-          "Alley\\WP\\Asset_Manager\\": "src/"
-        },
-        "autoload-dev": {
-          "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
-        }
-      }
+    "prefer-stable": true,
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "alleyinteractive/composer-wordpress-autoloader": true
+            "alleyinteractive/composer-wordpress-autoloader": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         },
         "sort-packages": true
     },
-    "prefer-stable": true,
+    "extra": {
+        "wordpress-autoloader": {
+            "autoload": {
+                "Alley\\WP\\Asset_Manager\\": "src/"
+            },
+            "autoload-dev": {
+                "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
+            }
+        }
+    },
     "scripts": {
         "lint": "@phpcs",
         "lint:fix": "@phpcbf",
@@ -39,8 +47,8 @@
         "phpcs": "phpcs --standard=./phpcs.xml .",
         "phpunit": "phpunit",
         "test": [
-          "@phpcs",
-          "@phpunit"
+            "@phpcs",
+            "@phpunit"
         ]
     }
 }

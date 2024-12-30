@@ -15,7 +15,7 @@ defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', __DIR__ );
 // Load the Composer autoloader.
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
-} else {
+} elseif ( ! class_exists( \Alley\WP\Asset_Manager\Asset_Manager::class ) ) {
 	add_action(
 		'admin_notices',
 		function () {
