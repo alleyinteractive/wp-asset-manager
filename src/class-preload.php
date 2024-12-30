@@ -8,13 +8,23 @@
 namespace Alley\WP\Asset_Manager;
 
 /**
- * Asset_Manager_Preload class.
+ * Asset Manager: Preload
+ *
+ * @extends Asset_Manager<array{
+ *   handle: string,
+ *   src?: string|null,
+ *   as?: string,
+ *   media?: string,
+ *   mime_type?: string,
+ *   crossorigin?: bool,
+ *   version?: string,
+ * }>
  */
 class Preload extends Asset_Manager {
 	/**
 	 * Types of files that can be preloaded; corresponds to allowed `as` attribute values.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	public $preload_as = [
 		'audio',
@@ -36,23 +46,23 @@ class Preload extends Asset_Manager {
 	 *
 	 * @var string
 	 */
-	public $asset_type = 'preload';
+	public ?string $asset_type = 'preload';
 
 	/**
 	 * Methods by which an asset can be loaded into the DOM.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $load_methods = [ 'preload' ];
+	public array $load_methods = [ 'preload' ];
 
 	/**
 	 * Map of asset 'as' and 'type` attributes based on file extension, used to
 	 * patch in attributes for commonly-preloaded assets.
 	 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 	 *
-	 * @var array
+	 * @var array<string, array{as: string, mime_type: string}>
 	 */
-	public $asset_types = [
+	public array $asset_types = [
 		'css'   => [
 			'as'        => 'style',
 			'mime_type' => 'text/css',
@@ -70,11 +80,9 @@ class Preload extends Asset_Manager {
 	/**
 	 * Print a single asset
 	 *
-	 * @param array $asset Asset to insert into DOM.
-	 *
-	 * @return void
+	 * @param TAssetData $asset Asset to insert into DOM.
 	 */
-	public function print_asset( $asset ) {
+	public function print_asset( array $asset ): void {
 		$classes      = $this->default_classes;
 		$classes[]    = $asset['handle'];
 		$print_string = '';
@@ -125,7 +133,7 @@ class Preload extends Asset_Manager {
 	 * @param array $asset Asset to mutate.
 	 * @return array
 	 */
-	public function pre_add_asset( $asset ) {
+	public function pre_add_asset( array $asset ): array {
 		// This is the only valid option, so we're patching it here.
 		$asset['load_method'] = 'preload';
 		// Preloads will always be in <head>, so we force the `wp_head` load hook.
@@ -140,7 +148,7 @@ class Preload extends Asset_Manager {
 	 * @param array $asset Asset to mutate.
 	 * @return array
 	 */
-	public function post_validate_asset( $asset ) {
+	public function post_validate_asset( array $asset ): array {
 		// Attempt to patch the `as` and `mime_type` values if either is missing.
 		if ( empty( $asset['as'] ) || empty( $asset['mime_type'] ) ) {
 			$asset = $this->set_asset_types( $asset );

@@ -7,8 +7,10 @@
 
 namespace Alley\WP\Asset_Manager\Concerns;
 
+use WP_Error;
+
 /**
- * Trait for getting and evalutaing asset conditions.
+ * Trait for getting and evaluating asset conditions.
  */
 trait Conditions {
 
@@ -23,7 +25,7 @@ trait Conditions {
 	 * Get the available conditions for loading assets.
 	 */
 	public static function get_conditions() {
-		if ( ! isset( static::$_conditions ) || ( defined( 'WP_IRVING_TEST' ) && WP_IRVING_TEST ) ) {
+		if ( ! isset( static::$_conditions ) || ( defined( 'MANTLE_IS_TESTING' ) && MANTLE_IS_TESTING ) ) {
 			/**
 			 * Filter function for getting available conditions to check for whether or not a given asset should load
 			 *
@@ -51,17 +53,17 @@ trait Conditions {
 	/**
 	 * Determine if an asset should be added (enqueued) or not.
 	 *
-	 * @param string $asset Type of asset.
+	 * @param array<mixed> $asset Asset.
 	 * @return bool|WP_Error
 	 */
-	public function asset_should_add( $asset ) {
+	public function asset_should_add( array $asset ): bool|WP_Error {
 		/**
 		 * Filter function for preventing an asset from loading, regardless of conditions
 		 *
 		 * @since  0.0.1
 		 *
-		 * @param bool  $add_asset Whether or not to forcefully prevent asset from loading
-		 * @param array $asset     Asset to prevent from loading
+		 * @param bool         $add_asset Whether or not to forcefully prevent asset from loading
+		 * @param array<mixed> $asset     Asset to prevent from loading
 		 */
 		if ( ! apply_filters( 'am_asset_should_add', true, $asset ) ) {
 			return false;

@@ -61,7 +61,7 @@ function am_map_meta_caps( $caps, $cap ) {
 add_filter( 'map_meta_cap', 'am_map_meta_caps', 10, 2 );
 
 // Setup the plugin's main classes after the theme has been setup.
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Preload::class, 'instance' ], 10 );
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Scripts::class, 'instance' ], 10 );
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Styles::class, 'instance' ], 10 );
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\SVG_Sprite::class, 'instance' ], 10 );
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Preload::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Scripts::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Styles::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\SVG_Sprite::class, 'instance' ] ); // @phpstan-ignore-line should not return anything

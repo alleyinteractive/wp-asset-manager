@@ -8,7 +8,18 @@
 namespace Alley\WP\Asset_Manager;
 
 /**
- * Asset_Manager_Styles class.
+ * Asset Manager: Styles
+ *
+ * @extends Asset_Manager<array{
+ *   handle: string,
+ *   src?: string|null,
+ *   deps?: array<string>,
+ *   condition?: array<string>|string,
+ *   load_method?: string,
+ *   version?: string,
+ *   media?: string,
+ *   type?: 'style',
+ * }>
  */
 class Styles extends Asset_Manager {
 	/**
@@ -23,30 +34,28 @@ class Styles extends Asset_Manager {
 	 *
 	 * @var array
 	 */
-	public $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
+	public array $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
 	 * @var string
 	 */
-	public $asset_type = 'style';
+	public ?string $asset_type = 'style';
 
 	/**
 	 * Core asset reference filter
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $core_ref_type = 'styles';
+	public ?string $core_ref_type = 'styles';
 
 	/**
 	 * Print a single stylesheet
 	 *
-	 * @param array $stylesheet Stylesheet to insert into DOM.
-	 *
-	 * @return void
+	 * @param TAssetData $stylesheet Stylesheet to insert into DOM.
 	 */
-	public function print_asset( $stylesheet ) {
+	public function print_asset( array $stylesheet ): void {
 		$classes      = $this->default_classes;
 		$classes[]    = $stylesheet['handle'];
 		$print_string = '';
@@ -121,7 +130,7 @@ class Styles extends Asset_Manager {
 	 * @param array $stylesheet Stylesheet to check.
 	 * @return array
 	 */
-	public function pre_add_asset( $stylesheet ) {
+	public function pre_add_asset( array $stylesheet ): array {
 		// Add loadCSS for defer method.
 		if ( 'defer' === $stylesheet['load_method'] && ! $this->loadcss_added ) {
 			am_enqueue_script(
@@ -144,7 +153,7 @@ class Styles extends Asset_Manager {
 	 * @param array $stylesheet Stylesheet to mutate.
 	 * @return array
 	 */
-	public function post_validate_asset( $stylesheet ) {
+	public function post_validate_asset( array $stylesheet ): array {
 		if (
 			! empty( $stylesheet['dependents'] ) &&
 			( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )

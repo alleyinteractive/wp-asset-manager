@@ -15,7 +15,8 @@
     ],
     "require-dev": {
         "alleyinteractive/alley-coding-standards": "^2.0",
-        "mantle-framework/testkit": "^1.2"
+        "mantle-framework/testkit": "^1.2",
+        "szepeviktor/phpstan-wordpress": "^2.0"
     },
     "prefer-stable": true,
     "autoload": {
@@ -46,13 +47,15 @@
         }
     },
     "scripts": {
-        "lint": "@phpcs",
         "lint:fix": "@phpcbf",
+        "lint": "@phpcs",
         "phpcbf": "phpcbf .",
         "phpcs": "phpcs --standard=./phpcs.xml .",
+        "phpstan": "phpstan analyse --memory-limit=1G",
         "phpunit": "phpunit",
         "test": [
             "@phpcs",
+            "@phpstan",
             "@phpunit"
         ]
     }

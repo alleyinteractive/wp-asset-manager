@@ -10,13 +10,14 @@ namespace Alley\WP\Asset_Manager;
 use DOMDocument;
 use DOMElement;
 use DOMText;
+use Mantle\Support\Traits\Singleton;
 
 /**
  * Asset_Manager_SVG_Sprite class.
  */
 class SVG_Sprite {
-	use Concerns\Singleton;
 	use Concerns\Conditions;
+	use Singleton;
 
 	/**
 	 * Directory from which relative paths will be completed.
@@ -410,10 +411,10 @@ class SVG_Sprite {
 	/**
 	 * Remove a registered symbol.
 	 *
-	 * @param  array $handle The symbol handle.
+	 * @param  string $handle The symbol handle.
 	 * @return bool Whether the symbol was removed, or wasn't registered.
 	 */
-	public function remove_symbol( $handle ): bool {
+	public function remove_symbol( string $handle ): bool {
 		if ( ! in_array( $handle, $this->asset_handles ) ) {
 			// Success: Handle not previously registered.
 			return true;

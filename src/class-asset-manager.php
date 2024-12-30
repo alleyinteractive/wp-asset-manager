@@ -7,50 +7,52 @@
 
 namespace Alley\WP\Asset_Manager;
 
+use Mantle\Support\Traits\Singleton;
+
 /**
- * Asset_Manager
+ * Asset Manager base class.
  *
- * Asset manager class.
+ * @template TAssetData of array
  */
 abstract class Asset_Manager {
 	use Concerns\Asset_Error;
-	use Concerns\Singleton;
 	use Concerns\Conditions;
+	use Singleton;
 
 	/**
 	 * Array of assets to insert
 	 *
-	 * @var array
+	 * @var array<TAssetData>
 	 */
-	public $assets = [];
+	public array $assets = [];
 
 	/**
 	 * Reference array of asset handles
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $asset_handles = [];
+	public array $asset_handles = [];
 
 	/**
 	 * Reference array of assets with their handle as the array key
 	 *
-	 * @var array
+	 * @var array<string, TAssetData>
 	 */
-	public $assets_by_handle = [];
+	public array $assets_by_handle = [];
 
 	/**
 	 * Boolean to define whether or not to ignore errors when enqueueing assets
 	 *
 	 * @var bool
 	 */
-	public $be_quiet = false;
+	public bool $be_quiet = false;
 
 	/**
 	 * Reference to default assets in WP core
 	 *
 	 * @var array
 	 */
-	public $core_assets_ref = [];
+	// public array $core_assets_ref = [];
 
 	/**
 	 * Variable name for global containing WP assets
@@ -67,60 +69,39 @@ abstract class Asset_Manager {
 	public $wp_enqueue_function = '';
 
 	/**
-	 * Array of assets, organized by dependencies
-	 *
-	 * @var array
-	 */
-	public $assets_by_dependency = [];
-
-	/**
-	 * Array of manually-loaded assets (no auto-dependency management)
-	 *
-	 * @var array
-	 */
-	public $assets_manual = [];
-
-	/**
-	 * Array of conditions with which to determine when a assets loads
-	 *
-	 * @var array
-	 */
-	public $conditions = [];
-
-	/**
 	 * Array of default classes to add to printed assets handles
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $default_classes = [];
+	public array $default_classes = [];
 
 	/**
 	 * Methods by which a asset can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $load_methods = [ 'sync', 'async' ];
+	public array $load_methods = [ 'sync', 'async' ];
 
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $wp_enqueue_methods = [ 'sync' ];
+	public array $wp_enqueue_methods = [ 'sync' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = null;
+	public ?string $asset_type = null;
 
 	/**
 	 * Core asset reference filter
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $core_ref_type = null;
+	public ?string $core_ref_type = null;
 
 	/**
 	 * Actions on which to load assets.
@@ -138,7 +119,7 @@ abstract class Asset_Manager {
 	 *      it with a custom print condition.
 	 *    - Custom actions will likely require that you enqueue the assets on the same action, but with an earlier priority.
 	 *
-	 * @var array $load_hooks {
+	 * @var array<string, array<string, int>> $load_hooks {
 	 *      List of available hooks on which an asset can be loaded. These can be any valid hook.
 	 *
 	 *      @type array $hook {
@@ -148,7 +129,7 @@ abstract class Asset_Manager {
 	 *      }
 	 * }
 	 */
-	public $load_hooks = [
+	public array $load_hooks = [
 		'am_critical' => [
 			'validate_assets' => 15,
 			'load_assets'     => 20,
@@ -166,26 +147,29 @@ abstract class Asset_Manager {
 	/**
 	 * Default print function throws error (and prints nothing)
 	 *
-	 * @param array $asset Asset to print.
+	 * @param TAssetData $asset Asset to print.
 	 */
-	abstract public function print_asset( $asset );
+	abstract public function print_asset( array $asset ): void;
 
 	/**
 	 * Perform final mutations before adding asset to array
 	 *
-	 * @param array $asset Asset to mutate.
-	 * @return $array
+	 * @param TAssetData $asset Asset to mutate.
+	 * @return TAssetData
 	 */
-	abstract public function pre_add_asset( $asset );
+	public function pre_add_asset( array $asset ): array {
+		return $asset;
+	}
 
 	/**
 	 * Perform mutations to asset after validation
 	 *
-	 * @param array $asset Asset to mutate.
-	 *
-	 * @return array
+	 * @param TAssetData $asset Asset to mutate.
+	 * @return TAssetData
 	 */
-	abstract public function post_validate_asset( $asset );
+	public function post_validate_asset( array $asset ): array {
+		return $asset;
+	}
 
 	/**
 	 * Constructor
@@ -208,7 +192,7 @@ abstract class Asset_Manager {
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param array $classes List of classes to apply to `class` attribute of resulting asset markup
+		 * @param array<string> $classes List of classes to apply to `class` attribute of resulting asset markup
 		 */
 		$this->default_classes = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
 
@@ -235,7 +219,7 @@ abstract class Asset_Manager {
 	/**
 	 * Set or filter properties for a specific type of asset
 	 */
-	public function set_asset_type_defaults() {}
+	public function set_asset_type_defaults(): void {}
 
 	/**
 	 * Add hooks for outputting assets
@@ -245,7 +229,7 @@ abstract class Asset_Manager {
 	public function add_hooks() {
 		foreach ( $this->load_hooks as $hook => $functions ) {
 			foreach ( $functions as $function => $priority ) {
-				add_action( $hook, [ $this, $function ], $priority );
+				add_action( $hook, [ $this, $function ], $priority ); // @phpstan-ignore-line expects callable
 			}
 		}
 	}
@@ -255,9 +239,9 @@ abstract class Asset_Manager {
 	 *
 	 * @param mixed $assets Assets object.
 	 */
-	public function set_core_assets_ref( $assets ) {
-		$this->core_assets_ref = $assets->registered;
-	}
+	// public function set_core_assets_ref( $assets ) {
+	// $this->core_assets_ref = $assets->registered;
+	// }
 
 	/**
 	 * Add a asset to the manifest of assets to load
@@ -272,10 +256,9 @@ abstract class Asset_Manager {
 	 *      @type string $load_method Style with which to load this asset. Defaults to 'sync'.
 	 *                                Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
-	 *
-	 * @return void
+	 * @phpstan-param TAssetData $args
 	 */
-	public function add_asset( $args ) {
+	public function add_asset( array $args ): void {
 		$wp_enqueue_function = $this->wp_enqueue_function;
 		$args['type']        = $this->asset_type;
 
@@ -332,7 +315,7 @@ abstract class Asset_Manager {
 
 					$args['loaded'] = true;
 				} else {
-					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', false, $wp_enqueue_function ) ) );
+					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', null, $wp_enqueue_function ) ) );
 				}
 			}
 
@@ -382,7 +365,7 @@ abstract class Asset_Manager {
 	/**
 	 * Make sure the assets and their dependencies are valid
 	 */
-	public function validate_assets() {
+	public function validate_assets(): void {
 		foreach ( $this->assets as $idx => $asset ) {
 			// Collect dependents.
 			$asset['dependents'] = $this->find_dependents( $asset );
@@ -469,6 +452,7 @@ abstract class Asset_Manager {
 		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
 			return;
 		}
+
 
 		$core_assets        = $GLOBALS[ $this->core_assets_global ] ?? [];
 		$core_assets_ref    = $core_assets->registered ?? [];

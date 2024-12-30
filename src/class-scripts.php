@@ -8,50 +8,63 @@
 namespace Alley\WP\Asset_Manager;
 
 /**
- * Asset_Manager_Scripts
+ * Asset Manager: Scripts
+ *
+ * @extends Asset_Manager<array{
+ *   handle: string,
+ *   src?: string|null,
+ *   deps?: array<string>,
+ *   condition?: array<string>|string,
+ *   version?: string,
+ *   load_hook?: string,
+ *   type?: 'script',
+ *   in_footer?: bool,
+ *   loaded?: bool,
+ *   dependents?: array<string>,
+ * }>
  */
 class Scripts extends Asset_Manager {
 	/**
 	 * Scripts loaded via async or defer
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $async_scripts = [];
+	public array $async_scripts = [];
 
 	/**
 	 * Global JS variable on which inline objects should be added as a property
 	 *
-	 * @var array
+	 * @var string
 	 */
-	public $inline_script_context = 'amScripts';
+	public string $inline_script_context = 'amScripts';
 
 	/**
 	 * Methods by which a script can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $load_methods = [ 'inline', 'sync', 'async', 'defer', 'async-defer' ];
+	public array $load_methods = [ 'inline', 'sync', 'async', 'defer', 'async-defer' ];
 
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
-	public $wp_enqueue_methods = [ 'sync', 'async', 'defer', 'async-defer' ];
+	public array $wp_enqueue_methods = [ 'sync', 'async', 'defer', 'async-defer' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
 	 * @var string
 	 */
-	public $asset_type = 'script';
+	public ?string $asset_type = 'script';
 
 	/**
 	 * Core asset reference filter
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $core_ref_type = 'scripts';
+	public ?string $core_ref_type = 'scripts';
 
 	/**
 	 * Constructor.
@@ -65,7 +78,7 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Set default properties for script manager
 	 */
-	public function set_asset_type_defaults() {
+	public function set_asset_type_defaults(): void {
 		/**
 		 * Filter function for setting new inline script context
 		 *
@@ -151,9 +164,9 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Print a single script.
 	 *
-	 * @param array $script Script to insert into DOM.
+	 * @param TAssetData $script Script to insert into DOM.
 	 */
-	public function print_asset( $script ) {
+	public function print_asset( array $script ): void {
 		$classes   = $this->default_classes;
 		$classes[] = $script['handle'];
 
@@ -184,22 +197,12 @@ class Scripts extends Asset_Manager {
 	}
 
 	/**
-	 * Perform final mutations before adding script to array.
-	 *
-	 * @param array $script Script to mutate.
-	 * @return array
-	 */
-	public function pre_add_asset( $script ) {
-		return $script;
-	}
-
-	/**
 	 * Add script to async/defer script list.
 	 *
 	 * @param array $script Script to add.
 	 * @return array
 	 */
-	public function post_validate_asset( $script ) {
+	public function post_validate_asset( array $script ): array {
 		$unsafe_dependents = [];
 
 		if ( ! empty( $script['dependents'] ) ) {
@@ -230,9 +233,9 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Add a script handle to the list of async or defer scripts
 	 *
-	 * @param array $script Script to add.
+	 * @param TAssetData $script Script to add.
 	 */
-	public function add_to_async( $script ) {
+	public function add_to_async( array $script ): void {
 		// For version of WordPress 6.3+ async and defer can use the core strategy for loading.
 		if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
 			$load_methods_to_async = [ 'async', 'defer', 'async-defer' ];
