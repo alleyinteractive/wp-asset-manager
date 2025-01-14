@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Added proper types for helper functions that support array in the first argument.
+- Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
 
 ### Changed
 
@@ -16,11 +17,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Adds a dependency on Composer autoloader. For submodules, you can track the
   `production-built` branch of the plugin or any tagged release (which will be
   built) to include the dependencies.
-
-## 1.3.8 (unreleased)
-
-* Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
-* Add: `convertDeprecationsToExceptions` to `phpunit.xml`.
 
 ## 1.3.7
 
