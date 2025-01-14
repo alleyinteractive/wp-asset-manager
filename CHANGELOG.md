@@ -1,6 +1,22 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0
+
+
+### Fixed
+
+- Added proper types for helper functions that support array in the first argument.
+
+### Changed
+
+* Migrates code into the `Alley\WP\Asset_Manager` namespace. Legacy classes such
+  as `Asset_Manager_Scripts` and `Asset_Manager_Styles` are aliased to their new
+  namespace for backward compatibility. Helper functions are left un-namespaced.
+* Adds a dependency on Composer autoloader. For submodules, you can track the
+  `production-built` branch of the plugin or any tagged release (which will be
+  built) to include the dependencies.
+
 ## 1.3.8 (unreleased)
 
 * Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
