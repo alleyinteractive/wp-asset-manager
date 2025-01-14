@@ -3,7 +3,7 @@
   "version": "1.4.0",
   "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
   "scripts": {
-	"build": "echo 'No build step defined'",
+    "build": "echo 'No build step defined'",
     "release": "npx @alleyinteractive/create-release@latest"
   },
   "repository": {
