@@ -83,8 +83,8 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 * @param string       $src         URI to stylesheet.
 	 * @param array        $deps        List of dependencies.
 	 * @param array|string $condition   Corresponds to a configured loading condition that, if matches,
-	 *                            will allow the stylesheet to load.
-	 *                            'global' is assumed if no condition is declared.
+	 *                                  will allow the stylesheet to load.
+	 *                                  'global' is assumed if no condition is declared.
 	 * @param string       $load_method How to load this asset.
 	 * @param string|null  $version     Version of the script.
 	 * @param string       $load_hook   Hook on which to load this asset.
@@ -128,8 +128,8 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 * @param array|string $handle       Handle for asset. This is necessary for dependency management.
 	 * @param string       $src          URI to asset.
 	 * @param array|string $condition    Corresponds to a configured loading condition that, if matches,
-	 *                             will allow the asset to load.
-	 *                             'global' is assumed if no condition is declared.
+	 *                                   will allow the asset to load.
+	 *                                   'global' is assumed if no condition is declared.
 	 * @param string|null  $version      Version of the asset.
 	 * @param string       $media        Media query to restrict when this asset is loaded.
 	 * @param string       $as           A hint to the browser about what type of asset this is.
@@ -167,8 +167,8 @@ if ( ! function_exists( 'am_register_symbol' ) ) :
 	 *                                 filter to update the directory from which relative paths will be
 	 *                                 completed.
 	 * @param array|string $condition  Corresponds to a configured loading condition that, if matches,
-	 *                           will allow the asset to be added to the sprite sheet.
-	 *                           'global' is assumed if no condition is declared.
+	 *                                 will allow the asset to be added to the sprite sheet.
+	 *                                 'global' is assumed if no condition is declared.
 	 * @param array        $attributes An array of attribute names and values to add to the resulting <svg>
 	 *                                 everywhere it is printed.
 	 *
