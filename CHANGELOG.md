@@ -2,6 +2,12 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.2
+
+### Fixed
+
+- Fixed issue with array of data being passed to the `$src` argument of `am_enqueue_script()`.
+
 ## 1.4.1
 
 ### Fixed

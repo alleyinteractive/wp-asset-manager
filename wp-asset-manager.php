@@ -10,7 +10,7 @@ Plugin Name: Asset Manager
 Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
 Description: Add more robust functionality to enqueuing static assets
 Author: Alley Interactive
-Version: 1.4.1
+Version: 1.4.2
 License: GPLv2 or later
 Author URI: https://alley.com
 */

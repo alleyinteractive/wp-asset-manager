@@ -62,6 +62,29 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
+	function test_load_asset_as_arguments() {
+		// Temporarily set current filter to 'wp_head' to trick current_filter()
+		global $wp_current_filter;
+		$old_filter        = $wp_current_filter;
+		$wp_current_filter = [ 'wp_head' ];
+
+		am_enqueue_script(
+			handle: 'test-inline-asset',
+			src: [
+				'myGlobalVar' => true,
+			],
+			load_method: 'inline',
+			load_hook: 'wp_head',
+		);
+		$actual_output   = get_echo( [ Scripts::instance(), 'load_assets' ] );
+		$expected_output = '<script class="wp-asset-manager test-inline-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["test-inline-asset"] = {"myGlobalVar":true}</script>';
+		$this->assertEquals( $expected_output, $actual_output, 'Load assets should call the print_asset() function on each asset and echo the proper results' );
+
+		// Reset current filter
+		$wp_current_filter = $old_filter;
+	}
+
+	#[Group( 'assets' )]
 	function test_asset_should_add() {
 		// If no handle, should return false
 		$no_handle = Scripts::instance()->asset_should_add( [ 'src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js' ] );

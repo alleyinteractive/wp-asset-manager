@@ -32,19 +32,19 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	/**
 	 * Load an external script. Options can be passed in as an array or individual parameters.
 	 *
-	 * @param string|array         $handle Handle for script.
-	 * @param string|null          $src URI to script.
-	 * @param array<string>        $deps This script's dependencies.
-	 * @param array<string>|string $condition Corresponds to a configured loading condition that, if matches,
-	 *                                        will allow the script to load.
-	 *                                        'global' is assumed if no condition is declared.
-	 * @param string               $load_method  How to load this asset.
-	 * @param string|null          $version      Version of the script.
-	 * @param string               $load_hook    Hook on which to load this asset.
+	 * @param string|array             $handle Handle for script.
+	 * @param array<mixed>|string|null $src URI to script or array of inline script data.
+	 * @param array<string>            $deps This script's dependencies.
+	 * @param array<string>|string     $condition Corresponds to a configured loading condition that, if matches,
+	 *                                            will allow the script to load.
+	 *                                            'global' is assumed if no condition is declared.
+	 * @param string                   $load_method  How to load this asset.
+	 * @param string|null              $version      Version of the script.
+	 * @param string                   $load_hook    Hook on which to load this asset.
 	 *
 	 * @phpstan-param string|array{
 	 *   handle: string,
-	 *   src?: string,
+	 *   src?: array<mixed>|string,
 	 *   condition?: string,
 	 *   deps?: array<string>,
 	 *   load_hook?: string,
@@ -52,7 +52,7 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 *   version?: string
 	 * } $handle
 	 */
-	function am_enqueue_script( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head' ): void {
+	function am_enqueue_script( array|string $handle, array|string|null $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head' ): void {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Scripts::instance()->add_asset( $args );
