@@ -258,7 +258,7 @@ abstract class Asset_Manager {
 	}
 
 	/**
-	 * Add a asset to the manifest of assets to load
+	 * Add an asset to the manifest of assets to load
 	 *
 	 * @param array $args {
 	 *  Arguments for loading asset. May differ based on asset type, but most contain the following.

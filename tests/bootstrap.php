@@ -6,6 +6,7 @@
  */
 
 \Mantle\Testing\manager()
+	->maybe_rsync_plugin()
 	->with_sqlite()
 	->loaded( fn () => require dirname( __DIR__ ) . '/wp-asset-manager.php' )
 	->install();

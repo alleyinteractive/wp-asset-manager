@@ -14,6 +14,7 @@ class AssetsTest extends TestCase {
 		// Enqueue test script
 		am_enqueue_script( $this->test_script );
 
+		$this->assertTrue( wp_script_is( $this->test_script['handle'], 'registered' ) );
 		$this->assertContains( $this->test_script['handle'], $wp_scripts->queue, 'Script should be enqueued' );
 		$this->assertArrayHasKey( $this->test_script['handle'], $wp_scripts->registered, 'Script should be registered' );
 		$this->assertArrayHasKey( $this->test_script['handle'], Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
