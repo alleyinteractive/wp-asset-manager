@@ -270,8 +270,6 @@ abstract class Asset_Manager {
 	 *      @type string $load_method Style with which to load this asset. Defaults to 'sync'.
 	 *                                Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
-	 *
-	 * @return void
 	 */
 	public function add_asset( $args ) {
 		$wp_enqueue_function = $this->wp_enqueue_function;
@@ -475,9 +473,9 @@ abstract class Asset_Manager {
 		}
 
 		$dep_register = match ( $args['type'] ) {
-			'style' => wp_styles(),
+			'style'  => wp_styles(),
 			'script' => wp_scripts(),
-			default => null,
+			default  => null,
 		};
 
 		if ( empty( $dep_register ) ) {

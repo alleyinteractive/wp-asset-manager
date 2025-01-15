@@ -13,26 +13,27 @@ class ScriptsTest extends TestCase {
 	#[Group( 'assets' )]
 	public function test_script_is_registered_to_wp_deps() {
 		$asset = [
-			'handle' => 'my-test-asset-test',
+			'handle' => 'my-test-asset-test-test',
 			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/cool-test.bundle.js',
 			'load_method' => 'async',
 		];
-
-		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
 
 		$this->assertFalse( wp_script_is( $asset['handle'], 'registered' ) );
 		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ) );
 		$this->assertFalse( wp_script_is( $asset['handle'], 'enqueued' ) );
 		$this->assertFalse( wp_script_is( $asset['handle'], 'queue' ) );
 
+		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
 		am_enqueue_script( $asset );
 
-		$this->assertTrue( wp_script_is( $asset['handle'], 'enqueued' ), 'Script should be enqueued.' );
-		$this->assertTrue( wp_script_is( $asset['handle'], 'queue' ), 'Script should be enqueued.' );
-		$this->assertTrue( wp_script_is( $asset['handle'], 'registered' ), 'Script should be registered.' );
-		// $this->assertTrue( wp_script_is( $asset['handle'], 'done' ), 'Script should be registered.' );
-
 		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		$this->assertTrue( wp_script_is( $asset['handle'], 'enqueued' ), 'Script should be enqueued.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'registered' ), 'Script should be registered.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'queue' ), 'Script should be in the queue.' );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ), 'Script is not marked as done.' );
+
 	}
 
 	#[Group( 'assets' )]

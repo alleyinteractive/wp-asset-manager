@@ -14,8 +14,6 @@ class StylesTest extends TestCase {
 	 */
 	#[Group( 'assets' )]
 	public function test_stylesheet_is_registered_to_wp_deps() {
-		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
-
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'registered' ) );
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'enqueued' ) );
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'done' ) );
@@ -26,14 +24,16 @@ class StylesTest extends TestCase {
 			[ 'load_method' => 'async' ]
 		);
 
+		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
 		am_enqueue_style( $async_style );
+
+		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
 
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'enqueued' ), 'Style should not be enqueued.' );
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'queue', 'Style should not be added to the queue.' ) );
 		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'registered' ), 'Style is not registered.' );
-		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'done' ), 'Style is is not marked as done.' );
-
-		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'done' ), 'Style is not marked as done.' );
 	}
 
 	#[Group( 'assets' )]
