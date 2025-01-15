@@ -1,11 +1,9 @@
 <?php
 /**
- * PHPUnit bootstrap file
+ * PHPUnit bootstrap file.
  *
- * @package WP_Irving
+ * @package Asset_Manager_Tests
  */
-
-use function Mantle\Testing\tests_add_filter;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

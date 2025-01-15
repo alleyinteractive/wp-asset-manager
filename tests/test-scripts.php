@@ -5,6 +5,33 @@ namespace Asset_Manager_Tests;
 class Asset_Manager_Scripts_Tests extends Asset_Manager_Test {
 
 	/**
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/66
+	 */
+	public function test_script_is_registered_to_wp_deps(): void {
+		$asset = [
+			'handle' => 'my-test-asset-test',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/cool-test.bundle.js',
+			'load_method' => 'async',
+		];
+
+		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		$this->assertFalse( wp_script_is( $asset['handle'], 'registered' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'enqueued' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'queue' ) );
+
+		am_enqueue_script( $asset );
+
+		$this->assertTrue( wp_script_is( $asset['handle'], 'enqueued' ), 'Script should be enqueued.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'queue' ), 'Script should be enqueued.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'registered' ), 'Script should be registered.' );
+		// $this->assertTrue( wp_script_is( $asset['handle'], 'done' ), 'Script should be registered.' );
+
+		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+	}
+
+	/**
 	 * @group assets
 	 */
 	function test_add_attributes() {

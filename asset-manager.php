@@ -18,7 +18,7 @@ Author URI: https://www.alleyinteractive.com/
 /**
  * Filesystem path to AssetManager.
  */
-defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', dirname( __FILE__ ) );
+defined( 'AM_BASE_DIR' ) || define( 'AM_BASE_DIR', __DIR__ );
 
 if ( ! function_exists( 'am_validate_path' ) ) {
 	/**
@@ -28,7 +28,7 @@ if ( ! function_exists( 'am_validate_path' ) ) {
 	 *
 	 * @return bool True if the path is valid, false otherwise.
 	 */
-	function am_validate_path( string $path ) : bool {
+	function am_validate_path( string $path ): bool {
 		return in_array( validate_file( $path ), [ 0, 2 ], true ) && file_exists( $path );
 	}
 }
@@ -259,3 +259,18 @@ if ( ! function_exists( 'am_map_meta_caps' ) ) :
 endif;
 
 add_filter( 'map_meta_cap', 'am_map_meta_caps', 10, 2 );
+
+/**
+ * Register assets to Query Monitor if it is installed.
+ *
+ * @param bool $retval Whether or not to register assets to Query Monitor.
+ * @return bool
+ */
+function am_load_asset_to_query_monitor( $retval ): bool {
+	if ( class_exists( 'QueryMonitor' ) ) {
+		return true;
+	}
+
+	return $retval;
+}
+add_filter( 'am_register_assets_to_wordpress_dependency', 'am_load_asset_to_query_monitor' );
