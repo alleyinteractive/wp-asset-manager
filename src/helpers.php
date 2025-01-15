@@ -79,7 +79,7 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	/**
 	 * Load an external stylesheet. Options can be passed in as an array or individual parameters.
 	 *
-	 * @param string|array $handle       Handle for stylesheet. This is necessary for dependency management.
+	 * @param string|array $handle      Handle for stylesheet. This is necessary for dependency management.
 	 * @param string       $src         URI to stylesheet.
 	 * @param array        $deps        List of dependencies.
 	 * @param array|string $condition   Corresponds to a configured loading condition that, if matches,
