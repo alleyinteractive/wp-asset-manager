@@ -5,18 +5,12 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager_Styles class.
  */
-class Asset_Manager_Styles extends Asset_Manager {
-
-	/**
-	 * Holds references to the singleton instances.
-	 *
-	 * @var array
-	 */
-	private static $instance;
-
+class Styles extends Asset_Manager {
 	/**
 	 * Whether or not loadCSS has been loaded.
 	 *
@@ -44,27 +38,6 @@ class Asset_Manager_Styles extends Asset_Manager {
 	 * @var string
 	 */
 	public $core_ref_type = 'styles';
-
-	/**
-	 * Constructor.
-	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
-	}
-
-	/**
-	 * Get an instance of the class.
-	 *
-	 * @return Asset_Manager_Styles
-	 */
-	public static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			self::$instance = new static();
-			self::$instance->add_hooks();
-			self::$instance->set_defaults();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * Print a single stylesheet

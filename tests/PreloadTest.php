@@ -1,12 +1,13 @@
 <?php
 
-namespace Asset_Manager_Tests;
+namespace Alley\WP\Asset_Manager\Tests;
 
-class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
+use Alley\WP\Asset_Manager\Preload;
+use PHPUnit\Framework\Attributes\Group;
 
-	/**
-	 * @group preload
-	 */
+class PreloadTest extends TestCase {
+
+	#[Group( 'preload' )]
 	function test_preload_asset() {
 		// Basic CSS preload.
 		// The `print_asset` function does no option parsing, so all expected values are required.
@@ -20,7 +21,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			'version'     => '1.0.0',
 		];
 		$expected_style_output = '<link rel="preload" href="http://client/css/test.css?ver=1.0.0" class="wp-asset-manager preload-basic" as="style" media="(min-width: 768px)" type="text/css" />';
-		$actual_style_output   = get_echo( [ \Asset_Manager_Preload::instance(), 'print_asset' ], [ $preload_basic ] );
+		$actual_style_output   = get_echo( [ Preload::instance(), 'print_asset' ], [ $preload_basic ] );
 		$this->assertEquals(
 			$expected_style_output,
 			$actual_style_output,
@@ -28,9 +29,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 		);
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_post_validate_asset() {
 		// Adds the expected attributes for preloading a font.
 		$font_asset     = [
@@ -46,7 +45,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$actual_font_output = \Asset_Manager_Preload::instance()->post_validate_asset( $font_asset );
+		$actual_font_output = Preload::instance()->post_validate_asset( $font_asset );
 
 		$this->assertEquals(
 			$expected_font,
@@ -60,7 +59,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			'src'    => 'my-song.mp3',
 		];
 
-		$actual_script_output = \Asset_Manager_Preload::instance()->set_asset_types( $unknown_asset );
+		$actual_script_output = Preload::instance()->set_asset_types( $unknown_asset );
 
 		$this->assertEquals(
 			$unknown_asset,
@@ -69,9 +68,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 		);
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_print_asset() {
 		// Throws an error for missing `as` value.
 		$unknown_asset = [
@@ -79,15 +76,13 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			'src'    => 'my-song.mp3',
 		];
 
-		$error = get_echo( [ \Asset_Manager_Preload::instance(), 'print_asset' ], [ $unknown_asset ] );
+		$error = get_echo( [ Preload::instance(), 'print_asset' ], [ $unknown_asset ] );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_as_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
 	}
 
-	/**
-	 * @group preload
-	 */
+	#[Group( 'preload' )]
 	function test_set_asset_types() {
-		$actual_output = \Asset_Manager_Preload::instance()->set_asset_types( [] );
+		$actual_output = Preload::instance()->set_asset_types( [] );
 
 		$this->assertEquals(
 			$actual_output,
@@ -104,7 +99,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$actual_output = \Asset_Manager_Preload::instance()->set_asset_types( $this->test_style );
+		$actual_output = Preload::instance()->set_asset_types( $this->test_style );
 
 		$this->assertEquals(
 			$expected_style,
@@ -125,7 +120,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$actual_font_output = \Asset_Manager_Preload::instance()->set_asset_types( $font_asset );
+		$actual_font_output = Preload::instance()->set_asset_types( $font_asset );
 
 		$this->assertEquals(
 			$expected_font,
@@ -146,7 +141,7 @@ class Asset_Manager_Preload_Tests extends Asset_Manager_Test {
 			]
 		);
 
-		$actual_script_output = \Asset_Manager_Preload::instance()->set_asset_types( $script_asset );
+		$actual_script_output = Preload::instance()->set_asset_types( $script_asset );
 
 		$this->assertEquals(
 			$expected_script,

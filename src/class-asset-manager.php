@@ -5,13 +5,17 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager
  *
  * Asset manager class.
  */
 abstract class Asset_Manager {
-	use Conditions, Asset_Error;
+	use Concerns\Asset_Error;
+	use Concerns\Singleton;
+	use Concerns\Conditions;
 
 	/**
 	 * Array of assets to insert
@@ -186,8 +190,9 @@ abstract class Asset_Manager {
 	/**
 	 * Constructor
 	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
+	protected function __construct() {
+		$this->add_hooks();
+		$this->set_defaults();
 	}
 
 	/**
@@ -303,19 +308,17 @@ abstract class Asset_Manager {
 					// If this is for a style, just pass the media argument.
 					if ( 'style' === $args['type'] ) {
 						$enqueue_options = $args['media'];
-					} else {
+					} elseif ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
 						// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
-						if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-							$enqueue_options = $args['in_footer'];
-						} else {
-							// We are on a version of WordPress 6.3+ so the last argument is an array.
-							$enqueue_options = [
-								'in_footer' => $args['in_footer'],
-							];
-							// If the load method is async or defer, set the strategy.
-							if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-								$enqueue_options['strategy'] = $args['load_method'];
-							}
+						$enqueue_options = $args['in_footer'];
+					} else {
+						// We are on a version of WordPress 6.3+ so the last argument is an array.
+						$enqueue_options = [
+							'in_footer' => $args['in_footer'],
+						];
+						// If the load method is async or defer, set the strategy.
+						if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+							$enqueue_options['strategy'] = $args['load_method'];
 						}
 					}
 
@@ -371,7 +374,7 @@ abstract class Asset_Manager {
 			if ( ! empty( $current_asset['deps'] ) && in_array( $asset['handle'], $current_asset['deps'], true ) ) {
 				$dependents[] = $current_asset['handle'];
 			}
-		};
+		}
 
 		return $dependents;
 	}
@@ -424,7 +427,7 @@ abstract class Asset_Manager {
 					) {
 						$this->generate_asset_error( 'circular_dependency', $asset, $this_dep['handle'] );
 					}
-				};
+				}
 			}
 
 			// Perform any type-specific validation checks or array mutation after validation.
