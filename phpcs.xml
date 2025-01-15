@@ -2,13 +2,13 @@
 <ruleset>
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
+	<!-- Include Alley Rules -->
+	<rule ref="Alley-Interactive" />
+
 	<arg value="ps" />
 	<arg name="parallel" value="8" />
 
 	<exclude-pattern>tests/</exclude-pattern>
-
-	<!-- Include Alley Rules -->
-	<rule ref="Alley-Interactive" />
 
 	<!-- Project customizations go here -->
 	<rule ref="WordPress.WP.I18n">
@@ -30,13 +30,14 @@
 			<property name="prefixes" type="array">
 				<element value="am_"/>
 				<element value="Asset_Manager"/>
+				<element value="Alley\WP\"/>
 			</property>
 		</properties>
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidVariableName">
 		<properties>
-			<property name="customPropertiesWhitelist" type="array">
+			<property name="allowed_custom_properties" type="array">
 				<element value="childNodes"/>
 				<element value="nodeName"/>
 				<element value="parentNode"/>

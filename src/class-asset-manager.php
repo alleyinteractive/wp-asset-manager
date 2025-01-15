@@ -5,14 +5,17 @@
  * @package AssetManager
  */
 
+namespace Alley\WP\Asset_Manager;
+
 /**
  * Asset_Manager
  *
  * Asset manager class.
  */
 abstract class Asset_Manager {
-	use Conditions;
-	use Asset_Error;
+	use Concerns\Asset_Error;
+	use Concerns\Singleton;
+	use Concerns\Conditions;
 
 	/**
 	 * Array of assets to insert
@@ -187,16 +190,15 @@ abstract class Asset_Manager {
 	/**
 	 * Constructor
 	 */
-	private function __construct() {
-		// Don't do anything, needs to be initialized via instance() method.
+	protected function __construct() {
+		$this->add_hooks();
+		$this->set_defaults();
 	}
 
 	/**
 	 * Set default properties
 	 *
 	 * NOTE: $handle provided when enqueueing the asset will always be added as a class
-	 *
-	 * @return void
 	 */
 	public function set_defaults() {
 		/**
@@ -234,7 +236,9 @@ abstract class Asset_Manager {
 	public function set_asset_type_defaults() {}
 
 	/**
-	 * Add hooks for outputting assets.
+	 * Add hooks for outputting assets
+	 *
+	 * @return void
 	 */
 	public function add_hooks() {
 		foreach ( $this->load_hooks as $hook => $functions ) {
@@ -254,7 +258,7 @@ abstract class Asset_Manager {
 	}
 
 	/**
-	 * Add an asset to the manifest of assets to load.
+	 * Add a asset to the manifest of assets to load
 	 *
 	 * @param array $args {
 	 *  Arguments for loading asset. May differ based on asset type, but most contain the following.
@@ -266,6 +270,8 @@ abstract class Asset_Manager {
 	 *      @type string $load_method Style with which to load this asset. Defaults to 'sync'.
 	 *                                Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
+	 *
+	 * @return void
 	 */
 	public function add_asset( $args ) {
 		$wp_enqueue_function = $this->wp_enqueue_function;
@@ -291,7 +297,8 @@ abstract class Asset_Manager {
 				$args['load_hook'] = ! empty( $args['in_footer'] ) ? 'wp_footer' : 'wp_head';
 			}
 
-			$args                      = $this->pre_add_asset( $args );
+			$args = $this->pre_add_asset( $args );
+
 			$asset_uses_core_functions = false;
 
 			// Enqueue asset if applicable.
@@ -323,85 +330,6 @@ abstract class Asset_Manager {
 			$this->asset_handles[] = $args['handle'];
 			//phpcs:enable
 		}
-	}
-
-	/**
-	 * Set enqueue options for a given asset.
-	 *
-	 * @param array $args Arguments for loading asset.
-	 * @return array|string
-	 */
-	protected function set_enqueue_options( $args ): array|string {
-		// If this is for a style, just pass the media argument.
-		if ( 'style' === $args['type'] ) {
-			$enqueue_options = $args['media'];
-		} else {
-			// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
-			if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-				$enqueue_options = $args['in_footer'];
-			} else {
-				// We are on a version of WordPress 6.3+ so the last argument is an array.
-				$enqueue_options = [ 'in_footer' => $args['in_footer'] ];
-
-				// If the load method is async or defer, set the strategy.
-				if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-					$enqueue_options['strategy'] = $args['load_method'];
-				}
-			}
-		}
-
-		return $enqueue_options;
-	}
-
-	/**
-	 * Register an asset to the WP dependency registry.
-	 *
-	 * @param array $args Arguments for loading asset.
-	 */
-	protected function register_asset_to_wp_deps( array $args ): void {
-		/**
-		 * Filter used to determine whether or not to register assets to the WP dependency registry.
-		 *
-		 * @param bool $register_asset Whether or not to register assets to the WP dependency registry.
-		 * @param array $args Arguments for loading asset.
-		 */
-		$register_asset = apply_filters( 'am_register_assets_to_wordpress_dependency', false, $args );
-
-		if ( false === $register_asset ) {
-			return;
-		}
-
-		// Skip inlined scripts.
-		if ( ! is_string( $args['src'] ) ) {
-			return;
-		}
-
-		$dep_register = match ( $args['type'] ) {
-			'style' => wp_styles(),
-			'script' => wp_scripts(),
-			default => null,
-		};
-
-		if ( empty( $dep_register ) ) {
-			return;
-		}
-
-		// Account for the `am_modify_load_method` function, which might apply to already registered/core assets.
-		if ( $dep_register->query( $args['handle'], 'registered' ) ) {
-			return;
-		}
-
-		// Register the asset.
-		$dep_register->add(
-			$args['handle'],
-			$args['src'],
-			$args['deps'],
-			$args['version'],
-			$this->set_enqueue_options( $args )
-		);
-
-		// Fake the enqueued state. Asset is printed by our `print_asset` method.
-		$dep_register->done[] = $args['handle'];
 	}
 
 	/**
@@ -498,6 +426,83 @@ abstract class Asset_Manager {
 	}
 
 	/**
+	 * Set enqueue options for a given asset.
+	 *
+	 * @param array $args Arguments for loading asset.
+	 * @return array|string
+	 */
+	protected function set_enqueue_options( $args ): array|string {
+		// If this is for a style, just pass the media argument.
+		if ( 'style' === $args['type'] ) {
+			$enqueue_options = $args['media'];
+		} elseif ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
+			// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
+			$enqueue_options = $args['in_footer'];
+		} else {
+			// We are on a version of WordPress 6.3+ so the last argument is an array.
+			$enqueue_options = [ 'in_footer' => $args['in_footer'] ];
+
+			// If the load method is async or defer, set the strategy.
+			if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+				$enqueue_options['strategy'] = $args['load_method'];
+			}
+		}
+
+		return $enqueue_options;
+	}
+
+	/**
+	 * Register an asset to the WP dependency registry.
+	 *
+	 * @param array $args Arguments for loading asset.
+	 */
+	protected function register_asset_to_wp_deps( array $args ): void {
+		/**
+		 * Filter used to determine whether or not to register assets to the WP dependency registry.
+		 *
+		 * @param bool $register_asset Whether or not to register assets to the WP dependency registry.
+		 * @param array $args Arguments for loading asset.
+		 */
+		$register_asset = apply_filters( 'am_register_assets_to_wordpress_dependency', false, $args );
+
+		if ( false === $register_asset ) {
+			return;
+		}
+
+		// Skip inlined scripts.
+		if ( ! is_string( $args['src'] ) ) {
+			return;
+		}
+
+		$dep_register = match ( $args['type'] ) {
+			'style' => wp_styles(),
+			'script' => wp_scripts(),
+			default => null,
+		};
+
+		if ( empty( $dep_register ) ) {
+			return;
+		}
+
+		// Account for the `am_modify_load_method` function, which might apply to already registered/core assets.
+		if ( $dep_register->query( $args['handle'], 'registered' ) ) {
+			return;
+		}
+
+		// Register the asset.
+		$dep_register->add(
+			$args['handle'],
+			$args['src'],
+			$args['deps'],
+			$args['version'],
+			$this->set_enqueue_options( $args )
+		);
+
+		// Fake the enqueued state. Asset is printed by our `print_asset` method.
+		$dep_register->done[] = $args['handle'];
+	}
+
+	/**
 	 * Check if a asset has any dependencies that exist in WP Core and, if so, enqueue them
 	 *
 	 * @param array $asset Asset to check for core dependencies.
@@ -517,8 +522,6 @@ abstract class Asset_Manager {
 	 *
 	 * @param string $handle      Handle of core asset to add.
 	 * @param string $load_method Customize load method of core asset, otherwise leave it as 'sync'.
-	 *
-	 * @return void
 	 */
 	public function add_core_asset( $handle, $load_method = 'sync' ) {
 		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
@@ -575,9 +578,9 @@ abstract class Asset_Manager {
 		$current_hook_position = array_search( $this_action, $available_hooks, true );
 
 		// Load assets that are configured to load on this hook or on a previous hook but were enqueued too late.
-		$dom_position_matches = ! empty( $asset['load_hook'] ) && ( $target_hook_position <= $current_hook_position || false === $target_hook_position );
+		$dom_position_matches = ! empty( $asset['load_hook'] )
+			&& ( $target_hook_position <= $current_hook_position || false === $target_hook_position );
 		$has_src              = ! empty( $asset['src'] );
-		
 		// Load assets that have not yet been loaded.
 		$asset_loaded = ! empty( $asset['loaded'] ) ? $asset['loaded'] : false;
 
