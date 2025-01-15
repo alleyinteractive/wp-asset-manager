@@ -32,7 +32,17 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	/**
 	 * Load an external script. Options can be passed in as an array or individual parameters.
 	 *
-	 * @phpstan-type EnqueueScriptArgs array{
+	 * @param string|array         $handle Handle for script.
+	 * @param string|null          $src URI to script.
+	 * @param array<string>        $deps This script's dependencies.
+	 * @param array<string>|string $condition Corresponds to a configured loading condition that, if matches,
+	 *                                        will allow the script to load.
+	 *                                        'global' is assumed if no condition is declared.
+	 * @param string               $load_method  How to load this asset.
+	 * @param string|null          $version      Version of the script.
+	 * @param string               $load_hook    Hook on which to load this asset.
+	 *
+	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
 	 *   condition?: string,
@@ -40,19 +50,9 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 *   load_hook?: string,
 	 *   load_method?: string,
 	 *   version?: string
-	 * }
-	 *
-	 * @param string|EnqueueScriptArgs $handle Handle for script.
-	 * @param string|null              $src URI to script.
-	 * @param array<string>            $deps This script's dependencies.
-	 * @param array<string>|string     $condition Corresponds to a configured loading condition that, if matches,
-	 *                                            will allow the script to load.
-	 *                                            'global' is assumed if no condition is declared.
-	 * @param string                   $load_method  How to load this asset.
-	 * @param string                   $version      Version of the script.
-	 * @param string                   $load_hook    Hook on which to load this asset.
+	 * } $handle
 	 */
-	function am_enqueue_script( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', string $version = '1.0.0', string $load_hook = 'wp_head' ): void {
+	function am_enqueue_script( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head' ): void {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Scripts::instance()->add_asset( $args );
@@ -79,7 +79,18 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	/**
 	 * Load an external stylesheet. Options can be passed in as an array or individual parameters.
 	 *
-	 * @phpstan-type EnqueueStyleArgs array{
+	 * @param string|array $handle      Handle for stylesheet. This is necessary for dependency management.
+	 * @param string       $src         URI to stylesheet.
+	 * @param array        $deps        List of dependencies.
+	 * @param array|string $condition   Corresponds to a configured loading condition that, if matches,
+	 *                                  will allow the stylesheet to load.
+	 *                                  'global' is assumed if no condition is declared.
+	 * @param string       $load_method How to load this asset.
+	 * @param string|null  $version     Version of the script.
+	 * @param string       $load_hook   Hook on which to load this asset.
+	 * @param string       $media       Media query to restrict when this asset is loaded.
+	 *
+	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
 	 *   deps?: array<string>,
@@ -88,20 +99,9 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 *   version?: string,
 	 *   load_hook?: string,
 	 *   media?: string
-	 * }
-	 *
-	 * @param string|EnqueueStyleArgs $handle      Handle for stylesheet. This is necessary for dependency management.
-	 * @param string                  $src         URI to stylesheet.
-	 * @param array                   $deps        List of dependencies.
-	 * @param array|string            $condition   Corresponds to a configured loading condition that, if matches,
-	 *                                       will allow the stylesheet to load.
-	 *                                       'global' is assumed if no condition is declared.
-	 * @param string                  $load_method How to load this asset.
-	 * @param string                  $version     Version of the script.
-	 * @param string                  $load_hook   Hook on which to load this asset.
-	 * @param string                  $media       Media query to restrict when this asset is loaded.
+	 * } $handle
 	 */
-	function am_enqueue_style( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', string $version = '1.0.0', string $load_hook = 'wp_head', ?string $media = null ): void {
+	function am_enqueue_style( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head', ?string $media = null ): void {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook', 'media' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 
@@ -125,7 +125,19 @@ if ( ! function_exists( 'am_preload' ) ) :
 	/**
 	 * Provide an asset with a `preload` resource hint for the browser to prioritize.
 	 *
-	 * @phpstan-type PreloadArgs array{
+	 * @param array|string $handle       Handle for asset. This is necessary for dependency management.
+	 * @param string       $src          URI to asset.
+	 * @param array|string $condition    Corresponds to a configured loading condition that, if matches,
+	 *                                   will allow the asset to load.
+	 *                                   'global' is assumed if no condition is declared.
+	 * @param string|null  $version      Version of the asset.
+	 * @param string       $media        Media query to restrict when this asset is loaded.
+	 * @param string       $as           A hint to the browser about what type of asset this is.
+	 *                                   See $preload_as for valid options.
+	 * @param boolean      $crossorigin  Preload this asset cross-origin.
+	 * @param string       $mime_type    The MIME type for the preloaded asset.
+	 *
+	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
 	 *   condition?: array<string>|string,
@@ -134,21 +146,9 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 *   as?: string,
 	 *   crossorigin?: bool,
 	 *   mime_type?: string
-	 * }
-	 *
-	 * @param string|PreloadArgs $handle       Handle for asset. This is necessary for dependency management.
-	 * @param string             $src          URI to asset.
-	 * @param array|string       $condition    Corresponds to a configured loading condition that, if matches,
-	 *                                   will allow the asset to load.
-	 *                                   'global' is assumed if no condition is declared.
-	 * @param string             $version      Version of the asset.
-	 * @param string             $media        Media query to restrict when this asset is loaded.
-	 * @param string             $as           A hint to the browser about what type of asset this is.
-	 *                                         See $preload_as for valid options.
-	 * @param boolean            $crossorigin  Preload this asset cross-origin.
-	 * @param string             $mime_type    The MIME type for the preloaded asset.
+	 * } $handle Handle for asset. This is necessary for dependency management.
 	 */
-	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
+	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
 		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Preload::instance()->add_asset( $args );
@@ -161,23 +161,23 @@ if ( ! function_exists( 'am_register_symbol' ) ) :
 	/**
 	 * Define a symbol to be added to the SVG sprite.
 	 *
-	 * @phpstan-type RegisterSymbolArgs array{
+	 * @param string|array $handle     Handle for asset, used to refer to the symbol in `am_use_symbol`.
+	 * @param string       $src        Absolute path from the current theme root, or a relative path
+	 *                                 based on the current theme root. Use the `am_modify_svg_directory`
+	 *                                 filter to update the directory from which relative paths will be
+	 *                                 completed.
+	 * @param array|string $condition  Corresponds to a configured loading condition that, if matches,
+	 *                                 will allow the asset to be added to the sprite sheet.
+	 *                                 'global' is assumed if no condition is declared.
+	 * @param array        $attributes An array of attribute names and values to add to the resulting <svg>
+	 *                                 everywhere it is printed.
+	 *
+	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
 	 *   condition?: array<string>|string,
 	 *   attributes?: array<string, string>
-	 * }
-	 *
-	 * @param string|RegisterSymbolArgs $handle     Handle for asset, used to refer to the symbol in `am_use_symbol`.
-	 * @param string                    $src        Absolute path from the current theme root, or a relative path
-	 *                                              based on the current theme root. Use the `am_modify_svg_directory`
-	 *                                              filter to update the directory from which relative paths will be
-	 *                                              completed.
-	 * @param array|string              $condition  Corresponds to a configured loading condition that, if matches,
-	 *                                        will allow the asset to be added to the sprite sheet.
-	 *                                        'global' is assumed if no condition is declared.
-	 * @param array                     $attributes An array of attribute names and values to add to the resulting <svg>
-	 *                                              everywhere it is printed.
+	 * } $handle
 	 */
 	function am_register_symbol( array|string $handle, ?string $src = null, array|string $condition = 'global', array $attributes = [] ): void {
 		$defaults = compact( 'handle', 'src', 'condition', 'attributes' );

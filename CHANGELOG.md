@@ -1,8 +1,14 @@
 # Change Log
+
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.4.0
+## 1.4.1
 
+### Fixed
+
+- Ensure that `$version` can be null when passed to helper methods.
+
+## 1.4.0
 
 ### Fixed
 
