@@ -263,11 +263,11 @@ abstract class Asset_Manager {
 	 * @param array $args {
 	 *  Arguments for loading asset. May differ based on asset type, but most contain the following.
 	 *
-	 *      @type string $handle      Handle for asset. Currently not used, but could be used to dequeue assets in the future.
-	 *      @type string $src         URI for src attribute of printed asset handle
-	 *      @type string $condition   Corresponds to a configured condition under which the asset should be loaded
-	 *      @type string $load_hook   Hook on which to load the asset
-	 *      @type string $load_method Style with which to load this asset. Defaults to 'sync'.
+	 *      @type string       $handle      Handle for asset. Currently not used, but could be used to dequeue assets in the future.
+	 *      @type array|string $src         URI for src attribute of printed asset handle. For scripts, it can be an array of data that should be JSON encoded and printed on the page.
+	 *      @type string       $condition   Corresponds to a configured condition under which the asset should be loaded
+	 *      @type string       $load_hook   Hook on which to load the asset
+	 *      @type string       $load_method Style with which to load this asset. Defaults to 'sync'.
 	 *                                Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
 	 */
