@@ -7,14 +7,12 @@
     "wordpress",
     "wordpress-plugin"
   ],
-  "authors": [{
-    "name": "Alley Interactive",
-    "email": "info@alley.com"
-  }],
-  "require-dev": {
-    "alleyinteractive/alley-coding-standards": "^2.0",
-    "mantle-framework/testkit": "^1.2"
-  },
+  "authors": [
+    {
+      "name": "Alley Interactive",
+      "email": "info@alley.com"
+    }
+  ],
   "prefer-stable": true,
   "autoload": {
     "files": [
