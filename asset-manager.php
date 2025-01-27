@@ -65,3 +65,18 @@ add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Preload::class, 'inst
 add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Scripts::class, 'instance' ], 10 );
 add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Styles::class, 'instance' ], 10 );
 add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\SVG_Sprite::class, 'instance' ], 10 );
+
+/**
+ * Register assets to Query Monitor if it is installed.
+ *
+ * @param bool $retval Whether or not to register assets to Query Monitor.
+ * @return bool
+ */
+function am_load_asset_to_query_monitor( $retval ): bool {
+	if ( class_exists( 'QueryMonitor' ) ) {
+		return true;
+	}
+
+	return $retval;
+}
+add_filter( 'am_register_assets_to_wordpress_dependency', 'am_load_asset_to_query_monitor' );

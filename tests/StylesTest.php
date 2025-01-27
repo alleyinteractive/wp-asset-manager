@@ -9,8 +9,35 @@ use PHPUnit\Framework\Attributes\Group;
 
 class StylesTest extends TestCase {
 
+	/**
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/66
+	 */
 	#[Group( 'assets' )]
-	function test_print_asset() {
+	public function test_stylesheet_is_registered_to_wp_deps() {
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'registered' ) );
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'enqueued' ) );
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'done' ) );
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'queue' ) );
+
+		$async_style = array_merge(
+			$this->test_style,
+			[ 'load_method' => 'async' ]
+		);
+
+		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		am_enqueue_style( $async_style );
+
+		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'enqueued' ), 'Style should not be enqueued.' );
+		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'queue', 'Style should not be added to the queue.' ) );
+		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'registered' ), 'Style is not registered.' );
+		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'done' ), 'Style is not marked as done.' );
+	}
+
+	#[Group( 'assets' )]
+	public function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_src            = [
 			'handle'      => 'inline-src-asset',
@@ -76,7 +103,7 @@ class StylesTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_pre_add_asset() {
+	public function test_pre_add_asset() {
 		$async_style = array_merge(
 			$this->test_style,
 			[
@@ -152,13 +179,14 @@ class StylesTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_post_validate_asset() {
+	public function test_post_validate_asset() {
 		$sync_style  = array_merge(
 			$this->test_style,
 			[
 				'deps' => [ 'defer-style-test' ],
 			]
 		);
+
 		$defer_style = array_merge(
 			$this->test_style_two,
 			[
@@ -166,6 +194,7 @@ class StylesTest extends TestCase {
 				'load_method' => 'defer',
 			]
 		);
+
 		am_enqueue_style( $sync_style );
 
 		// Defer style test

@@ -1,8 +1,8 @@
 <?php
 /**
- * PHPUnit bootstrap file
+ * PHPUnit bootstrap file.
  *
- * @package WP_Irving
+ * @package Asset_Manager_Tests
  */
 
 \Mantle\Testing\manager()

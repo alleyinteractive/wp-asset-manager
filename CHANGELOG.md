@@ -2,6 +2,17 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## 1.4.3
+
+### Changed
+
+* Register an asset to the WP dependency registry. (#66)
+  * Available only if `QueryMonitor` is active.
+* Updated plugin header `description` to match the one in package and in the git repo.
+* Added support for `.phpunit-watcher.yml`.
+* Fix alignment for `package.json` and `composer.json` (Use spaces instead of tabs per `.editorconfig` rules).
+
 ## 1.4.2
 
 ### Fixed
