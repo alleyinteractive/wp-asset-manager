@@ -43,8 +43,8 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 * @param string                   $load_hook    Hook on which to load this asset.
 	 *
 	 * @phpstan-param string|array{
-	 *   handle: string,
-	 *   src?: array<mixed>|string,
+	 *   handle: array<string, mixed>|string,
+	 *   src?: array|string,
 	 *   condition?: string,
 	 *   deps?: array<string>,
 	 *   load_hook?: string,
