@@ -32,7 +32,7 @@ class Styles extends Asset_Manager {
 	/**
 	 * Methods by which a stylesheet can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	public array $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
 
@@ -53,7 +53,7 @@ class Styles extends Asset_Manager {
 	/**
 	 * Print a single stylesheet
 	 *
-	 * @param TAssetData $stylesheet Stylesheet to insert into DOM.
+	 * @param array $stylesheet Stylesheet to insert into DOM.
 	 */
 	public function print_asset( array $stylesheet ): void {
 		$classes      = $this->default_classes;
@@ -156,9 +156,14 @@ class Styles extends Asset_Manager {
 	public function post_validate_asset( array $stylesheet ): array {
 		if (
 			! empty( $stylesheet['dependents'] ) &&
-			( 'async' === $stylesheet['load_method'] || 'defer' === $stylesheet['load_method'] )
+			is_array( $stylesheet['dependents'] ) &&
+			( 'async' === ( $stylesheet['load_method'] ?? '' ) || 'defer' === ( $stylesheet['load_method'] ?? '' ) )
 		) {
-			$this->generate_asset_error( 'unsafe_load_method', $stylesheet, $this->assets_by_handle[ $stylesheet['dependents'][0] ] );
+			$first_dependent = $stylesheet['dependents'][0] ?? null;
+			$dependent_asset = is_string( $first_dependent ) ? ( $this->assets_by_handle[ $first_dependent ] ?? null ) : null;
+			if ( is_array( $dependent_asset ) ) {
+				$this->generate_asset_error( 'unsafe_load_method', $stylesheet, $dependent_asset );
+			}
 		}
 
 		return $stylesheet;

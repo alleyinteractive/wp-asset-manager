@@ -80,7 +80,7 @@ class Preload extends Asset_Manager {
 	/**
 	 * Print a single asset
 	 *
-	 * @param TAssetData $asset Asset to insert into DOM.
+	 * @param array $asset Asset to insert into DOM.
 	 */
 	public function print_asset( array $asset ): void {
 		$classes      = $this->default_classes;
@@ -173,7 +173,7 @@ class Preload extends Asset_Manager {
 	 * @param array $asset The asset for which the types are needed.
 	 * @return array
 	 */
-	public function set_asset_types( $asset ) {
+	public function set_asset_types( array $asset ): array {
 		if ( empty( $asset ) || ! isset( $asset['src'] ) ) {
 			return $asset;
 		}

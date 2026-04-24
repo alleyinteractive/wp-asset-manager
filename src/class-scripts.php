@@ -12,9 +12,10 @@ namespace Alley\WP\Asset_Manager;
  *
  * @extends Asset_Manager<array{
  *   handle: string,
- *   src?: string|null,
+ *   src?: string|array<string, mixed>|null,
  *   deps?: array<string>,
  *   condition?: array<string>|string,
+ *   load_method?: string,
  *   version?: string,
  *   load_hook?: string,
  *   type?: 'script',
@@ -86,13 +87,15 @@ class Scripts extends Asset_Manager {
 		 *
 		 * @param string $inline_script_context Property of the window object under which inlined values will be nested
 		 */
-		$this->inline_script_context = apply_filters( 'am_inline_script_context', 'amScripts' );
+		/** @var string $inline_script_context */
+		$inline_script_context       = apply_filters( 'am_inline_script_context', 'amScripts' );
+		$this->inline_script_context = $inline_script_context;
 	}
 
 	/**
 	 * Add filters for managing async or defer load methods
 	 */
-	public function manage_async() {
+	public function manage_async(): void {
 		add_filter( 'script_loader_tag', [ $this, 'add_attributes' ], 10, 2 );
 		add_filter( 'wpcom_js_do_concat', [ $this, 'disable_concat' ], 10, 2 );
 		add_filter( 'js_do_concat', [ $this, 'disable_concat' ], 10, 2 );
@@ -146,7 +149,7 @@ class Scripts extends Asset_Manager {
 	 * @param string $handle      Handle of script to modify.
 	 * @param string $load_method Target load method.
 	 */
-	public function modify_load_method( $handle, $load_method ) {
+	public function modify_load_method( string $handle, string $load_method ): void {
 		// Add script if it's a core asset.
 		$this->add_core_asset( $handle );
 
@@ -164,7 +167,7 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Print a single script.
 	 *
-	 * @param TAssetData $script Script to insert into DOM.
+	 * @param array $script Script to insert into DOM.
 	 */
 	public function print_asset( array $script ): void {
 		$classes   = $this->default_classes;
@@ -233,7 +236,7 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Add a script handle to the list of async or defer scripts
 	 *
-	 * @param TAssetData $script Script to add.
+	 * @param array $script Script to add.
 	 */
 	public function add_to_async( array $script ): void {
 		// For version of WordPress 6.3+ async and defer can use the core strategy for loading.
@@ -243,10 +246,10 @@ class Scripts extends Asset_Manager {
 			$load_methods_to_async = [ 'async-defer' ];
 		}
 		if (
-			in_array( $script['load_method'], $load_methods_to_async, true ) &&
+			in_array( $script['load_method'] ?? null, $load_methods_to_async, true ) &&
 			! in_array( $script['handle'], $this->async_scripts, true )
 		) {
-			$this->async_scripts[] = $script['handle'];
+			$this->async_scripts[] = (string) $script['handle'];
 		}
 	}
 }

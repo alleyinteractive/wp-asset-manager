@@ -43,11 +43,31 @@ jobs:
           wordpress-version: '${{ matrix.wordpress }}'
           skip-wordpress-install: 'true'
           wordpress-multisite: '${{ matrix.multisite }}'
+
+  phpstan:
+    name: "PHPStan"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.pull_request.draft == false
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}-phpstan
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run General Tests
+        # Installs PHP and Composer dependencies (including phpstan)
+        uses: alleyinteractive/action-test-general@develop
+
+      - name: Run PHPStan
+        run: composer phpstan
+
   # This required job ensures that all PR checks have passed before merging.
   all-pr-checks-passed:
     name: All PR checks passed
     needs:
       - pr-tests
+      - phpstan
     runs-on: ubuntu-latest
     if: always()
     steps:

@@ -17,15 +17,17 @@ trait Conditions {
 	/**
 	 * Storage of the asset conditions.
 	 *
-	 * @var array
+	 * @var array<string, mixed>|null
 	 */
-	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+	protected static ?array $_conditions = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Get the available conditions for loading assets.
+	 *
+	 * @return array<string, mixed>
 	 */
-	public static function get_conditions() {
-		if ( ! isset( static::$_conditions ) || ( defined( 'MANTLE_IS_TESTING' ) && MANTLE_IS_TESTING ) ) {
+	public static function get_conditions(): array {
+		if ( null === static::$_conditions || ( defined( 'MANTLE_IS_TESTING' ) && MANTLE_IS_TESTING ) ) {
 			/**
 			 * Filter function for getting available conditions to check for whether or not a given asset should load
 			 *
@@ -37,7 +39,8 @@ trait Conditions {
 			 *     @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
 			 * }
 			 */
-			static::$_conditions = apply_filters(
+			/** @var array<string, mixed> $filtered_conditions */
+			$filtered_conditions  = apply_filters(
 				'am_asset_conditions',
 				[
 					'global' => true,
@@ -45,9 +48,10 @@ trait Conditions {
 					'search' => is_search(),
 				]
 			);
+			static::$_conditions = $filtered_conditions;
 		}
 
-		return static::$_conditions;
+		return static::$_conditions ?? [];
 	}
 
 	/**
@@ -82,13 +86,22 @@ trait Conditions {
 		$conditions       = static::get_conditions();
 		$condition_result = true;
 
+		$condition = $asset['condition'];
+
 		// Default functionality of condition is 'include'.
-		if ( ! empty( $asset['condition']['include'] ) ) {
-			$condition_include = $asset['condition']['include'];
-		} elseif ( ! empty( $asset['condition']['include_any'] ) ) {
-			$condition_include_any = $asset['condition']['include_any'];
-		} elseif ( empty( $asset['condition']['exclude'] ) ) {
-			$condition_include = $asset['condition'];
+		$condition_include     = null;
+		$condition_include_any = null;
+
+		if ( is_array( $condition ) ) {
+			if ( ! empty( $condition['include'] ) ) {
+				$condition_include = $condition['include'];
+			} elseif ( ! empty( $condition['include_any'] ) ) {
+				$condition_include_any = $condition['include_any'];
+			} elseif ( empty( $condition['exclude'] ) ) {
+				$condition_include = $condition;
+			}
+		} else {
+			$condition_include = $condition;
 		}
 
 		// Check 'include' conditions (all must be true for asset to load)
@@ -120,8 +133,9 @@ trait Conditions {
 
 		// Check 'exclude' conditions (all must be false for asset to load)
 		// Verify $condition_result is true. If it's already false, we don't need to check excludes.
-		if ( ! empty( $asset['condition']['exclude'] ) && $condition_result ) {
-			$condition_exclude = ! is_array( $asset['condition']['exclude'] ) ? [ $asset['condition']['exclude'] ] : $asset['condition']['exclude'];
+		$condition_exclude_list = is_array( $condition ) ? ( $condition['exclude'] ?? null ) : null;
+		if ( ! empty( $condition_exclude_list ) && $condition_result ) {
+			$condition_exclude = ! is_array( $condition_exclude_list ) ? [ $condition_exclude_list ] : $condition_exclude_list;
 
 			foreach ( $condition_exclude as $condition_false ) {
 				if ( ! $conditions[ $condition_false ] ) {

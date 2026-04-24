@@ -194,7 +194,9 @@ abstract class Asset_Manager {
 		 *
 		 * @param array<string> $classes List of classes to apply to `class` attribute of resulting asset markup
 		 */
-		$this->default_classes = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
+		/** @var array<string> $default_classes */
+		$default_classes       = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
+		$this->default_classes = $default_classes;
 
 		/**
 		 * Filter function used to ignore errors when enqueueing assets
@@ -315,7 +317,7 @@ abstract class Asset_Manager {
 
 					$args['loaded'] = true;
 				} else {
-					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', null, $wp_enqueue_function ) ) );
+					$this->generate_asset_error( 'invalid_enqueue_function', null, $wp_enqueue_function );
 				}
 			}
 
@@ -389,7 +391,7 @@ abstract class Asset_Manager {
 
 					// Check if dependency exists.
 					if ( empty( $this->assets_by_handle[ $dependency ] ) ) {
-						$this->generate_asset_error( 'missing', $asset, $dependency );
+						$this->generate_asset_error( 'missing', $asset, is_string( $dependency ) ? $dependency : null );
 						// Skip to the next dependency if this one is missing, as none of the other errors will be relevant.
 						continue;
 					} else {
@@ -408,7 +410,7 @@ abstract class Asset_Manager {
 						&& in_array( $asset['handle'], $this_dep['deps'], true )
 						&& in_array( $this_dep['handle'], $asset['deps'], true )
 					) {
-						$this->generate_asset_error( 'circular_dependency', $asset, $this_dep['handle'] );
+						$this->generate_asset_error( 'circular_dependency', $asset, is_string( $this_dep['handle'] ) ? $this_dep['handle'] : null );
 					}
 				}
 			}
@@ -430,12 +432,14 @@ abstract class Asset_Manager {
 	 *
 	 * @return void
 	 */
-	public function add_core_dependencies( $asset ) {
-		$load_method = ! empty( $asset['load_method'] ) ? $asset['load_method'] : 'sync';
+	public function add_core_dependencies( array $asset ): void {
+		$load_method = is_string( $asset['load_method'] ?? null ) ? $asset['load_method'] : 'sync';
 
-		if ( ! empty( $asset['deps'] ) ) {
+		if ( ! empty( $asset['deps'] ) && is_array( $asset['deps'] ) ) {
 			foreach ( $asset['deps'] as $dependency ) {
-				$this->add_core_asset( $dependency, $load_method );
+				if ( is_string( $dependency ) ) {
+					$this->add_core_asset( $dependency, $load_method );
+				}
 			}
 		}
 	}
