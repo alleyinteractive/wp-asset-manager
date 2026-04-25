@@ -416,7 +416,7 @@ abstract class Asset_Manager {
 	 * @param array $args Arguments for loading asset.
 	 * @return array|string
 	 */
-	protected function set_enqueue_options( $args ): array|string {
+	protected function set_enqueue_options( array $args ): array|string {
 		// If this is for a style, just pass the media argument.
 		if ( 'style' === $args['type'] ) {
 			$enqueue_options = $args['media'];

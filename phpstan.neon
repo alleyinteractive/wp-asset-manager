@@ -67,9 +67,15 @@ parameters:
 
 		# Offset might not exist: optional array keys in the TAssetData shapes.
 		- "#Offset 'load_method' might not exist on#"
+		- "#Offset '(handle|src|deps|version|in_footer|media|type)' might not exist on#"
 
 		# printf/sprintf with mixed-typed inline content (e.g. file_get_contents result).
 		- '#Parameter \#[0-9]+ \.\.\.\$values of function (printf|sprintf) expects .+, mixed given\.#'
 
 		# Styles async print: media attribute may be mixed.
 		- "#Binary operation \".\" between '.*' and mixed results in an error\.#"
+
+		# WP_Dependencies::$done is a valid array property on both WP_Styles and WP_Scripts.
+		# PHPStan sees WP_Dependencies as a union type that may not have $done.
+		- '#Cannot access property \$done on WP_(Dependencies|Scripts|Styles)#'
+		- '#Property WP_(Dependencies|Scripts|Styles)::\$done .* does not accept#'
