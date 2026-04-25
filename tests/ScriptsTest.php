@@ -7,8 +7,37 @@ use PHPUnit\Framework\Attributes\Group;
 
 class ScriptsTest extends TestCase {
 
+	/**
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/66
+	 */
 	#[Group( 'assets' )]
-	function test_add_attributes() {
+	public function test_script_is_registered_to_wp_deps() {
+		$asset = [
+			'handle' => 'my-test-asset-test-test',
+			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/cool-test.bundle.js',
+			'load_method' => 'async',
+		];
+
+		$this->assertFalse( wp_script_is( $asset['handle'], 'registered' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'enqueued' ) );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'queue' ) );
+
+		add_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		am_enqueue_script( $asset );
+
+		remove_filter( 'am_register_assets_to_wordpress_dependency', '__return_true' );
+
+		$this->assertTrue( wp_script_is( $asset['handle'], 'enqueued' ), 'Script should be enqueued.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'registered' ), 'Script should be registered.' );
+		$this->assertTrue( wp_script_is( $asset['handle'], 'queue' ), 'Script should be in the queue.' );
+		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ), 'Script is not marked as done.' );
+
+	}
+
+	#[Group( 'assets' )]
+	public function test_add_attributes() {
 		$async_asset  = [
 			'handle'      => 'async-asset',
 			'src'         => get_stylesheet_directory_uri() . '/static/js/async-test.js',
@@ -23,7 +52,7 @@ class ScriptsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_modify_load_method() {
+	public function test_modify_load_method() {
 		$sync_asset            = [
 			'handle' => 'sync-asset',
 			'src'    => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
@@ -52,7 +81,7 @@ class ScriptsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_print_asset() {
+	public function test_print_asset() {
 		// Inline load method with array provided for src attribute
 		$inline_array           = [
 			'handle'      => 'inline-array-asset',
@@ -101,7 +130,7 @@ class ScriptsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_post_validate_asset() {
+	public function test_post_validate_asset() {
 		$sync_script  = array_merge(
 			$this->test_script,
 			[
@@ -140,7 +169,7 @@ class ScriptsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_add_to_async() {
+	public function test_add_to_async() {
 		$async_script = array_merge(
 			$this->test_script_two,
 			[

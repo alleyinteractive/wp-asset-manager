@@ -8,12 +8,13 @@ use PHPUnit\Framework\Attributes\Group;
 class AssetsTest extends TestCase {
 
 	#[Group( 'assets' )]
-	function test_add_asset() {
+	public function test_add_asset() {
 		global $wp_scripts;
 
 		// Enqueue test script
 		am_enqueue_script( $this->test_script );
 
+		$this->assertTrue( wp_script_is( $this->test_script['handle'], 'registered' ) );
 		$this->assertContains( $this->test_script['handle'], $wp_scripts->queue, 'Script should be enqueued' );
 		$this->assertArrayHasKey( $this->test_script['handle'], $wp_scripts->registered, 'Script should be registered' );
 		$this->assertArrayHasKey( $this->test_script['handle'], Scripts::instance()->assets_by_handle, 'Script should be added to asset manifest, sorted by handle' );
@@ -37,7 +38,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_load_asset() {
+	public function test_load_asset() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
 		$old_filter        = $wp_current_filter;
@@ -62,7 +63,30 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_asset_should_add() {
+	function test_load_asset_as_arguments() {
+		// Temporarily set current filter to 'wp_head' to trick current_filter()
+		global $wp_current_filter;
+		$old_filter        = $wp_current_filter;
+		$wp_current_filter = [ 'wp_head' ];
+
+		am_enqueue_script(
+			handle: 'test-inline-asset',
+			src: [
+				'myGlobalVar' => true,
+			],
+			load_method: 'inline',
+			load_hook: 'wp_head',
+		);
+		$actual_output   = get_echo( [ Scripts::instance(), 'load_assets' ] );
+		$expected_output = '<script class="wp-asset-manager test-inline-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["test-inline-asset"] = {"myGlobalVar":true}</script>';
+		$this->assertEquals( $expected_output, $actual_output, 'Load assets should call the print_asset() function on each asset and echo the proper results' );
+
+		// Reset current filter
+		$wp_current_filter = $old_filter;
+	}
+
+	#[Group( 'assets' )]
+	public function test_asset_should_add() {
 		// If no handle, should return false
 		$no_handle = Scripts::instance()->asset_should_add( [ 'src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js' ] );
 		$this->assertFalse( $no_handle, 'If script does not have a handle, it should fail to be added' );
@@ -116,7 +140,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_asset_should_load() {
+	public function test_asset_should_load() {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
 		$old_filter        = $wp_current_filter;
@@ -166,7 +190,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_find_dependents() {
+	public function test_find_dependents() {
 		$asset_with_deps         = array_merge(
 			$this->test_script_two,
 			[
@@ -189,7 +213,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_invalid_load_hook() {
+	public function test_invalid_load_hook() {
 		// Invalid load hook
 		$invalid_load_hook = [
 			'handle'    => 'my-test-asset',
@@ -202,7 +226,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_missing_dependency() {
+	public function test_missing_dependency() {
 		// Missing dependency
 		$dep_missing = [
 			'handle' => 'my-test-asset',
@@ -215,7 +239,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_unsafe_load_hook() {
+	public function test_unsafe_load_hook() {
 		// Unsafe load hook
 		$unsafe_load_hook_dep = [
 			'handle'    => 'my-test-asset',
@@ -235,7 +259,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_circular_dependency() {
+	public function test_circular_dependency() {
 		// Unsafe load hook
 		$circular_dep     = [
 			'handle' => 'my-test-asset',
@@ -254,7 +278,7 @@ class AssetsTest extends TestCase {
 	}
 
 	#[Group( 'assets' )]
-	function test_add_core_dependencies() {
+	public function test_add_core_dependencies() {
 		$scripts = wp_scripts();
 
 		$this->assertNotEmpty(

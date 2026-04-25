@@ -1,12 +1,36 @@
 # Change Log
+
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.4.0
 
+## 1.4.3
+
+### Changed
+
+* Register an asset to the WP dependency registry. (#66)
+  * Available only if `QueryMonitor` is active.
+* Updated plugin header `description` to match the one in package and in the git repo.
+* Added support for `.phpunit-watcher.yml`.
+* Fix alignment for `package.json` and `composer.json` (Use spaces instead of tabs per `.editorconfig` rules).
+
+## 1.4.2
+
+### Fixed
+
+- Fixed issue with array of data being passed to the `$src` argument of `am_enqueue_script()`.
+
+## 1.4.1
+
+### Fixed
+
+- Ensure that `$version` can be null when passed to helper methods.
+
+## 1.4.0
 
 ### Fixed
 
 - Added proper types for helper functions that support array in the first argument.
+- Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
 
 ### Changed
 
@@ -16,11 +40,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Adds a dependency on Composer autoloader. For submodules, you can track the
   `production-built` branch of the plugin or any tagged release (which will be
   built) to include the dependencies.
-
-## 1.3.8 (unreleased)
-
-* Fix: `Asset_Manager_Preload::set_asset_types()` should return an empty array if no valid arguments are passed.
-* Add: `convertDeprecationsToExceptions` to `phpunit.xml`.
 
 ## 1.3.7
 

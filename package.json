@@ -1,14 +1,14 @@
 {
   "name": "@alleyinteractive/wp-asset-manager",
-  "version": "1.4.0",
+  "version": "1.4.3",
   "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
-  "scripts": {
-	"build": "echo 'No build step defined'",
-    "release": "npx @alleyinteractive/create-release@latest"
+  "engines": {
+    "node": "22",
+    "npm": "10"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/alleyinteractive/wp-asset-manager.git"
+  "scripts": {
+    "build": "echo 'No build step defined'",
+    "release": "npx @alleyinteractive/create-release@latest"
   },
   "author": "",
   "license": "GPL-2.0+",

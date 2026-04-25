@@ -1,62 +1,60 @@
 {
-    "name": "alleyinteractive/wp-asset-manager",
-    "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
-    "license": "GPL-2.0-only",
-    "type": "wordpress-plugin",
-    "keywords": [
-        "wordpress",
-        "wordpress-plugin"
-    ],
-    "authors": [
-        {
-            "name": "Alley Interactive",
-            "email": "info@alley.com"
-        }
-    ],
-    "require-dev": {
-        "alleyinteractive/alley-coding-standards": "^2.0",
-        "mantle-framework/testkit": "^1.2",
-        "szepeviktor/phpstan-wordpress": "^2.0"
+  "name": "alleyinteractive/wp-asset-manager",
+  "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
+  "license": "GPL-2.0-only",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "wordpress",
+    "wordpress-plugin"
+  ],
+  "authors": [{
+    "name": "Alley Interactive",
+    "email": "info@alley.com"
+  }],
+  "require-dev": {
+    "alleyinteractive/alley-coding-standards": "^2.0",
+    "mantle-framework/testkit": "^1.2",
+    "szepeviktor/phpstan-wordpress": "^2.0"
+  },
+  "prefer-stable": true,
+  "autoload": {
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "alleyinteractive/composer-wordpress-autoloader": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
     },
-    "prefer-stable": true,
-    "autoload": {
-        "files": [
-            "src/helpers.php"
-        ]
-    },
-    "autoload-dev": {
-      "psr-4": {
+    "sort-packages": true
+  },
+  "extra": {
+    "wordpress-autoloader": {
+      "autoload": {
+        "Alley\\WP\\Asset_Manager\\": "src/"
+      },
+      "autoload-dev": {
         "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
       }
-    },
-    "config": {
-        "allow-plugins": {
-            "alleyinteractive/composer-wordpress-autoloader": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        },
-        "sort-packages": true
-    },
-    "extra": {
-        "wordpress-autoloader": {
-            "autoload": {
-                "Alley\\WP\\Asset_Manager\\": "src/"
-            },
-            "autoload-dev": {
-                "Alley\\WP\\Asset_Manager\\Tests\\": "tests/"
-            }
-        }
-    },
-    "scripts": {
-        "lint:fix": "@phpcbf",
-        "lint": "@phpcs",
-        "phpcbf": "phpcbf .",
-        "phpcs": "phpcs --standard=./phpcs.xml .",
-        "phpstan": "phpstan analyse --memory-limit=1G",
-        "phpunit": "phpunit",
-        "test": [
-            "@phpcs",
-            "@phpstan",
-            "@phpunit"
-        ]
     }
+  },
+  "scripts": {
+    "lint": "@phpcs",
+    "lint:fix": "@phpcbf",
+    "phpcbf": "phpcbf .",
+    "phpcs": "phpcs --standard=./phpcs.xml .",
+    "phpstan": "phpstan analyse --memory-limit=1G",
+    "phpunit": "phpunit",
+    "test": [
+      "@phpcs",
+      "@phpstan",
+      "@phpunit"
+    ]
+  }
 }

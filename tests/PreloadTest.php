@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Group;
 class PreloadTest extends TestCase {
 
 	#[Group( 'preload' )]
-	function test_preload_asset() {
+	public function test_preload_asset() {
 		// Basic CSS preload.
 		// The `print_asset` function does no option parsing, so all expected values are required.
 		$preload_basic         = [
@@ -30,7 +30,7 @@ class PreloadTest extends TestCase {
 	}
 
 	#[Group( 'preload' )]
-	function test_post_validate_asset() {
+	public function test_post_validate_asset() {
 		// Adds the expected attributes for preloading a font.
 		$font_asset     = [
 			'handle' => 'preload-as-font',
@@ -69,7 +69,7 @@ class PreloadTest extends TestCase {
 	}
 
 	#[Group( 'preload' )]
-	function test_print_asset() {
+	public function test_print_asset() {
 		// Throws an error for missing `as` value.
 		$unknown_asset = [
 			'handle' => 'preload-as-audio',
@@ -81,7 +81,7 @@ class PreloadTest extends TestCase {
 	}
 
 	#[Group( 'preload' )]
-	function test_set_asset_types() {
+	public function test_set_asset_types() {
 		$actual_output = Preload::instance()->set_asset_types( [] );
 
 		$this->assertEquals(

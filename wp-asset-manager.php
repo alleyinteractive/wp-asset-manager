@@ -8,11 +8,11 @@
 /*
 Plugin Name: Asset Manager
 Plugin URI: https://github.com/alleyinteractive/wp-asset-manager
-Description: Add more robust functionality to enqueuing static assets
+Description: Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.
 Author: Alley Interactive
-Version: 1.4.0
-License: GPLv2 or later
 Author URI: https://alley.com
+Version: 1.4.3
+License: GPLv2 or later
 */
 
 // Require the main plugin file left as the original name for backwards compatibility.

@@ -61,7 +61,22 @@ function am_map_meta_caps( $caps, $cap ) {
 add_filter( 'map_meta_cap', 'am_map_meta_caps', 10, 2 );
 
 // Setup the plugin's main classes after the theme has been setup.
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Preload::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Scripts::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Styles::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
-add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\SVG_Sprite::class, 'instance' ] ); // @phpstan-ignore-line should not return anything
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Preload::class, 'instance' ], 10 ); // @phpstan-ignore-line
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Scripts::class, 'instance' ], 10 ); // @phpstan-ignore-line
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\Styles::class, 'instance' ], 10 ); // @phpstan-ignore-line
+add_action( 'after_setup_theme', [ \Alley\WP\Asset_Manager\SVG_Sprite::class, 'instance' ], 10 ); // @phpstan-ignore-line
+
+/**
+ * Register assets to Query Monitor if it is installed.
+ *
+ * @param bool $retval Whether or not to register assets to Query Monitor.
+ * @return bool
+ */
+function am_load_asset_to_query_monitor( $retval ): bool {
+	if ( class_exists( 'QueryMonitor' ) ) {
+		return true;
+	}
+
+	return $retval;
+}
+add_filter( 'am_register_assets_to_wordpress_dependency', 'am_load_asset_to_query_monitor' );
