@@ -48,13 +48,6 @@ abstract class Asset_Manager {
 	public bool $be_quiet = false;
 
 	/**
-	 * Reference to default assets in WP core
-	 *
-	 * @var array
-	 */
-	// public array $core_assets_ref = [];
-
-	/**
 	 * Variable name for global containing WP assets
 	 *
 	 * @var string
@@ -147,15 +140,18 @@ abstract class Asset_Manager {
 	/**
 	 * Default print function throws error (and prints nothing)
 	 *
-	 * @param TAssetData $asset Asset to print.
+	 * @param array      $asset Asset to print.
+	 * @phpstan-param TAssetData $asset
 	 */
 	abstract public function print_asset( array $asset ): void;
 
 	/**
 	 * Perform final mutations before adding asset to array
 	 *
-	 * @param TAssetData $asset Asset to mutate.
-	 * @return TAssetData
+	 * @param array      $asset Asset to mutate.
+	 * @return array
+	 * @phpstan-param TAssetData $asset
+	 * @phpstan-return TAssetData
 	 */
 	public function pre_add_asset( array $asset ): array {
 		return $asset;
@@ -164,8 +160,10 @@ abstract class Asset_Manager {
 	/**
 	 * Perform mutations to asset after validation
 	 *
-	 * @param TAssetData $asset Asset to mutate.
-	 * @return TAssetData
+	 * @param array      $asset Asset to mutate.
+	 * @return array
+	 * @phpstan-param TAssetData $asset
+	 * @phpstan-return TAssetData
 	 */
 	public function post_validate_asset( array $asset ): array {
 		return $asset;
@@ -192,7 +190,7 @@ abstract class Asset_Manager {
 		 *
 		 * @param array<string> $classes List of classes to apply to `class` attribute of resulting asset markup
 		 */
-		/** @var array<string> $default_classes */
+		/** @var array<string> $default_classes Default classes. */
 		$default_classes       = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
 		$this->default_classes = $default_classes;
 
@@ -233,15 +231,6 @@ abstract class Asset_Manager {
 			}
 		}
 	}
-
-	/**
-	 * Set reference to core assets
-	 *
-	 * @param mixed $assets Assets object.
-	 */
-	// public function set_core_assets_ref( $assets ) {
-	// $this->core_assets_ref = $assets->registered;
-	// }
 
 	/**
 	 * Add an asset to the manifest of assets to load

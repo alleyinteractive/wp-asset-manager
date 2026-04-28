@@ -109,7 +109,7 @@ class SVG_Sprite {
 			 *
 			 * @param string $path The absolute root for relative SVG paths.
 			 */
-			/** @var string $svg_directory */
+			/** @var string $svg_directory SVG directory path. */
 			$svg_directory          = apply_filters( 'am_modify_svg_directory', get_stylesheet_directory() );
 			static::$_svg_directory = $svg_directory;
 		}
@@ -139,7 +139,7 @@ class SVG_Sprite {
 		 *                                 The value represents attribute's value.
 		 * }
 		 */
-		/** @var array<string, mixed> $attributes */
+		/** @var array<string, mixed> $attributes Global SVG attributes. */
 		$attributes = apply_filters( 'am_global_svg_attributes', static::$_global_attributes );
 		return $attributes;
 	}

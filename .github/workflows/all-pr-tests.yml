@@ -56,8 +56,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run General Tests
-        # Installs PHP and Composer dependencies (including phpstan)
+        # Checks for gitignored files and git conflict markers
         uses: alleyinteractive/action-test-general@develop
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPStan
         run: composer phpstan

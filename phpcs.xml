@@ -9,6 +9,8 @@
 	<arg name="parallel" value="8" />
 
 	<exclude-pattern>tests/</exclude-pattern>
+	<!-- PHPStan bootstrap is a dev-tool file, not plugin code -->
+	<exclude-pattern>phpstan-bootstrap.php</exclude-pattern>
 
 	<!-- Project customizations go here -->
 	<rule ref="WordPress.WP.I18n">
@@ -17,7 +19,9 @@
 			Verify that the text_domain is set to the desired text-domain.
 			Multiple valid text domains can be provided as a comma-delimited list.
 			 -->
-			<property name="text_domain" type="array" value="am" />
+			<property name="text_domain" type="array">
+				<element value="am"/>
+			</property>
 		</properties>
 	</rule>
 
@@ -51,11 +55,9 @@
 			WordPress.com VIP does not propagate wp_cache_set data across datacenters,
 			largely to avoid attempting to propagate large (>50k) data for batcache.
 			-->
-			<property name="forbiddenFunctions" type="array" value="wp_cache_add=>wp_cache_set" />
-			<!-- This is the newer format, only supported in PHPCS 3.3.0+
 			<property name="forbiddenFunctions" type="array">
 				<element key="wp_cache_add" value="wp_cache_set"/>
-			</property> -->
+			</property>
 		</properties>
 	</rule>
 </ruleset>

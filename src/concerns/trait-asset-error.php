@@ -16,8 +16,8 @@ trait Asset_Error {
 	/**
 	 * Generate and echo a WP_Error based on a provided error code
 	 *
-	 * @param string           $code  Error code.
-	 * @param array|null       $asset Offending asset.
+	 * @param string            $code  Error code.
+	 * @param array|null        $asset Offending asset.
 	 * @param array|string|null $info  Additional information about a dependency or dependent.
 	 */
 	public function generate_asset_error( string $code, ?array $asset, array|string|null $info = null ): void {
