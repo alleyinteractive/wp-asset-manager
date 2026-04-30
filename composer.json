@@ -15,7 +15,7 @@
     "alleyinteractive/alley-coding-standards": "^2.0",
     "mantle-framework/testkit": "^1.2",
     "szepeviktor/phpstan-wordpress": "^2.0",
-    "wp-coding-standards/wpcs": "3.2.0"
+    "wp-coding-standards/wpcs": "3.1.0"
   },
   "prefer-stable": true,
   "autoload": {

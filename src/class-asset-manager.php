@@ -140,7 +140,7 @@ abstract class Asset_Manager {
 	/**
 	 * Default print function throws error (and prints nothing)
 	 *
-	 * @param array      $asset Asset to print.
+	 * @param array $asset Asset to print.
 	 * @phpstan-param TAssetData $asset
 	 */
 	abstract public function print_asset( array $asset ): void;
@@ -148,7 +148,7 @@ abstract class Asset_Manager {
 	/**
 	 * Perform final mutations before adding asset to array
 	 *
-	 * @param array      $asset Asset to mutate.
+	 * @param array $asset Asset to mutate.
 	 * @return array
 	 * @phpstan-param TAssetData $asset
 	 * @phpstan-return TAssetData
@@ -160,7 +160,7 @@ abstract class Asset_Manager {
 	/**
 	 * Perform mutations to asset after validation
 	 *
-	 * @param array      $asset Asset to mutate.
+	 * @param array $asset Asset to mutate.
 	 * @return array
 	 * @phpstan-param TAssetData $asset
 	 * @phpstan-return TAssetData
@@ -182,7 +182,7 @@ abstract class Asset_Manager {
 	 *
 	 * NOTE: $handle provided when enqueueing the asset will always be added as a class
 	 */
-	public function set_defaults() {
+	public function set_defaults(): void {
 		/**
 		 * Filter function used to get the default classes to add to the resulting asset markup
 		 *
@@ -190,7 +190,11 @@ abstract class Asset_Manager {
 		 *
 		 * @param array<string> $classes List of classes to apply to `class` attribute of resulting asset markup
 		 */
-		/** @var array<string> $default_classes Default classes. */
+		/**
+		 * Default asset classes.
+		 *
+		 * @var array<string>
+		 */
 		$default_classes       = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
 		$this->default_classes = $default_classes;
 
@@ -309,7 +313,7 @@ abstract class Asset_Manager {
 	/**
 	 * Loop through assets and print each on the appropriate hook, as specified
 	 */
-	public function load_assets() {
+	public function load_assets(): void {
 		foreach ( $this->assets as $idx => $asset ) {
 			if ( $this->asset_should_load( $asset ) ) {
 				$this->print_asset( $asset );
@@ -499,7 +503,7 @@ abstract class Asset_Manager {
 	 * @param string $handle      Handle of core asset to add.
 	 * @param string $load_method Customize load method of core asset, otherwise leave it as 'sync'.
 	 */
-	public function add_core_asset( $handle, $load_method = 'sync' ) {
+	public function add_core_asset( string $handle, string $load_method = 'sync' ): void {
 		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
 			return;
 		}

@@ -70,7 +70,7 @@ class Styles extends Asset_Manager {
 						/**
 						 * Filter the inline stylesheet.
 						 *
-						 * @param string $contents Contents to filter.
+						 * @param string|false $contents Contents to filter.
 						 * @param array $stylesheet Stylesheet being rendered.
 						 */
 						apply_filters( 'am_inline_stylesheet', file_get_contents( $stylesheet['src'] ), $stylesheet ), // phpcs:ignore

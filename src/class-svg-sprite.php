@@ -109,7 +109,11 @@ class SVG_Sprite {
 			 *
 			 * @param string $path The absolute root for relative SVG paths.
 			 */
-			/** @var string $svg_directory SVG directory path. */
+			/**
+			 * SVG directory path.
+			 *
+			 * @var string
+			 */
 			$svg_directory          = apply_filters( 'am_modify_svg_directory', get_stylesheet_directory() );
 			static::$_svg_directory = $svg_directory;
 		}
@@ -139,7 +143,11 @@ class SVG_Sprite {
 		 *                                 The value represents attribute's value.
 		 * }
 		 */
-		/** @var array<string, mixed> $attributes Global SVG attributes. */
+		/**
+		 * Global SVG attributes.
+		 *
+		 * @var array<string, mixed>
+		 */
 		$attributes = apply_filters( 'am_global_svg_attributes', static::$_global_attributes );
 		return $attributes;
 	}
@@ -177,7 +185,7 @@ class SVG_Sprite {
 		 *
 		 * @since 1.1.0
 		 *
-		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
+		 * @param mixed $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
 		$kses_sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_kses_svg ?? [] );
 

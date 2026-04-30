@@ -39,7 +39,11 @@ trait Conditions {
 			 *     @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
 			 * }
 			 */
-			/** @var array<string, mixed> $filtered_conditions Filtered asset conditions. */
+			/**
+			 * Filtered asset conditions.
+			 *
+			 * @var array<string, mixed>
+			 */
 			$filtered_conditions = apply_filters(
 				'am_asset_conditions',
 				[
