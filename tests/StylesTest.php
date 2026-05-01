@@ -123,13 +123,13 @@ class StylesTest extends TestCase {
 		$this->assertContains( 'loadCSS', Scripts::instance()->asset_handles );
 		$this->assertContains(
 			[
+				'handle'      => 'loadCSS',
 				'src'         => AM_BASE_DIR . '/js/loadCSS.min.js',
 				'deps'        => [],
 				'condition'   => 'global',
 				'load_method' => 'inline',
 				'version'     => '1.0.0',
 				'load_hook'   => 'am_critical',
-				'handle'      => 'loadCSS',
 				'type'        => 'script',
 				'in_footer'   => false,
 			],
@@ -146,15 +146,15 @@ class StylesTest extends TestCase {
 		$this->assertContains( 'style-preload-patch', Styles::instance()->asset_handles );
 		$this->assertContains(
 			[
+				'handle'      => 'style-preload-patch',
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
 				'deps'        => [],
 				'condition'   => 'global',
 				'load_method' => 'sync',
 				'version'     => '1.0.0',
 				'load_hook'   => 'wp_head',
-				'media'       => 'all',
-				'handle'      => 'style-preload-patch',
 				'type'        => 'style',
+				'media'       => 'all',
 				'loaded'      => true,
 			],
 			Styles::instance()->assets,
@@ -163,15 +163,15 @@ class StylesTest extends TestCase {
 		$this->assertContains( 'style-preload-patch', Preload::instance()->asset_handles );
 		$this->assertContains(
 			[
+				'handle'      => 'style-preload-patch',
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
 				'deps'        => [],
 				'condition'   => 'global',
 				'load_method' => 'preload',
 				'version'     => '1.0.0',
 				'load_hook'   => 'wp_head',
-				'media'       => 'all',
-				'handle'      => 'style-preload-patch',
 				'type'        => 'preload',
+				'media'       => 'all',
 			],
 			Preload::instance()->assets,
 			'Styles preloaded via `am_enqueue_style` should be sent through `am_preload`'

@@ -21,13 +21,13 @@ class AssetsTest extends TestCase {
 		$this->assertContains( $this->test_script['handle'], Scripts::instance()->asset_handles, 'Script should be added to array of asset handles' );
 		$this->assertContains(
 			[
+				'handle'      => $this->test_script['handle'],
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/js/test.bundle.js',
 				'deps'        => [],
 				'condition'   => 'global',
 				'load_method' => 'sync',
 				'version'     => '1.0.0',
 				'load_hook'   => 'wp_head',
-				'handle'      => $this->test_script['handle'],
 				'type'        => 'script',
 				'in_footer'   => false,
 				'loaded'      => true,

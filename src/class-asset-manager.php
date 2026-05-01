@@ -285,7 +285,7 @@ abstract class Asset_Manager {
 					$wp_enqueue_function(
 						$args['handle'],
 						$args['src'],
-						$args['deps'],
+						$args['deps'] ?? [],
 						$args['version'],
 						$this->set_enqueue_options( $args )
 					);
@@ -471,7 +471,7 @@ abstract class Asset_Manager {
 		$dep_register->add(
 			$args['handle'],
 			$args['src'],
-			$args['deps'],
+			$args['deps'] ?? [],
 			$args['version'],
 			$this->set_enqueue_options( $args )
 		);
