@@ -86,7 +86,9 @@ class SVG_Sprite {
 			'safe_style_css',
 			fn ( $styles ) => [
 				...array_values( $styles ),
-				[ 'left', 'overflow', 'position' ],
+				'left',
+				'overflow',
+				'position',
 			],
 		);
 
