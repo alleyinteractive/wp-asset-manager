@@ -53,5 +53,8 @@
       "@phpcs",
       "@phpunit"
     ]
+  },
+  "require": {
+    "alleyinteractive/composer-wordpress-autoloader": "^1.3"
   }
 }
