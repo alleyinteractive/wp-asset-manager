@@ -83,7 +83,7 @@ class Preload extends Asset_Manager {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
 			$this->generate_asset_error( 'invalid_preload_as_attribute', $asset );
 		} elseif ( ! empty( $asset['src'] ) ) {
-			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s />';
+			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s %9$s />';
 
 			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
 				// Make sure we include the asset version for styles and scripts.
@@ -105,18 +105,22 @@ class Preload extends Asset_Manager {
 					! empty( $asset['crossorigin'] ) ? 'crossorigin' : '',
 					empty( $asset['imagesrcset'] ) ? '' : sprintf( 'imagesrcset="%s" ', esc_attr( $asset['imagesrcset'] ) ),
 					empty( $asset['imagesizes'] ) ? '' : sprintf( 'imagesizes="%s" ', esc_attr( $asset['imagesizes'] ) ),
+					empty( $asset['fetchpriority'] ) ? '' : sprintf( 'fetchpriority="%s" ', esc_attr( $asset['fetchpriority'] ) ),
 				),
 				[
 					'link' => [
-						'rel'         => [],
-						'href'        => [],
-						'class'       => [],
-						'as'          => [],
-						'media'       => [],
-						'type'        => [],
-						'crossorigin' => [],
-						'imagesrcset' => [],
-						'imagesizes'  => [],
+						'rel'           => [],
+						'href'          => [],
+						'class'         => [],
+						'as'            => [],
+						'media'         => [],
+						'type'          => [],
+						'crossorigin'   => [],
+						'imagesrcset'   => [],
+						'imagesizes'    => [],
+						'fetchpriority' => [
+							'values' => [ 'auto', 'low', 'high' ],
+						],
 					],
 				]
 			);

@@ -125,19 +125,20 @@ if ( ! function_exists( 'am_preload' ) ) :
 	/**
 	 * Provide an asset with a `preload` resource hint for the browser to prioritize.
 	 *
-	 * @param array|string $handle       Handle for asset. This is necessary for dependency management.
-	 * @param string       $src          URI to asset.
-	 * @param array|string $condition    Corresponds to a configured loading condition that, if matches,
-	 *                                   will allow the asset to load.
-	 *                                   'global' is assumed if no condition is declared.
-	 * @param string|null  $version      Version of the asset.
-	 * @param string       $media        Media query to restrict when this asset is loaded.
-	 * @param string       $as           A hint to the browser about what type of asset this is.
-	 *                                   See $preload_as for valid options.
-	 * @param boolean      $crossorigin  Preload this asset cross-origin.
-	 * @param string       $mime_type    The MIME type for the preloaded asset.
-	 * @param string       $imagesrcset  A list of URLs to images that represent the srcset attribute for the image.
-	 * @param string       $imagesizes   A list of image sizes to include in the srcset attribute.
+	 * @param array|string $handle         Handle for asset. This is necessary for dependency management.
+	 * @param string       $src            URI to asset.
+	 * @param array|string $condition      Corresponds to a configured loading condition that, if matches,
+	 *                                     will allow the asset to load.
+	 *                                     'global' is assumed if no condition is declared.
+	 * @param string|null  $version        Version of the asset.
+	 * @param string       $media          Media query to restrict when this asset is loaded.
+	 * @param string       $as             A hint to the browser about what type of asset this is.
+	 *                                     See $preload_as for valid options.
+	 * @param boolean      $crossorigin    Preload this asset cross-origin.
+	 * @param string       $mime_type      The MIME type for the preloaded asset.
+	 * @param string       $imagesrcset    A list of URLs to images that represent the srcset attribute for the image.
+	 * @param string       $imagesizes     A list of image sizes to include in the srcset attribute.
+	 * @param string       $fetchpriority  The fetch priority of the asset.
 	 *
 	 * @phpstan-param string|array{
 	 *   handle: string,
@@ -149,11 +150,12 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 *   crossorigin?: bool,
 	 *   mime_type?: string,
 	 *   imagesizes?: string,
-	 *   imagesrcset?: string
+	 *   imagesrcset?: string,
+	 *   fetchpriority?: 'high'|'low'|'auto'
 	 * } $handle Handle for asset. This is necessary for dependency management.
 	 */
-	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null, ?string $imagesrcset = null, ?string $imagesizes = null ): void {
-		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type', 'imagesrcset', 'imagesizes' );
+	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null, ?string $imagesrcset = null, ?string $imagesizes = null, ?string $fetchpriority = null ): void {
+		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type', 'imagesrcset', 'imagesizes', 'fetchpriority' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Preload::instance()->add_asset( $args );
 	}
