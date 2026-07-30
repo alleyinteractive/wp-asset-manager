@@ -83,7 +83,7 @@ class Preload extends Asset_Manager {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
 			$this->generate_asset_error( 'invalid_preload_as_attribute', $asset );
 		} elseif ( ! empty( $asset['src'] ) ) {
-			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
+			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s />';
 
 			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
 				// Make sure we include the asset version for styles and scripts..
@@ -102,7 +102,9 @@ class Preload extends Asset_Manager {
 					esc_attr( $asset['as'] ),
 					esc_attr( $asset['media'] ),
 					empty( $asset['mime_type'] ) ? '' : sprintf( 'type="%s" ', esc_attr( $asset['mime_type'] ) ),
-					! empty( $asset['crossorigin'] ) ? 'crossorigin' : ''
+					! empty( $asset['crossorigin'] ) ? 'crossorigin' : '',
+					empty( $asset['imagesrcset'] ) ? '' : sprintf( 'imagesrcset="%s" ', esc_attr( $asset['imagesrcset'] ) ),
+					empty( $asset['imagesizes'] ) ? '' : sprintf( 'imagesizes="%s" ', esc_attr( $asset['imagesizes'] ) ),
 				),
 				[
 					'link' => [
@@ -113,6 +115,8 @@ class Preload extends Asset_Manager {
 						'media'       => [],
 						'type'        => [],
 						'crossorigin' => [],
+						'imagesrcset' => [],
+						'imagesizes'  => [],
 					],
 				]
 			);

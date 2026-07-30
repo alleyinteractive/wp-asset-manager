@@ -136,6 +136,8 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 *                                   See $preload_as for valid options.
 	 * @param boolean      $crossorigin  Preload this asset cross-origin.
 	 * @param string       $mime_type    The MIME type for the preloaded asset.
+	 * @param string       $imagesrcset  A list of URLs to images that represent the srcset attribute for the image.
+	 * @param string       $imagesizes   A list of image sizes to include in the srcset attribute.
 	 *
 	 * @phpstan-param string|array{
 	 *   handle: string,
@@ -145,11 +147,13 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 *   media?: string,
 	 *   as?: string,
 	 *   crossorigin?: bool,
-	 *   mime_type?: string
+	 *   mime_type?: string,
+	 *   imagesizes?: string,
+	 *   imagesrcset?: string
 	 * } $handle Handle for asset. This is necessary for dependency management.
 	 */
-	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
-		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type' );
+	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null, ?string $imagesrcset = null, ?string $imagesizes = null ): void {
+		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type', 'imagesrcset', 'imagesizes' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Preload::instance()->add_asset( $args );
 	}
