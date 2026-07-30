@@ -86,7 +86,7 @@ class Preload extends Asset_Manager {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s />';
 
 			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
-				// Make sure we include the asset version for styles and scripts..
+				// Make sure we include the asset version for styles and scripts.
 				$asset['src'] = add_query_arg(
 					'ver',
 					$asset['version'],
@@ -145,6 +145,12 @@ class Preload extends Asset_Manager {
 	 * @return array
 	 */
 	public function post_validate_asset( $asset ) {
+		// Infers `as="image"` if `imagesrcset` is present but `as` isn't.
+		// Keyed on `imagesrcset`, not `imagesizes`; `imagesizes` has no effect without a srcset to pick from.
+		if ( empty( $asset['as'] ) && ! empty( $asset['imagesrcset'] )  ) {
+			$asset['as'] = 'image';
+		}
+
 		// Attempt to patch the `as` and `mime_type` values if either is missing.
 		if ( empty( $asset['as'] ) || empty( $asset['mime_type'] ) ) {
 			$asset = $this->set_asset_types( $asset );
