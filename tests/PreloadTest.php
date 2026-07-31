@@ -85,6 +85,40 @@ class PreloadTest extends TestCase {
 			$actual_script_output,
 			"Should not add the 'as' and 'mime_type' arguments for an unknown file type"
 		);
+
+		// Infers `as` as 'image' when `imagesrcset` is present but `as` isn't.
+		$responsive_image_asset = [
+			'handle'      => 'preload-responsive-image',
+			'src'         => 'hero.jpg',
+			'imagesrcset' => 'hero-480.jpg 480w, hero-800.jpg 800w',
+		];
+		$expected_responsive_image = array_merge(
+			$responsive_image_asset,
+			[ 'as' => 'image' ]
+		);
+
+		$actual_responsive_image_output = Preload::instance()->post_validate_asset( $responsive_image_asset );
+
+		$this->assertEquals(
+			$expected_responsive_image,
+			$actual_responsive_image_output,
+			"Should infer 'as' as 'image' when imagesrcset is present but 'as' is missing"
+		);
+
+		// Shouldn't infer `as` when `imagesizes` is present without `imagesrcset`.
+		$sizes_only_asset = [
+			'handle'     => 'preload-sizes-only',
+			'src'        => 'hero.jpg',
+			'imagesizes' => '(max-width: 600px) 480px, 800px',
+		];
+
+		$actual_sizes_only_output = Preload::instance()->post_validate_asset( $sizes_only_asset );
+
+		$this->assertEquals(
+			$sizes_only_asset,
+			$actual_sizes_only_output,
+			"Should not infer 'as' when imagesizes is present without imagesrcset"
+		);
 	}
 
 	#[Group( 'preload' )]
