@@ -3,6 +3,17 @@
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 1.5.0
+
+  ### Added
+
+  * Adds `imagesrcset`, `imagesizes`, and `fetchpriority` arguments to `am_preload()` for preloading responsive images. (#55)
+    * `as` is automatically inferred as `'image'` when `imagesrcset` is supplied without an explicit `as`.
+
+  ### Fixed
+
+  * Adds missing `alleyinteractive/composer-wordpress-autoloader` Composer dependency to prevent a fatal error.
+    
 ## 1.4.3
 
 ### Changed

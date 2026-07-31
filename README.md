@@ -239,17 +239,40 @@ From [the spec](https://www.w3.org/TR/preload/#as-attribute):
 
 This function will also automatically add the `crossorigin` attribute for fonts, which [is required](https://drafts.csswg.org/css-fonts/#font-fetching-requirements) when preloading fonts, even if they're not actually cross-origin requests.
 
+`am_preload` can also preload a *responsive* image via the [`imagesrcset`/`imagesizes`][imagesrcset] options, the preload equivalent of an `<img>` tag's `srcset`/`sizes` attributes. These let the browser pick the correct image from a candidate list before it even reaches the `<img>` tag — the whole point of preloading a responsive hero/LCP image. If `imagesrcset` is supplied without an explicit `as`, `as` is automatically set to `'image'`. A `fetchpriority` option is also available to hint the browser's relative priority for fetching the asset.
+
+```php
+am_preload(
+  [
+    'handle'        => 'preload-hero-image',
+    'src'           => 'images/hero.jpg',
+    'imagesrcset'   => 'images/hero-480.jpg 480w, images/hero-800.jpg 800w',
+    'imagesizes'    => '(max-width: 600px) 480px, 800px',
+    'fetchpriority' => 'high',
+  ]
+);
+```
+
+Result:
+
+```html
+<link rel="preload" href="http://client/images/hero.jpg" class="wp-asset-manager preload-hero-image" as="image" media="all" imagesrcset="images/hero-480.jpg 480w, images/hero-800.jpg 800w" imagesizes="(max-width: 600px) 480px, 800px" fetchpriority="high" />
+```
+
 ### Preload Options
 
-| Name          | Description                                                        | Required    | Default     |
-|:--------------|:-------------------------------------------------------------------|:-----------:|:-----------:|
-| `handle`      | The handle for the asset                                           | •           |             |
-| `src`         | The URI for the asset                                              | •           |             |
-| `condition`   | The condition for which this asset should load                     |             | `'global'`  |
-| `version`     | The asset version                                                  |             | `'1.0.0'`   |
-| `as`          | The `as` attribute's value ([info][preload-types])                 | •           |             |
-| `mime_type`   | The `type` attribute's value ([info][mime-types])                  | •           |             |
-| `media`       | The media attribute value used to conditionally preload the asset  |             | `'all'`     |
+| Name            | Description                                                        | Required    | Default     |
+|:----------------|:-------------------------------------------------------------------|:-----------:|:-----------:|
+| `handle`        | The handle for the asset                                           | •           |             |
+| `src`           | The URI for the asset                                              | •           |             |
+| `condition`     | The condition for which this asset should load                     |             | `'global'`  |
+| `version`       | The asset version                                                  |             | `'1.0.0'`   |
+| `as`            | The `as` attribute's value ([info][preload-types])                 | •           |             |
+| `mime_type`     | The `type` attribute's value ([info][mime-types])                  | •           |             |
+| `media`         | The media attribute value used to conditionally preload the asset  |             | `'all'`     |
+| `imagesrcset`   | The `imagesrcset` attribute's value ([info][imagesrcset])          |             |             |
+| `imagesizes`    | The `imagesizes` attribute's value ([info][imagesrcset])           |             |             |
+| `fetchpriority` | The `fetchpriority` attribute's value (`'high'`, `'low'`, `'auto'`) |             |             |
 
 ## SVG Sprite
 
@@ -522,3 +545,4 @@ Development of Asset Manager happens on [Github](http://github.com/alleyinteract
 
 [preload-types]: https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#What_types_of_content_can_be_preloaded
 [mime-types]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+[imagesrcset]: https://html.spec.whatwg.org/multipage/semantics.html#attr-link-imagesrcset
