@@ -151,7 +151,7 @@ class Preload extends Asset_Manager {
 	public function post_validate_asset( $asset ) {
 		// Infers `as="image"` if `imagesrcset` is present but `as` isn't.
 		// Keyed on `imagesrcset`, not `imagesizes`; `imagesizes` has no effect without a srcset to pick from.
-		if ( empty( $asset['as'] ) && ! empty( $asset['imagesrcset'] )  ) {
+		if ( empty( $asset['as'] ) && ! empty( $asset['imagesrcset'] ) ) {
 			$asset['as'] = 'image';
 		}
 
