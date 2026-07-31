@@ -27,6 +27,25 @@ class PreloadTest extends TestCase {
 			$actual_style_output,
 			'Should print a preload link with all necessary attributes'
 		);
+
+		// Responsive image preload with imagesrcset, imagesizes, and fetchpriority.
+		$preload_responsive_image         = [
+			'handle'        => 'preload-responsive-image',
+			'src'           => 'client/images/hero.jpg',
+			'as'            => 'image',
+			'media'         => 'all',
+			'version'       => '1.0.0',
+			'imagesrcset'   => 'client/images/hero-480.jpg 480w, client/images/hero-800.jpg 800w',
+			'imagesizes'    => '(max-width: 600px) 480px, 800px',
+			'fetchpriority' => 'high',
+		];
+		$expected_responsive_image_output = '<link rel="preload" href="http://client/images/hero.jpg" class="wp-asset-manager preload-responsive-image" as="image" media="all" imagesrcset="client/images/hero-480.jpg 480w, client/images/hero-800.jpg 800w" imagesizes="(max-width: 600px) 480px, 800px" fetchpriority="high" />';
+		$actual_responsive_image_output   = get_echo( [ Preload::instance(), 'print_asset' ], [ $preload_responsive_image ] );
+		$this->assertEquals(
+			$expected_responsive_image_output,
+			$actual_responsive_image_output,
+			'Should print a preload link with imagesrcset, imagesizes, and fetchpriority attributes'
+		);
 	}
 
 	#[Group( 'preload' )]
