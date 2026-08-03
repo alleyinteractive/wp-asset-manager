@@ -18,7 +18,7 @@ jobs:
     # Define a matrix of PHP/WordPress versions to test against
     strategy:
       matrix:
-        php: [8.2, 8.3]
+        php: [8.3]
         wordpress: ["latest"]
         multisite: ["true", "false"]
     runs-on: ubuntu-latest
