@@ -1,4 +1,13 @@
 <?php
+/**
+ * Asset Manager Tests: Base test case.
+ *
+ * Shared fixtures, filters, and state reset for the suite.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
@@ -8,6 +17,9 @@ use Alley\WP\Asset_Manager\Preload;
 use Alley\WP\Asset_Manager\SVG_Sprite;
 use Mantle\Testing\Concerns\Refresh_Database;
 
+/**
+ * TestCase class.
+ */
 abstract class TestCase extends \Mantle\Testkit\Test_Case {
 	use Refresh_Database;
 
@@ -31,7 +43,10 @@ abstract class TestCase extends \Mantle\Testkit\Test_Case {
 		'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-two.css',
 	];
 
-	public array $global_attributes = [ 'focusable' => 'false', 'aria-hidden' => 'true' ];
+	public array $global_attributes = [
+		'focusable'   => 'false',
+		'aria-hidden' => 'true',
+	];
 
 	public string $svg_directory;
 
@@ -115,16 +130,16 @@ abstract class TestCase extends \Mantle\Testkit\Test_Case {
 		Preload::instance()->assets_by_handle = [];
 		Preload::instance()->asset_handles    = [];
 
-		SVG_Sprite::instance()->asset_handles       = [];
-		SVG_Sprite::instance()->sprite_map          = [];
+		SVG_Sprite::instance()->asset_handles         = [];
+		SVG_Sprite::instance()->sprite_map            = [];
 		SVG_Sprite::instance()->kses_svg_allowed_tags = [
 			'svg' => [],
 			'use' => [
 				'href' => true,
 			],
 		];
-		SVG_Sprite::$_global_attributes = [];
-		SVG_Sprite::$_svg_directory     = null;
+		SVG_Sprite::$_global_attributes               = [];
+		SVG_Sprite::$_svg_directory                   = null;
 		SVG_Sprite::instance()->create_sprite_sheet();
 
 		wp_deregister_script( 'my-test-asset' );

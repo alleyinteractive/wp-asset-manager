@@ -1,14 +1,32 @@
 <?php
+/**
+ * Asset Manager Tests: Assets.
+ *
+ * Tests the shared asset pipeline — registration, conditions,
+ * dependency validation, and load hooks — through the Scripts implementation.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
+use Alley\WP\Asset_Manager\Asset_Manager;
 use Alley\WP\Asset_Manager\Scripts;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+use function Mantle\Support\Helpers\capture;
+
+/**
+ * AssetsTest class.
+ */
+#[CoversClass( Asset_Manager::class )]
+#[Group( 'assets' )]
 class AssetsTest extends TestCase {
 
-	#[Group( 'assets' )]
-	public function test_add_asset() {
+	public function test_add_asset(): void {
 		global $wp_scripts;
 
 		// Enqueue test script
@@ -37,8 +55,7 @@ class AssetsTest extends TestCase {
 		);
 	}
 
-	#[Group( 'assets' )]
-	public function test_load_asset() {
+	public function test_load_asset(): void {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
 		$old_filter        = $wp_current_filter;
@@ -54,7 +71,7 @@ class AssetsTest extends TestCase {
 				'load_hook'   => 'wp_head',
 			]
 		);
-		$actual_output   = get_echo( [ Scripts::instance(), 'load_assets' ] );
+		$actual_output   = capture( [ Scripts::instance(), 'load_assets' ] );
 		$expected_output = '<script class="wp-asset-manager test-inline-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["test-inline-asset"] = {"myGlobalVar":true}</script>';
 		$this->assertEquals( $expected_output, $actual_output, 'Load assets should call the print_asset() function on each asset and echo the proper results' );
 
@@ -62,8 +79,7 @@ class AssetsTest extends TestCase {
 		$wp_current_filter = $old_filter;
 	}
 
-	#[Group( 'assets' )]
-	function test_load_asset_as_arguments() {
+	public function test_load_asset_as_arguments(): void {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
 		$old_filter        = $wp_current_filter;
@@ -77,7 +93,7 @@ class AssetsTest extends TestCase {
 			load_method: 'inline',
 			load_hook: 'wp_head',
 		);
-		$actual_output   = get_echo( [ Scripts::instance(), 'load_assets' ] );
+		$actual_output   = capture( [ Scripts::instance(), 'load_assets' ] );
 		$expected_output = '<script class="wp-asset-manager test-inline-asset" type="text/javascript">window.amScripts = window.amScripts || {}; window.amScripts["test-inline-asset"] = {"myGlobalVar":true}</script>';
 		$this->assertEquals( $expected_output, $actual_output, 'Load assets should call the print_asset() function on each asset and echo the proper results' );
 
@@ -85,8 +101,7 @@ class AssetsTest extends TestCase {
 		$wp_current_filter = $old_filter;
 	}
 
-	#[Group( 'assets' )]
-	public function test_asset_should_add() {
+	public function test_asset_should_add(): void {
 		// If no handle, should return false
 		$no_handle = Scripts::instance()->asset_should_add( [ 'src' => get_stylesheet_directory_uri() . 'static/js/test-two.bundle.js' ] );
 		$this->assertFalse( $no_handle, 'If script does not have a handle, it should fail to be added' );
@@ -139,8 +154,7 @@ class AssetsTest extends TestCase {
 		$this->assertTrue( $condition_include_exclude, 'If script has a condition with both `include` and `exclude` keys, it should check all `include` conditions are true and all `exclude` conditions are false' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_asset_should_load() {
+	public function test_asset_should_load(): void {
 		// Temporarily set current filter to 'wp_head' to trick current_filter()
 		global $wp_current_filter;
 		$old_filter        = $wp_current_filter;
@@ -189,8 +203,7 @@ class AssetsTest extends TestCase {
 		$wp_current_filter = $old_filter;
 	}
 
-	#[Group( 'assets' )]
-	public function test_find_dependents() {
+	public function test_find_dependents(): void {
 		$asset_with_deps         = array_merge(
 			$this->test_script_two,
 			[
@@ -212,8 +225,7 @@ class AssetsTest extends TestCase {
 		$this->assertEquals( $expected_dependents, $actual_dependents, 'Should return an array of assets that depend on this one' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_invalid_load_hook() {
+	public function test_invalid_load_hook(): void {
 		// Invalid load hook
 		$invalid_load_hook = [
 			'handle'    => 'my-test-asset',
@@ -221,12 +233,11 @@ class AssetsTest extends TestCase {
 			'load_hook' => 'hook_does_not_exist',
 		];
 		am_enqueue_script( $invalid_load_hook );
-		$error = get_echo( [ Scripts::instance(), 'validate_assets' ], $invalid_load_hook );
+		$error = capture( [ Scripts::instance(), 'validate_assets' ] );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_load_hook</em>', $error, 'Should throw invalid_load_hook error if load_hook provided does not exist' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_missing_dependency() {
+	public function test_missing_dependency(): void {
 		// Missing dependency
 		$dep_missing = [
 			'handle' => 'my-test-asset',
@@ -234,12 +245,11 @@ class AssetsTest extends TestCase {
 			'deps'   => [ 'dep-does-not-exist' ],
 		];
 		am_enqueue_script( $dep_missing );
-		$error = get_echo( [ Scripts::instance(), 'validate_assets' ], $dep_missing );
+		$error = capture( [ Scripts::instance(), 'validate_assets' ] );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>missing</em>', $error, 'Should throw missing error if a dependency does not exist' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_unsafe_load_hook() {
+	public function test_unsafe_load_hook(): void {
 		// Unsafe load hook
 		$unsafe_load_hook_dep = [
 			'handle'    => 'my-test-asset',
@@ -254,12 +264,11 @@ class AssetsTest extends TestCase {
 		];
 		am_enqueue_script( $unsafe_load_hook_dep );
 		am_enqueue_script( $unsafe_load_hook );
-		$error = get_echo( [ Scripts::instance(), 'validate_assets' ] );
+		$error = capture( [ Scripts::instance(), 'validate_assets' ] );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_hook</em>', $error, 'Should throw unsafe_load_hook error if a dependency is configured to load on a load_hook after this script' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_circular_dependency() {
+	public function test_circular_dependency(): void {
 		// Unsafe load hook
 		$circular_dep     = [
 			'handle' => 'my-test-asset',
@@ -273,12 +282,11 @@ class AssetsTest extends TestCase {
 		];
 		am_enqueue_script( $circular_dep );
 		am_enqueue_script( $circular_dep_two );
-		$error = get_echo( [ Scripts::instance(), 'validate_assets' ], $circular_dep );
+		$error = capture( [ Scripts::instance(), 'validate_assets' ] );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>circular_dependency</em>', $error, 'Should throw circular_dependency error if two scripts have each other as dependencies' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_add_core_dependencies() {
+	public function test_add_core_dependencies(): void {
 		$scripts = wp_scripts();
 
 		$this->assertNotEmpty(

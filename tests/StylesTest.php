@@ -1,19 +1,38 @@
 <?php
+/**
+ * Asset Manager Tests: Styles.
+ *
+ * Tests stylesheet-specific behavior: printing, async/defer
+ * load methods, and the loadCSS dependency.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Preload;
 use Alley\WP\Asset_Manager\Scripts;
 use Alley\WP\Asset_Manager\Styles;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+use function Mantle\Support\Helpers\capture;
+
+/**
+ * StylesTest class.
+ */
+#[CoversClass( Styles::class )]
+#[Group( 'assets' )]
 class StylesTest extends TestCase {
 
 	/**
+	 * Test that a stylesheet is registered with the WordPress dependency registry.
+	 *
 	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/66
 	 */
-	#[Group( 'assets' )]
-	public function test_stylesheet_is_registered_to_wp_deps() {
+	public function test_stylesheet_is_registered_to_wp_deps(): void {
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'registered' ) );
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'enqueued' ) );
 		$this->assertFalse( wp_style_is( $this->test_style['handle'], 'done' ) );
@@ -36,8 +55,7 @@ class StylesTest extends TestCase {
 		$this->assertTrue( wp_style_is( $this->test_style['handle'], 'done' ), 'Style is not marked as done.' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_print_asset() {
+	public function test_print_asset(): void {
 		// Inline load method with array provided for src attribute
 		$inline_src            = [
 			'handle'      => 'inline-src-asset',
@@ -49,7 +67,7 @@ class StylesTest extends TestCase {
 \tfont: Helvetica, times, serif;
 }
 </style>";
-		$actual_style_output   = get_echo( [ Styles::instance(), 'print_asset' ], [ $inline_src ] );
+		$actual_style_output   = capture( fn () => Styles::instance()->print_asset( $inline_src ) );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Inline load_method should print the contents of a CSS file in a <style> tag' );
 
 		// Async load method
@@ -80,7 +98,7 @@ class StylesTest extends TestCase {
 			'load_method' => 'defer',
 		];
 		$expected_style_output = '<script class="wp-asset-manager inline-defer-asset" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("http://client/css/test.css");});</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-defer-asset" /></noscript>';
-		$actual_style_output   = get_echo( [ Styles::instance(), 'print_asset' ], [ $defer_style ] );
+		$actual_style_output   = capture( fn () => Styles::instance()->print_asset( $defer_style ) );
 		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via loadCSS() function called on DOMContentLoaded' );
 
 		// Inline load method with missing file
@@ -89,7 +107,7 @@ class StylesTest extends TestCase {
 			'src'         => 'client/css/file-does-not-exist.css',
 			'load_method' => 'inline',
 		];
-		$style_output = get_echo( [ Styles::instance(), 'print_asset' ], [ $inline_fail ] );
+		$style_output = capture( fn () => Styles::instance()->print_asset( $inline_fail ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided does not exist' );
 
 		// Inline load method with external asset
@@ -98,12 +116,11 @@ class StylesTest extends TestCase {
 			'src'         => 'https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css',
 			'load_method' => 'inline',
 		];
-		$style_output    = get_echo( [ Styles::instance(), 'print_asset' ], [ $inline_external ] );
+		$style_output    = capture( fn () => Styles::instance()->print_asset( $inline_external ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_pre_add_asset() {
+	public function test_pre_add_asset(): void {
 		$async_style = array_merge(
 			$this->test_style,
 			[
@@ -138,8 +155,8 @@ class StylesTest extends TestCase {
 
 		// am_enqueue_style > load_method => preload is depricated.
 		$preload_style = [
-			'handle' => 'style-preload-patch',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
+			'handle'      => 'style-preload-patch',
+			'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
 			'load_method' => 'preload',
 		];
 		am_enqueue_style( $preload_style );
@@ -178,9 +195,8 @@ class StylesTest extends TestCase {
 		);
 	}
 
-	#[Group( 'assets' )]
-	public function test_post_validate_asset() {
-		$sync_style  = array_merge(
+	public function test_post_validate_asset(): void {
+		$sync_style = array_merge(
 			$this->test_style,
 			[
 				'deps' => [ 'defer-style-test' ],
@@ -199,7 +215,7 @@ class StylesTest extends TestCase {
 
 		// Defer style test
 		$defer_style['dependents'] = Styles::instance()->find_dependents( $defer_style );
-		$output                    = get_echo( [ Styles::instance(), 'post_validate_asset' ], [ $defer_style ] );
+		$output                    = capture( fn () => Styles::instance()->post_validate_asset( $defer_style ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded stylesheet depends on a stylesheet with a defer attribute' );
 	}
 }

@@ -1,20 +1,39 @@
 <?php
+/**
+ * Asset Manager Tests: Scripts.
+ *
+ * Tests script-specific behavior: printing, async/defer attributes,
+ * and load-method changes.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Scripts;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+use function Mantle\Support\Helpers\capture;
+
+/**
+ * ScriptsTest class.
+ */
+#[CoversClass( Scripts::class )]
+#[Group( 'assets' )]
 class ScriptsTest extends TestCase {
 
 	/**
+	 * Test that a script is registered with the WordPress dependency registry.
+	 *
 	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/66
 	 */
-	#[Group( 'assets' )]
-	public function test_script_is_registered_to_wp_deps() {
+	public function test_script_is_registered_to_wp_deps(): void {
 		$asset = [
-			'handle' => 'my-test-asset-test-test',
-			'src'    => 'http://www.example.org/wp-content/themes/example/static/js/cool-test.bundle.js',
+			'handle'      => 'my-test-asset-test-test',
+			'src'         => 'http://www.example.org/wp-content/themes/example/static/js/cool-test.bundle.js',
 			'load_method' => 'async',
 		];
 
@@ -33,11 +52,9 @@ class ScriptsTest extends TestCase {
 		$this->assertTrue( wp_script_is( $asset['handle'], 'registered' ), 'Script should be registered.' );
 		$this->assertTrue( wp_script_is( $asset['handle'], 'queue' ), 'Script should be in the queue.' );
 		$this->assertFalse( wp_script_is( $asset['handle'], 'done' ), 'Script is not marked as done.' );
-
 	}
 
-	#[Group( 'assets' )]
-	public function test_add_attributes() {
+	public function test_add_attributes(): void {
 		$async_asset  = [
 			'handle'      => 'async-asset',
 			'src'         => get_stylesheet_directory_uri() . '/static/js/async-test.js',
@@ -51,9 +68,8 @@ class ScriptsTest extends TestCase {
 		$this->assertEquals( $expected_async_tag, $actual_async_tag, 'add_to_async should add the approprate attribute (async or defer) to a script' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_modify_load_method() {
-		$sync_asset            = [
+	public function test_modify_load_method(): void {
+		$sync_asset = [
 			'handle' => 'sync-asset',
 			'src'    => 'http://www.example.org/wp-content/themes/twentytwelve/static/js/async-test.js',
 		];
@@ -80,8 +96,7 @@ class ScriptsTest extends TestCase {
 		$this->assertEquals( $expected_async_result, $actual_async_result, 'Assets with a modified load method should have the appropriate attibute added' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_print_asset() {
+	public function test_print_asset(): void {
 		// Inline load method with array provided for src attribute
 		$inline_array           = [
 			'handle'      => 'inline-array-asset',
@@ -91,7 +106,7 @@ class ScriptsTest extends TestCase {
 			'load_method' => 'inline',
 		];
 		$expected_script_output = '<script class="wp-asset-manager inline-array-asset" type="text/javascript">window.assetContext = window.assetContext || {}; window.assetContext["inline-array-asset"] = {"myGlobalVar":true}</script>';
-		$actual_script_output   = get_echo( [ Scripts::instance(), 'print_asset' ], [ $inline_array ] );
+		$actual_script_output   = capture( fn () => Scripts::instance()->print_asset( $inline_array ) );
 		$this->assertEquals( $expected_script_output, $actual_script_output, 'Inline assets with an array provided in `src` should output a script containing a global variable' );
 
 		// Inline load method with path provided for src attibute
@@ -105,7 +120,7 @@ class ScriptsTest extends TestCase {
   console.log(test);
 };
 </script>";
-		$actual_script_output   = get_echo( [ Scripts::instance(), 'print_asset' ], [ $inline_src ] );
+		$actual_script_output   = capture( fn () => Scripts::instance()->print_asset( $inline_src ) );
 		$this->assertEquals( $expected_script_output, $actual_script_output, 'Inline assets with filepath provided in `src` should get the contents of that file and output them in a script tag' );
 
 		// Inline load method with missing file
@@ -115,7 +130,7 @@ class ScriptsTest extends TestCase {
 			'load_method' => 'inline',
 		];
 		$expected_script_output = '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>';
-		$actual_script_output   = get_echo( [ Scripts::instance(), 'print_asset' ], [ $inline_fail ] );
+		$actual_script_output   = capture( fn () => Scripts::instance()->print_asset( $inline_fail ) );
 		$this->assertStringContainsString( $expected_script_output, $actual_script_output, 'Should throw an error if file provided does not exist' );
 
 		// Inline load method with external asset
@@ -125,12 +140,11 @@ class ScriptsTest extends TestCase {
 			'load_method' => 'inline',
 		];
 		$expected_script_output = '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>';
-		$actual_script_output   = get_echo( [ Scripts::instance(), 'print_asset' ], [ $inline_external ] );
+		$actual_script_output   = capture( fn () => Scripts::instance()->print_asset( $inline_external ) );
 		$this->assertStringContainsString( $expected_script_output, $actual_script_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_post_validate_asset() {
+	public function test_post_validate_asset(): void {
 		$sync_script  = array_merge(
 			$this->test_script,
 			[
@@ -159,17 +173,16 @@ class ScriptsTest extends TestCase {
 
 		// Defer script test
 		$defer_script['dependents'] = Scripts::instance()->find_dependents( $defer_script );
-		$output                     = get_echo( [ Scripts::instance(), 'post_validate_asset' ], [ $defer_script ] );
+		$output                     = capture( fn () => Scripts::instance()->post_validate_asset( $defer_script ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a defer attribute' );
 
 		// Async script test
 		$async_script['dependents'] = Scripts::instance()->find_dependents( $async_script );
-		$output                     = get_echo( [ Scripts::instance(), 'post_validate_asset' ], [ $async_script ] );
+		$output                     = capture( fn () => Scripts::instance()->post_validate_asset( $async_script ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded script depends on a script with a async attribute' );
 	}
 
-	#[Group( 'assets' )]
-	public function test_add_to_async() {
+	public function test_add_to_async(): void {
 		$async_script = array_merge(
 			$this->test_script_two,
 			[
@@ -188,14 +201,13 @@ class ScriptsTest extends TestCase {
 	/**
 	 * Test defer attribute handling.
 	 */
-	#[Group( 'assets' )]
-	public function test_defer_attribute() {
+	public function test_defer_attribute(): void {
 
 		// Enqueue the script with the defer attribute.
 		am_enqueue_script( $this->test_script['handle'], $this->test_script['src'], [], 'global', 'defer' );
 
 		// Get the script tag output.
-		$script_output = get_echo( 'wp_print_scripts', [ $this->test_script['handle'] ] );
+		$script_output = capture( fn () => wp_print_scripts( $this->test_script['handle'] ) );
 
 		// Check if the script tag has the defer attribute.
 		$this->assertStringContainsString( 'defer"', $script_output );

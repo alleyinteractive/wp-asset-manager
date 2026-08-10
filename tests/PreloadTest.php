@@ -1,14 +1,31 @@
 <?php
+/**
+ * Asset Manager Tests: Preload.
+ *
+ * Tests `am_preload()` — asset types, `as`/`mime_type` patching,
+ * and error handling.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\Preload;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+use function Mantle\Support\Helpers\capture;
+
+/**
+ * PreloadTest class.
+ */
+#[CoversClass( Preload::class )]
+#[Group( 'preload' )]
 class PreloadTest extends TestCase {
 
-	#[Group( 'preload' )]
-	public function test_preload_asset() {
+	public function test_preload_asset(): void {
 		// Basic CSS preload.
 		// The `print_asset` function does no option parsing, so all expected values are required.
 		$preload_basic         = [
@@ -21,7 +38,7 @@ class PreloadTest extends TestCase {
 			'version'     => '1.0.0',
 		];
 		$expected_style_output = '<link rel="preload" href="http://client/css/test.css?ver=1.0.0" class="wp-asset-manager preload-basic" as="style" media="(min-width: 768px)" type="text/css" />';
-		$actual_style_output   = get_echo( [ Preload::instance(), 'print_asset' ], [ $preload_basic ] );
+		$actual_style_output   = capture( fn () => Preload::instance()->print_asset( $preload_basic ) );
 		$this->assertEquals(
 			$expected_style_output,
 			$actual_style_output,
@@ -29,14 +46,13 @@ class PreloadTest extends TestCase {
 		);
 	}
 
-	#[Group( 'preload' )]
-	public function test_post_validate_asset() {
+	public function test_post_validate_asset(): void {
 		// Adds the expected attributes for preloading a font.
-		$font_asset     = [
+		$font_asset    = [
 			'handle' => 'preload-as-font',
 			'src'    => 'my-font.woff2',
 		];
-		$expected_font  = array_merge(
+		$expected_font = array_merge(
 			$font_asset,
 			[
 				'as'          => 'font',
@@ -68,30 +84,28 @@ class PreloadTest extends TestCase {
 		);
 	}
 
-	#[Group( 'preload' )]
-	public function test_print_asset() {
+	public function test_print_asset(): void {
 		// Throws an error for missing `as` value.
 		$unknown_asset = [
 			'handle' => 'preload-as-audio',
 			'src'    => 'my-song.mp3',
 		];
 
-		$error = get_echo( [ Preload::instance(), 'print_asset' ], [ $unknown_asset ] );
+		$error = capture( fn () => Preload::instance()->print_asset( $unknown_asset ) );
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>invalid_preload_as_attribute</em>', $error, "Should throw invalid_preload_attribute error if the 'as' attribute is missing" );
 	}
 
-	#[Group( 'preload' )]
-	public function test_set_asset_types() {
+	public function test_set_asset_types(): void {
 		$actual_output = Preload::instance()->set_asset_types( [] );
 
 		$this->assertEquals(
 			$actual_output,
 			[],
-			"Should return an empty array if no arguments are passed"
+			'Should return an empty array if no arguments are passed'
 		);
 
 		// Adds the expected attributes for preloading a CSS file.
-		$expected_style  = array_merge(
+		$expected_style = array_merge(
 			$this->test_style,
 			[
 				'as'        => 'style',
@@ -108,11 +122,11 @@ class PreloadTest extends TestCase {
 		);
 
 		// Adds the expected attributes for preloading a font.
-		$font_asset     = [
+		$font_asset    = [
 			'handle' => 'preload-type-font',
 			'src'    => 'my-font.woff2',
 		];
-		$expected_font  = array_merge(
+		$expected_font = array_merge(
 			$font_asset,
 			[
 				'as'        => 'font',
@@ -129,11 +143,11 @@ class PreloadTest extends TestCase {
 		);
 
 		// Adds the expected attributes for preloading a JS file.
-		$script_asset = [
+		$script_asset    = [
 			'handle' => 'preload-type-script',
 			'src'    => 'my-script.js',
 		];
-		$expected_script  = array_merge(
+		$expected_script = array_merge(
 			$script_asset,
 			[
 				'as'        => 'script',
