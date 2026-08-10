@@ -51,7 +51,7 @@
     "lint": "@phpcs",
     "lint:fix": "@phpcbf",
     "phpcbf": "phpcbf .",
-    "phpcs": "phpcs --standard=./phpcs.xml .",
+    "phpcs": "phpcs .",
     "phpunit": "phpunit",
     "test": [
       "@phpcs",
