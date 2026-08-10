@@ -165,6 +165,10 @@ class SVG_Sprite {
 		// Allowed tags and attributes for SVG.
 		include __DIR__ . '/kses-svg.php';
 
+		if ( empty( $am_kses_svg ) ) {
+			$am_kses_svg = [];
+		}
+
 		/**
 		 * Filter function for patching in missing attributes and elements for escaping with `wp_kses`.
 		 *
@@ -172,7 +176,7 @@ class SVG_Sprite {
 		 *
 		 * @param array $am_svg_allowed_tags wp_kses allowed SVG for the sprite sheet.
 		 */
-		$kses_sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_kses_svg ?? [] );
+		$kses_sprite_allowed_tags = apply_filters( 'am_sprite_allowed_tags', $am_kses_svg );
 
 		echo wp_kses(
 			$this->sprite_document->C14N(),

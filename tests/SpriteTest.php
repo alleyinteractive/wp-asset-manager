@@ -88,8 +88,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -125,8 +125,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -191,8 +191,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -273,8 +273,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -298,8 +298,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_embedded_script_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $without_embedded_script_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the script tag and disallowed attribute.'
 		);
 	}
@@ -366,8 +366,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_non_standard_attribute_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $without_non_standard_attribute_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -402,8 +402,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$with_non_standard_attribute_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $with_non_standard_attribute_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
 	}
@@ -429,9 +429,15 @@ class SpriteTest extends TestCase {
 			$camelcase_tags_attrs
 		);
 
+		/*
+		 * camelCase element names survive escaping on every supported version. camelCase
+		 * attribute names only survive through WordPress 6.9 — from 7.0 on, `wp_kses_hair()`
+		 * lowercases them, which `expected_after_kses()` accounts for. Browsers restore the
+		 * canonical casing when parsing SVG in HTML, so the rendered sprite is unchanged.
+		 */
 		$this->assertEquals(
-			$camelcase_tags_attrs_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $camelcase_tags_attrs_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the SVG tags and attributes.'
 		);
 	}
