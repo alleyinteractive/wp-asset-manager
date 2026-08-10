@@ -410,11 +410,11 @@ class SVG_Sprite {
 	/**
 	 * Remove a registered symbol.
 	 *
-	 * @param  array $handle The symbol handle.
+	 * @param  string $handle The symbol handle.
 	 * @return bool Whether the symbol was removed, or wasn't registered.
 	 */
 	public function remove_symbol( $handle ): bool {
-		if ( ! in_array( $handle, $this->asset_handles ) ) {
+		if ( ! in_array( $handle, $this->asset_handles, true ) ) {
 			// Success: Handle not previously registered.
 			return true;
 		}
