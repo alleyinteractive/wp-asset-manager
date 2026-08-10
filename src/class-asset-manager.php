@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;
@@ -237,8 +237,6 @@ abstract class Asset_Manager {
 
 	/**
 	 * Add hooks for outputting assets
-	 *
-	 * @return void
 	 */
 	public function add_hooks() {
 		foreach ( $this->load_hooks as $hook => $functions ) {

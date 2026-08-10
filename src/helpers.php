@@ -6,7 +6,7 @@
  *
  * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 use Alley\WP\Asset_Manager\Preload;

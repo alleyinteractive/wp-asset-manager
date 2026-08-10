@@ -7,7 +7,7 @@
  * @link https://www.w3.org/TR/SVG2/
  * @link https://svgwg.org/
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 /**

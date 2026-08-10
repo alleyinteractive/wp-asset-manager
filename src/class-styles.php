@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager_Styles
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;
@@ -43,8 +43,6 @@ class Styles extends Asset_Manager {
 	 * Print a single stylesheet
 	 *
 	 * @param array $stylesheet Stylesheet to insert into DOM.
-	 *
-	 * @return void
 	 */
 	public function print_asset( $stylesheet ) {
 		$classes      = $this->default_classes;

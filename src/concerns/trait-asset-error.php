@@ -2,7 +2,7 @@
 /**
  * Trait file for asset errors.
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager\Concerns;

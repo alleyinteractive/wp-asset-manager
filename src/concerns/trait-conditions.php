@@ -2,7 +2,7 @@
 /**
  * Trait file for asset conditions.
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager\Concerns;

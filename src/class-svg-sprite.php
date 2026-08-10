@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager_SVG_Sprite
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;
@@ -391,7 +391,6 @@ class SVG_Sprite {
 	 * Adds an asset to the sprite sheet.
 	 *
 	 * @param array $asset An asset definition.
-	 * @return void
 	 */
 	public function add_asset( $asset ): void {
 		if ( ! $this->asset_should_add( $asset ) ) {

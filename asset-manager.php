@@ -4,7 +4,7 @@
  *
  * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 /**

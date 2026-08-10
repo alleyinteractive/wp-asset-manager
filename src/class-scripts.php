@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager_Scripts
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;

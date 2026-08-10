@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager_Preload
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;
@@ -14,9 +14,9 @@ class Preload extends Asset_Manager {
 	/**
 	 * Types of files that can be preloaded; corresponds to allowed `as` attribute values.
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $preload_as = [
+	public array $preload_as = [
 		'audio',
 		'document',
 		'embed',
@@ -52,7 +52,7 @@ class Preload extends Asset_Manager {
 	 *
 	 * @var array
 	 */
-	public $asset_types = [
+	public array $asset_types = [
 		'css'   => [
 			'as'        => 'style',
 			'mime_type' => 'text/css',
@@ -71,8 +71,6 @@ class Preload extends Asset_Manager {
 	 * Print a single asset
 	 *
 	 * @param array $asset Asset to insert into DOM.
-	 *
-	 * @return void
 	 */
 	public function print_asset( $asset ) {
 		$classes      = $this->default_classes;
