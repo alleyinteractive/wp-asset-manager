@@ -1,7 +1,55 @@
-# Change Log
+# ChangeLog
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+
+### Breaking
+
+* Raised the minimum PHP version to 8.3.
+* Raised the minimum WordPress version to 6.3.
+* Changed the text domain from `am` to `wp-asset-manager` to match the plugin slug. Existing
+  translation files will need to be renamed.
+
+### Deprecations
+
+* The `am_*` template tags — `am_enqueue_script()`, `am_enqueue_style()`, `am_preload()`,
+  `am_register_symbol()`, `am_use_symbol()`, `am_get_symbol()`, and the rest — will be formally
+  deprecated in the next major version. They continue to work in 2.x.
+
+### Fixed
+
+* Fixed test failures on WordPress 7.0, which rebuilt `wp_kses_hair()` on top of the HTML API
+  ([#76](https://github.com/alleyinteractive/wp-asset-manager/issues/76)). Escaped output now
+  lowercases SVG attribute names such as `viewBox` and encodes single quotes as `&apos;`. Both
+  are cosmetic — browsers restore SVG attribute casing when parsing HTML, and `&apos;` is decoded
+  before an inline handler runs — so the plugin's markup is unchanged. Test expectations adapt to
+  the running WordPress version instead of assuming one.
+* Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as
+  accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
+* `SVG_Sprite::remove_symbol()` now compares handles strictly, matching every other `in_array()`
+  call in the codebase.
+* Added an explicit dependency on `alleyinteractive/composer-wordpress-autoloader`. It was
+  previously inherited from `mantle-framework/testkit`, which dropped it in v1.21.0, leaving a
+  fresh `composer install` unable to autoload the plugin's own classes.
+
+### Changed
+
+* Moved the API reference out of the README and into the
+  [wiki](https://github.com/alleyinteractive/wp-asset-manager/wiki).
+* CI now tests PHP 8.3, 8.4, and 8.5 against the latest WordPress, plus a dedicated job covering
+  the minimum supported WordPress version.
+* Excluded the `WordPress.NamingConventions.PrefixAllGlobals` sniff. WPCS 3.x enforces a
+  four-character minimum prefix, which rejects the plugin's published `am_` prefix.
+* Tests use Mantle's `Mantle\Support\Helpers\capture()` in place of a local `get_echo()` helper.
+* Renamed `phpcs.xml` to `phpcs.xml.dist` so the ruleset can be overridden locally.
+* Test suite is now linted. Test files declare `strict_types`, test methods declare `public`
+  visibility and `void` return types, and each test class is scoped with `#[CoversClass]`.
+* Excluded the `WordPress.WP.EnqueuedResources` sniff. Printing `<link>` and `<script>` tags
+  directly is what the async and defer load methods are for.
+* Added a `Text Domain` header to the plugin file.
+* CI no longer starts the MySQL, Redis, and Memcached containers; the test bootstrap uses SQLite.
+* Added `CONTRIBUTING.md`.
 
 ## 1.4.3
 
