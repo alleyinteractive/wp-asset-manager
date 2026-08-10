@@ -276,6 +276,26 @@ abstract class Asset_Manager {
 		if ( $this->asset_should_add( $args ) ) {
 			// Validate load style.
 			if ( empty( $args['load_method'] ) || ! in_array( $args['load_method'], $this->load_methods, true ) ) {
+				/*
+				 * An empty load method is the documented way to accept the default, so only
+				 * warn when a value was supplied and not recognised. Falling back to 'sync'
+				 * is otherwise silent, and the methods removed in 2.0.0 — 'async-defer' for
+				 * scripts and 'preload' for styles — would degrade without any notice.
+				 */
+				if ( ! empty( $args['load_method'] ) ) {
+					_doing_it_wrong(
+						esc_html( "am_enqueue_{$this->asset_type}" ),
+						sprintf(
+							/* translators: 1: the unsupported load method, 2: the asset handle, 3: comma-separated list of supported load methods */
+							esc_html__( 'Unsupported load method "%1$s" for "%2$s". The asset will load synchronously. Supported load methods: %3$s.', 'wp-asset-manager' ),
+							esc_html( $args['load_method'] ),
+							esc_html( $args['handle'] ),
+							esc_html( implode( ', ', $this->load_methods ) )
+						),
+						'2.0.0'
+					);
+				}
+
 				$args['load_method'] = 'sync';
 			}
 
@@ -430,18 +450,14 @@ abstract class Asset_Manager {
 	protected function set_enqueue_options( $args ): array|string {
 		// If this is for a style, just pass the media argument.
 		if ( 'style' === $args['type'] ) {
-			$enqueue_options = $args['media'];
-		} elseif ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-			// If this is for a script, pass the in_footer argument when on a version prior to 6.3.
-			$enqueue_options = $args['in_footer'];
-		} else {
-			// We are on a version of WordPress 6.3+ so the last argument is an array.
-			$enqueue_options = [ 'in_footer' => $args['in_footer'] ];
+			return $args['media'];
+		}
 
-			// If the load method is async or defer, set the strategy.
-			if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-				$enqueue_options['strategy'] = $args['load_method'];
-			}
+		$enqueue_options = [ 'in_footer' => $args['in_footer'] ];
+
+		// If the load method is async or defer, let core handle it via the loading strategy.
+		if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
+			$enqueue_options['strategy'] = $args['load_method'];
 		}
 
 		return $enqueue_options;

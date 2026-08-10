@@ -10,6 +10,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Raised the minimum WordPress version to 6.3.
 * Changed the text domain from `am` to `wp-asset-manager` to match the plugin slug. Existing
   translation files will need to be renamed.
+* Removed the `async-defer` load method ([#63](https://github.com/alleyinteractive/wp-asset-manager/issues/63)).
+  `async` takes precedence over `defer` when both are present, so the combination had no effect
+  worth supporting. Use `async` instead. Scripts still using `async-defer` fall back to `sync`.
+* Removed `Scripts::$async_scripts`, `Scripts::add_to_async()`, `Scripts::add_attributes()`,
+  `Scripts::disable_concat()`, and `Scripts::manage_async()`. These implemented the pre-WordPress-6.3 fallback for async and defer, which core's `strategy` argument now handles.
+* Removed the `preload` load method from `am_enqueue_style()`, deprecated since 0.1.1. It patched
+  in a call to `am_preload()` and downgraded the style to `sync`. Call `am_preload()` directly.
+  Styles still passing `preload` fall back to `sync` and no preload hint is emitted.
 
 ### Deprecations
 
@@ -27,6 +35,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   the running WordPress version instead of assuming one.
 * Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as
   accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
+* Fixed `am_modify_load_method()` failing to apply `async` or `defer` on WordPress 6.3+
+  ([#62](https://github.com/alleyinteractive/wp-asset-manager/issues/62)). The load method is
+  carried by core's `strategy` argument, which is only read at enqueue time, so changing it
+  afterwards now writes the strategy back to the registered script via `wp_script_add_data()`.
 * `SVG_Sprite::remove_symbol()` now compares handles strictly, matching every other `in_array()`
   call in the codebase.
 * Added an explicit dependency on `alleyinteractive/composer-wordpress-autoloader`. It was
@@ -48,6 +60,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Excluded the `WordPress.WP.EnqueuedResources` sniff. Printing `<link>` and `<script>` tags
   directly is what the async and defer load methods are for.
 * Added a `Text Domain` header to the plugin file.
+* `am_enqueue_script()` and `am_enqueue_style()` now call `_doing_it_wrong()` when given an
+  unrecognised load method, instead of silently falling back to `sync`. Omitting the load method
+  entirely still selects the default without a notice.
 * CI no longer starts the MySQL, Redis, and Memcached containers; the test bootstrap uses SQLite.
 * Added `CONTRIBUTING.md`.
 

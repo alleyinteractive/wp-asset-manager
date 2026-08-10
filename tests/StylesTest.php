@@ -152,46 +152,36 @@ class StylesTest extends TestCase {
 			],
 			Scripts::instance()->assets
 		);
+	}
 
-		// am_enqueue_style > load_method => preload is depricated.
-		$preload_style = [
-			'handle'      => 'style-preload-patch',
-			'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
-			'load_method' => 'preload',
-		];
-		am_enqueue_style( $preload_style );
-		$this->assertContains( 'style-preload-patch', Styles::instance()->asset_handles );
-		$this->assertContains(
+	/**
+	 * Test that `am_enqueue_style()` no longer accepts the `preload` load method.
+	 *
+	 * It was deprecated in 0.1.1 and removed in 2.0.0. Callers should use `am_preload()`.
+	 */
+	public function test_preload_load_method_is_not_supported(): void {
+		$this->assertNotContains( 'preload', Styles::instance()->load_methods, '`preload` should not be a style load method.' );
+
+		$this->setExpectedIncorrectUsage( 'am_enqueue_style' );
+
+		am_enqueue_style(
 			[
-				'handle'      => 'style-preload-patch',
+				'handle'      => 'style-preload-removed',
 				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
-				'deps'        => [],
-				'condition'   => 'global',
-				'load_method' => 'sync',
-				'version'     => '1.0.0',
-				'load_hook'   => 'wp_head',
-				'media'       => 'all',
-				'type'        => 'style',
-				'loaded'      => true,
-			],
-			Styles::instance()->assets,
-			"Styles preloaded via `am_enqueue_style` should be switched to the 'sync' `load_method`"
-		);
-		$this->assertContains( 'style-preload-patch', Preload::instance()->asset_handles );
-		$this->assertContains(
-			[
-				'handle'      => 'style-preload-patch',
-				'src'         => 'http://www.example.org/wp-content/themes/example/static/css/test-patch.css',
-				'deps'        => [],
-				'condition'   => 'global',
 				'load_method' => 'preload',
-				'version'     => '1.0.0',
-				'load_hook'   => 'wp_head',
-				'media'       => 'all',
-				'type'        => 'preload',
-			],
-			Preload::instance()->assets,
-			'Styles preloaded via `am_enqueue_style` should be sent through `am_preload`'
+			]
+		);
+
+		$this->assertSame(
+			'sync',
+			Styles::instance()->assets_by_handle['style-preload-removed']['load_method'],
+			'An unrecognised load method should fall back to `sync`.'
+		);
+
+		$this->assertNotContains(
+			'style-preload-removed',
+			Preload::instance()->asset_handles,
+			'`am_enqueue_style()` should no longer patch in a call to `am_preload()`.'
 		);
 	}
 

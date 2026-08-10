@@ -105,16 +105,6 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook', 'media' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 
-		/**
-		 * Using am_enqueue_style with `load_method => preload` is no longer supported.
-		 * This patches in a call to am_preload and updates the enqueued style's
-		 * load_method to 'sync', which replicates the deprecated behavior.
-		 */
-		if ( 'preload' === $args['load_method'] ) {
-			Preload::instance()->add_asset( $args );
-			$args['load_method'] = 'sync';
-		}
-
 		Styles::instance()->add_asset( $args );
 	}
 

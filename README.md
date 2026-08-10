@@ -24,7 +24,7 @@ am_enqueue_style(
     'src'         => 'css/styles.css',
     'deps'        => [],
     'condition'   => 'global',
-    'load_method' => 'async', // 'sync', 'inline', 'async', 'defer', 'preload'
+    'load_method' => 'async', // 'sync', 'inline', 'async', 'defer'
     'version'     => '1.0.0',
     'load_hook'   => 'wp_head',
     'media'       => 'all', // 'print', 'screen', or any valid media query
