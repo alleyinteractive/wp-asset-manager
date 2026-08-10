@@ -25,7 +25,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 					<?php
 					esc_html_e(
 						'Asset Manager is not installed. Please switch to a tagged release or track the `production-built` branch.',
-						'am'
+						'wp-asset-manager'
 					);
 					?>
 				</p>

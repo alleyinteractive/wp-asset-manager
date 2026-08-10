@@ -24,43 +24,43 @@ trait Asset_Error {
 		// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
 		switch ( $code ) {
 			case 'circular_dependency':
-				$message = sprintf( __( 'You have a circular dependency in your enqueues. <strong>%1$s</strong> and <strong>%2$s</strong> require each other as dependencies.', 'am' ), $asset['handle'], $info );
+				$message = sprintf( __( 'You have a circular dependency in your enqueues. <strong>%1$s</strong> and <strong>%2$s</strong> require each other as dependencies.', 'wp-asset-manager' ), $asset['handle'], $info );
 				break;
 
 			case 'invalid_load_hook':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong> is using an invalid load_hook. The asset is configured to load on hook <strong>%2$s</strong>, but this hook does not exist.', 'am' ), $asset['handle'], $asset['load_hook'] );
+				$message = sprintf( __( 'Asset <strong>%1$s</strong> is using an invalid load_hook. The asset is configured to load on hook <strong>%2$s</strong>, but this hook does not exist.', 'wp-asset-manager' ), $asset['handle'], $asset['load_hook'] );
 				break;
 
 			case 'unsafe_load_hook':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong>, configured to load on hook <strong>%2$s</strong>, is loading after an asset that depends on it: <strong>%3$s</strong>, configured to load on hook <strong>%4$s</strong>', 'am' ), $asset['handle'], $asset['load_hook'], $info['handle'], $info['load_hook'] );
+				$message = sprintf( __( 'Asset <strong>%1$s</strong>, configured to load on hook <strong>%2$s</strong>, is loading after an asset that depends on it: <strong>%3$s</strong>, configured to load on hook <strong>%4$s</strong>', 'wp-asset-manager' ), $asset['handle'], $asset['load_hook'], $info['handle'], $info['load_hook'] );
 				break;
 
 			case 'missing':
-				$message = sprintf( __( 'A dependency you listed for this asset is invalid. <strong>%1$s</strong> lists <strong>%2$s</strong> as a dependency, but that asset is not configured to load on this page.', 'am' ), $asset['handle'], $info );
+				$message = sprintf( __( 'A dependency you listed for this asset is invalid. <strong>%1$s</strong> lists <strong>%2$s</strong> as a dependency, but that asset is not configured to load on this page.', 'wp-asset-manager' ), $asset['handle'], $info );
 				break;
 
 			case 'cannot_print':
-				$message = sprintf( __( 'Asset of type <strong>%1$s</strong> does not exist or does not have a print_asset() function configured.', 'am' ), $asset['type'] );
+				$message = sprintf( __( 'Asset of type <strong>%1$s</strong> does not exist or does not have a print_asset() function configured.', 'wp-asset-manager' ), $asset['type'] );
 				break;
 
 			case 'invalid_enqueue_function':
-				$message = sprintf( __( 'You attempted to enqueue an asset with function %1$s, which does not exist.', 'am' ), $info );
+				$message = sprintf( __( 'You attempted to enqueue an asset with function %1$s, which does not exist.', 'wp-asset-manager' ), $info );
 				break;
 
 			case 'unsafe_load_method':
-				$message = sprintf( __( 'Asset <strong>%1$s</strong> uses the <strong>%2$s</strong> load method, meaning there is no guarantee it will be available for its dependent asset <strong>%3$s</strong>, using <strong>%4$s</strong> load method.', 'am' ), $asset['handle'], $asset['load_method'], $info['handle'], $info['load_method'] );
+				$message = sprintf( __( 'Asset <strong>%1$s</strong> uses the <strong>%2$s</strong> load method, meaning there is no guarantee it will be available for its dependent asset <strong>%3$s</strong>, using <strong>%4$s</strong> load method.', 'wp-asset-manager' ), $asset['handle'], $asset['load_method'], $info['handle'], $info['load_method'] );
 				break;
 
 			case 'unsafe_inline':
-				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'am' ), $asset['src'] );
+				$message = sprintf( __( 'You attempted to load <strong>%1$s</strong> using the "inline" load method, but it is an external asset or the asset does not exist.', 'wp-asset-manager' ), $asset['src'] );
 				break;
 
 			case 'invalid_preload_as_attribute':
-				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'am' ), $asset['src'] );
+				$message = sprintf( __( 'You attempted to preload <strong>%1$s</strong> with a missing or invalid <strong>as</strong> attribute. The `as` attribute helps the browser prioritize and accept the preloaded asset.', 'wp-asset-manager' ), $asset['src'] );
 				break;
 
 			default:
-				$message = sprintf( __( 'Something went wrong when enqueueing <strong>%s</strong>.', 'am' ), $asset['handle'] );
+				$message = sprintf( __( 'Something went wrong when enqueueing <strong>%s</strong>.', 'wp-asset-manager' ), $asset['handle'] );
 				break;
 		}
 		// phpcs:enable
