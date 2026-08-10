@@ -21,16 +21,16 @@ class Styles extends Asset_Manager {
 	/**
 	 * Methods by which a stylesheet can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
+	public array $load_methods = [ 'sync', 'async', 'defer', 'inline' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = 'style';
+	public ?string $asset_type = 'style';
 
 	/**
 	 * Core asset reference filter

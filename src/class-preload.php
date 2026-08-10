@@ -34,16 +34,16 @@ class Preload extends Asset_Manager {
 	/**
 	 * Asset type this class is responsible for loading and managing.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = 'preload';
+	public ?string $asset_type = 'preload';
 
 	/**
 	 * Methods by which an asset can be loaded into the DOM.
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $load_methods = [ 'preload' ];
+	public array $load_methods = [ 'preload' ];
 
 	/**
 	 * Map of asset 'as' and 'type` attributes based on file extension, used to

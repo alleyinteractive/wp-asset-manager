@@ -97,9 +97,9 @@ abstract class Asset_Manager {
 	/**
 	 * Methods by which a asset can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $load_methods = [ 'sync', 'async' ];
+	public array $load_methods = [ 'sync', 'async' ];
 
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
@@ -111,9 +111,9 @@ abstract class Asset_Manager {
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = null;
+	public ?string $asset_type = null;
 
 	/**
 	 * Core asset reference filter

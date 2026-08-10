@@ -28,9 +28,9 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Methods by which a script can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $load_methods = [ 'inline', 'sync', 'async', 'defer', 'async-defer' ];
+	public array $load_methods = [ 'inline', 'sync', 'async', 'defer', 'async-defer' ];
 
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
@@ -42,9 +42,9 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = 'script';
+	public ?string $asset_type = 'script';
 
 	/**
 	 * Core asset reference filter
