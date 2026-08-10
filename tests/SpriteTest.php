@@ -507,4 +507,48 @@ class SpriteTest extends TestCase {
 		$symbol_not_exist = am_deregister_symbol( 'nonexistent' );
 		$this->assertTrue( $symbol_not_exist );
 	}
+
+	/**
+	 * Test that the sprite's `safe_style_css` entries are added as individual strings.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/73
+	 */
+	public function test_safe_style_css_is_a_flat_list_of_strings(): void {
+		SVG_Sprite::instance();
+
+		$styles = apply_filters( 'safe_style_css', [ 'color' ] );
+
+		$this->assertSame(
+			[],
+			array_filter( $styles, 'is_array' ),
+			'`safe_style_css` should not contain nested arrays.'
+		);
+
+		foreach ( [ 'left', 'overflow', 'position' ] as $property ) {
+			$this->assertContains( $property, $styles, "`{$property}` should be allowed as a style property." );
+		}
+	}
+
+	/**
+	 * Test that a downstream `safe_style_css` callback can treat the allowlist as strings.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/73
+	 */
+	public function test_safe_style_css_survives_a_downstream_array_unique(): void {
+		SVG_Sprite::instance();
+
+		add_filter(
+			'safe_style_css',
+			fn ( $styles ) => array_unique( [ ...$styles, 'fill' ] ),
+			20
+		);
+
+		$filtered = safecss_filter_attr( 'left:-9999px;overflow:hidden;position:absolute' );
+
+		remove_all_filters( 'safe_style_css', 20 );
+
+		foreach ( [ 'left:-9999px', 'overflow:hidden', 'position:absolute' ] as $declaration ) {
+			$this->assertStringContainsString( $declaration, $filtered, "`{$declaration}` should survive kses." );
+		}
+	}
 }

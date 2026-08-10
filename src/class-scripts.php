@@ -44,7 +44,7 @@ class Scripts extends Asset_Manager {
 	 *
 	 * @var string
 	 */
-	public string $core_ref_type = 'scripts';
+	public ?string $core_ref_type = 'scripts';
 
 	/**
 	 * Set default properties for script manager

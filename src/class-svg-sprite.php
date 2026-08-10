@@ -79,14 +79,15 @@ class SVG_Sprite {
 		/**
 		 * Ensures the sprite's `style` attribute isn't escaped.
 		 *
-		 * @param  string[] $styles Array of allowed CSS properties.
-		 * @return string[]         Modified safe inline style properties.
+		 * @param string[] $styles Array of allowed CSS properties.
 		 */
 		add_filter(
 			'safe_style_css',
 			fn ( $styles ) => [
 				...array_values( $styles ),
-				[ 'left', 'overflow', 'position' ],
+				'left',
+				'overflow',
+				'position',
 			],
 		);
 
@@ -97,6 +98,8 @@ class SVG_Sprite {
 
 	/**
 	 * Get the SVG directory.
+	 *
+	 * @return string
 	 */
 	public function get_svg_directory() {
 		if ( ! isset( static::$_svg_directory ) ) {

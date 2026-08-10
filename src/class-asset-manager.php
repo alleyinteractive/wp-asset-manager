@@ -104,9 +104,9 @@ abstract class Asset_Manager {
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $wp_enqueue_methods = [ 'sync' ];
+	public array $wp_enqueue_methods = [ 'sync' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
@@ -120,7 +120,7 @@ abstract class Asset_Manager {
 	 *
 	 * @var string
 	 */
-	public $core_ref_type = null;
+	public ?string $core_ref_type = null;
 
 	/**
 	 * Actions on which to load assets.
@@ -148,7 +148,7 @@ abstract class Asset_Manager {
 	 *      }
 	 * }
 	 */
-	public $load_hooks = [
+	public array $load_hooks = [
 		'am_critical' => [
 			'validate_assets' => 15,
 			'load_assets'     => 20,
@@ -363,7 +363,7 @@ abstract class Asset_Manager {
 	/**
 	 * Consolidate direct dependents of this asset
 	 *
-	 * @param array $asset - asset to sort in the dependency array.
+	 * @param array $asset Asset to sort in the dependency array.
 	 *
 	 * @return array
 	 */

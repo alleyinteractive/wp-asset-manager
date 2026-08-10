@@ -37,7 +37,7 @@ class Styles extends Asset_Manager {
 	 *
 	 * @var string
 	 */
-	public $core_ref_type = 'styles';
+	public ?string $core_ref_type = 'styles';
 
 	/**
 	 * Print a single stylesheet

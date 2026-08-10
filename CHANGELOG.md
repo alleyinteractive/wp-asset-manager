@@ -41,6 +41,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   ([#62](https://github.com/alleyinteractive/wp-asset-manager/issues/62)). The load method is
   carried by core's `strategy` argument, which is only read at enqueue time, so changing it
   afterwards now writes the strategy back to the registered script via `wp_script_add_data()`.
+* Fixed `SVG_Sprite` adding a nested array to the `safe_style_css` allowlist
+  ([#73](https://github.com/alleyinteractive/wp-asset-manager/issues/73)). The filter is documented
+  as `string[]`, and the nested value raised an "Array to string conversion" warning on every
+  rendered page once a downstream callback — such as Gutenberg's
+  `gutenberg_add_svg_to_safe_style_css()` — ran `array_unique()` over the list.
 * `SVG_Sprite::remove_symbol()` now compares handles strictly, matching every other `in_array()`
   call in the codebase.
 * Added an explicit dependency on `alleyinteractive/composer-wordpress-autoloader`. It was
