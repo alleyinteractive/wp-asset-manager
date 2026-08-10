@@ -14,9 +14,9 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Global JS variable on which inline objects should be added as a property
 	 *
-	 * @var array
+	 * @var string
 	 */
-	public $inline_script_context = 'amScripts';
+	public string $inline_script_context = 'amScripts';
 
 	/**
 	 * Methods by which a script can be loaded into the DOM
@@ -30,7 +30,7 @@ class Scripts extends Asset_Manager {
 	 *
 	 * @var string[]
 	 */
-	public $wp_enqueue_methods = [ 'sync', 'async', 'defer' ];
+	public array $wp_enqueue_methods = [ 'sync', 'async', 'defer' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
@@ -44,18 +44,18 @@ class Scripts extends Asset_Manager {
 	 *
 	 * @var string
 	 */
-	public $core_ref_type = 'scripts';
+	public string $core_ref_type = 'scripts';
 
 	/**
 	 * Set default properties for script manager
 	 */
 	public function set_asset_type_defaults() {
 		/**
-		 * Filter function for setting new inline script context
+		 * Filter function for setting new inline script context.
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param string $inline_script_context Property of the window object under which inlined values will be nested
+		 * @param string $inline_script_context Property of the window object under which inlined values will be nested.
 		 */
 		$this->inline_script_context = apply_filters( 'am_inline_script_context', 'amScripts' );
 	}

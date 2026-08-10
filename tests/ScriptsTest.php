@@ -212,6 +212,29 @@ class ScriptsTest extends TestCase {
 	}
 
 	/**
+	 * Test the array form of `am_modify_load_method()` documented in the wiki.
+	 *
+	 * Every other `am_*` helper accepts its options as an array; this one took only strings,
+	 * so the documented call — and the reproduction in #62 — raised a TypeError.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/62
+	 */
+	public function test_modify_load_method_accepts_an_array(): void {
+		am_enqueue_script( $this->test_script );
+
+		am_modify_load_method(
+			[
+				'handle'      => $this->test_script['handle'],
+				'load_method' => 'defer',
+			]
+		);
+
+		wp_scripts()->done = [];
+
+		$this->assertScriptHasAttribute( 'defer', capture( fn () => wp_print_scripts( $this->test_script['handle'] ) ) );
+	}
+
+	/**
 	 * Test that a script can never carry both `async` and `defer`.
 	 *
 	 * The `async-defer` load method was removed in 2.0.0 — `async` takes precedence over

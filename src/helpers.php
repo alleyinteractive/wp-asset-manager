@@ -63,13 +63,33 @@ endif;
 if ( ! function_exists( 'am_modify_load_method' ) ) :
 
 	/**
-	 * Modify the load method of an already-enqueued script
+	 * Modify the load method of an already-enqueued script.
 	 *
-	 * @param string $handle      Handle for script.
-	 * @param string $load_method How to load this asset.
+	 * Options can be passed in as an array or individual parameters.
+	 *
+	 * @param string|array $handle      Handle for script, or an array of options.
+	 * @param string       $load_method How to load this asset.
+	 *
+	 * @phpstan-param string|array{
+	 *   handle?: string,
+	 *   load_method?: string
+	 * } $handle
 	 */
-	function am_modify_load_method( string $handle, string $load_method = 'sync' ): void {
-		Scripts::instance()->modify_load_method( $handle, $load_method );
+	function am_modify_load_method( array|string $handle, string $load_method = 'sync' ): void {
+		$defaults = compact( 'handle', 'load_method' );
+		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+
+		if ( ! is_string( $args['handle'] ) || '' === $args['handle'] ) {
+			_doing_it_wrong(
+				'am_modify_load_method',
+				esc_html__( 'A script handle is required.', 'wp-asset-manager' ),
+				'2.0.0'
+			);
+
+			return;
+		}
+
+		Scripts::instance()->modify_load_method( $args['handle'], $args['load_method'] );
 	}
 
 endif;

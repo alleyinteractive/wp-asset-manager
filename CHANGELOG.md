@@ -35,6 +35,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   the running WordPress version instead of assuming one.
 * Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as
   accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
+* Fixed `am_modify_load_method()` raising a `TypeError` when passed an array of options, the form
+  shown in the documentation. It now accepts `array|string` like every other `am_*` helper.
 * Fixed `am_modify_load_method()` failing to apply `async` or `defer` on WordPress 6.3+
   ([#62](https://github.com/alleyinteractive/wp-asset-manager/issues/62)). The load method is
   carried by core's `strategy` argument, which is only read at enqueue time, so changing it
