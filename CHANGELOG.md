@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   worth supporting. Use `async` instead. Scripts still using `async-defer` fall back to `sync`.
 * Removed `Scripts::$async_scripts`, `Scripts::add_to_async()`, `Scripts::add_attributes()`,
   `Scripts::disable_concat()`, and `Scripts::manage_async()`. These implemented the pre-WordPress-6.3 fallback for async and defer, which core's `strategy` argument now handles.
+* Removed `Asset_Manager::$assets_by_dependency` and `Asset_Manager::$assets_manual`. Both were
+  public but always empty and referenced nowhere in the plugin.
 * Removed the `preload` load method from `am_enqueue_style()`, deprecated since 0.1.1. It patched
   in a call to `am_preload()` and downgraded the style to `sync`. Call `am_preload()` directly.
   Styles still passing `preload` fall back to `sync` and no preload hint is emitted.
@@ -37,6 +39,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   are cosmetic — browsers restore SVG attribute casing when parsing HTML, and `&apos;` is decoded
   before an inline handler runs — so the plugin's markup is unchanged. Test expectations adapt to
   the running WordPress version instead of assuming one.
+* Fixed `deps` being ignored for assets the plugin prints itself
+  ([#22](https://github.com/alleyinteractive/wp-asset-manager/issues/22)). Inline styles and
+  scripts, and async and defer styles, bypass `wp_enqueue_*` and so never reached core's
+  dependency resolution — they printed in the order they were registered, which made `deps`
+  meaningless for critical CSS. They are now ordered so a dependency prints before anything that
+  depends on it, transitively. Assets with no dependency between them keep their registration
+  order. This changes output order only where the registration order already contradicted the
+  declared dependencies.
 * Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as
   accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
 * Fixed `am_modify_load_method()` raising a `TypeError` when passed an array of options, the form

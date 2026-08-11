@@ -67,20 +67,6 @@ abstract class Asset_Manager {
 	public $wp_enqueue_function = '';
 
 	/**
-	 * Array of assets, organized by dependencies
-	 *
-	 * @var array
-	 */
-	public $assets_by_dependency = [];
-
-	/**
-	 * Array of manually-loaded assets (no auto-dependency management)
-	 *
-	 * @var array
-	 */
-	public $assets_manual = [];
-
-	/**
 	 * Array of conditions with which to determine when a assets loads
 	 *
 	 * @var array
@@ -352,12 +338,90 @@ abstract class Asset_Manager {
 	 * Loop through assets and print each on the appropriate hook, as specified
 	 */
 	public function load_assets() {
-		foreach ( $this->assets as $idx => $asset ) {
+		foreach ( $this->sort_assets_by_dependency() as $idx ) {
+			$asset = $this->assets[ $idx ];
+
 			if ( $this->asset_should_load( $asset ) ) {
 				$this->print_asset( $asset );
 				$this->assets[ $idx ]['loaded'] = true;
 			}
 		}
+	}
+
+	/**
+	 * Order assets so that a dependency is printed before anything that depends on it.
+	 *
+	 * Only assets this class prints itself need this. Assets using a load method in
+	 * `$wp_enqueue_methods` are handed to `wp_enqueue_*`, where core's `WP_Dependencies`
+	 * already resolves the order.
+	 *
+	 * The sort is stable: an asset only moves when a dependency forces it to, so assets with
+	 * no relationship between them keep the order they were registered in. That matters for
+	 * critical CSS, where the cascade often depends on ordering that `deps` doesn't express.
+	 *
+	 * @return int[] Keys of `$this->assets`, in the order they should print.
+	 */
+	public function sort_assets_by_dependency(): array {
+		$remaining = array_keys( $this->assets );
+		$emitted   = [];
+		$order     = [];
+
+		while ( ! empty( $remaining ) ) {
+			$next = null;
+
+			// Take the earliest-registered asset whose dependencies have all been printed.
+			foreach ( $remaining as $position => $idx ) {
+				if ( $this->asset_deps_are_met( $this->assets[ $idx ], $emitted ) ) {
+					$next = $position;
+					break;
+				}
+			}
+
+			/*
+			 * Nothing is ready, so everything left is part of a cycle. `validate_assets()`
+			 * reports it as a `circular_dependency`; take the earliest-registered asset to
+			 * break the deadlock so that every asset still prints exactly once.
+			 */
+			if ( null === $next ) {
+				$next = array_key_first( $remaining );
+			}
+
+			$idx = $remaining[ $next ];
+
+			unset( $remaining[ $next ] );
+
+			$order[] = $idx;
+
+			$emitted[ $this->assets[ $idx ]['handle'] ] = true;
+		}
+
+		return $order;
+	}
+
+	/**
+	 * Determine whether every dependency of an asset has already been printed.
+	 *
+	 * @param array               $asset   Asset to check.
+	 * @param array<string, bool> $emitted Handles that have already been placed, as keys.
+	 * @return bool
+	 */
+	protected function asset_deps_are_met( $asset, $emitted ): bool {
+		if ( empty( $asset['deps'] ) || ! is_array( $asset['deps'] ) ) {
+			return true;
+		}
+
+		foreach ( $asset['deps'] as $dep ) {
+			/*
+			 * A dependency this class doesn't manage can't be positioned relative to anything
+			 * it prints, so treat it as met. Dependencies that are missing outright, or that
+			 * load on a later hook, are already reported by `validate_assets()`.
+			 */
+			if ( isset( $this->assets_by_handle[ $dep ] ) && ! isset( $emitted[ $dep ] ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

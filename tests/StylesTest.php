@@ -185,6 +185,127 @@ class StylesTest extends TestCase {
 		);
 	}
 
+	/**
+	 * Test that an inline style is printed after the style it depends on.
+	 *
+	 * Inline styles are printed by the plugin rather than handed to `wp_enqueue_style()`, so
+	 * core's dependency resolution never sees them. The order they were registered in used to
+	 * be the order they printed in, which makes `deps` meaningless for critical CSS.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/22
+	 */
+	public function test_inline_styles_print_in_dependency_order(): void {
+		$this->enqueue_inline_style( 'critical-second', [ 'critical-first' ] );
+		$this->enqueue_inline_style( 'critical-first' );
+
+		$this->assertSame(
+			[ 'critical-first', 'critical-second' ],
+			$this->printed_handles(),
+			'A dependency should print before the style that depends on it.'
+		);
+	}
+
+	/**
+	 * Test that a chain of dependencies is resolved, not just a direct one.
+	 */
+	public function test_inline_styles_resolve_a_dependency_chain(): void {
+		$this->enqueue_inline_style( 'critical-third', [ 'critical-second' ] );
+		$this->enqueue_inline_style( 'critical-second', [ 'critical-first' ] );
+		$this->enqueue_inline_style( 'critical-first' );
+
+		$this->assertSame(
+			[ 'critical-first', 'critical-second', 'critical-third' ],
+			$this->printed_handles(),
+			'A transitive dependency should print before everything downstream of it.'
+		);
+	}
+
+	/**
+	 * Test that unrelated styles keep the order they were registered in.
+	 *
+	 * Critical CSS order is often intentional beyond what `deps` expresses, so sorting must
+	 * only move an asset when a dependency forces it to.
+	 */
+	public function test_inline_styles_without_deps_keep_registration_order(): void {
+		$this->enqueue_inline_style( 'critical-beta', [ 'critical-alpha' ] );
+		$this->enqueue_inline_style( 'critical-alpha' );
+		$this->enqueue_inline_style( 'critical-gamma' );
+
+		$this->assertSame(
+			[ 'critical-alpha', 'critical-beta', 'critical-gamma' ],
+			$this->printed_handles(),
+			'Only the style forced to move by a dependency should move.'
+		);
+	}
+
+	/**
+	 * Test that a circular dependency still prints every style exactly once.
+	 *
+	 * The cycle itself is reported by `validate_assets()`. The sort only has to avoid
+	 * deadlocking on it.
+	 */
+	public function test_circular_dependencies_still_print_every_style(): void {
+		$this->enqueue_inline_style( 'critical-ping', [ 'critical-pong' ] );
+		$this->enqueue_inline_style( 'critical-pong', [ 'critical-ping' ] );
+
+		$printed = $this->printed_handles();
+
+		sort( $printed );
+
+		$this->assertSame(
+			[ 'critical-ping', 'critical-pong' ],
+			$printed,
+			'Both styles in a cycle should print, exactly once each.'
+		);
+	}
+
+	/**
+	 * Test that a dependency the plugin doesn't manage is ignored by the sort.
+	 *
+	 * Core handles and anything enqueued directly aren't in the asset manifest, so they can't
+	 * be positioned. A missing dependency is already reported by `validate_assets()`.
+	 */
+	public function test_unmanaged_dependencies_do_not_block_printing(): void {
+		$this->enqueue_inline_style( 'critical-orphan', [ 'a-handle-that-does-not-exist' ] );
+
+		$this->assertSame(
+			[ 'critical-orphan' ],
+			$this->printed_handles(),
+			'A style should still print when it depends on a handle the plugin does not manage.'
+		);
+	}
+
+	/**
+	 * Enqueue an inline style on `wp_head`.
+	 *
+	 * @param string   $handle Handle for the style.
+	 * @param string[] $deps   Handles this style depends on.
+	 */
+	private function enqueue_inline_style( string $handle, array $deps = [] ): void {
+		am_enqueue_style(
+			[
+				'handle'      => $handle,
+				'deps'        => $deps,
+				'src'         => 'tests/mocks/test-css.css',
+				'load_method' => 'inline',
+				'load_hook'   => 'wp_head',
+			]
+		);
+	}
+
+	/**
+	 * Print the queued assets and return the handles in the order they appeared.
+	 *
+	 * @return string[]
+	 */
+	private function printed_handles(): array {
+		$output = capture( fn () => do_action( 'wp_head' ) );
+
+		preg_match_all( '/wp-asset-manager (critical-\w+)/', $output, $matches );
+
+		return $matches[1];
+	}
+
 	public function test_post_validate_asset(): void {
 		$sync_style = array_merge(
 			$this->test_style,
