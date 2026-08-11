@@ -19,6 +19,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   in a call to `am_preload()` and downgraded the style to `sync`. Call `am_preload()` directly.
   Styles still passing `preload` fall back to `sync` and no preload hint is emitted.
 
+### Added
+
+* Added `imagesrcset`, `imagesizes`, and `fetchpriority` options to `am_preload()` for preloading responsive images ([#55](https://github.com/alleyinteractive/wp-asset-manager/issues/55)).
+
 ### Deprecations
 
 * The `am_*` template tags — `am_enqueue_script()`, `am_enqueue_style()`, `am_preload()`,

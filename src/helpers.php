@@ -121,7 +121,16 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 *   media?: string
 	 * } $handle
 	 */
-	function am_enqueue_style( array|string $handle, ?string $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head', ?string $media = null ): void {
+	function am_enqueue_style(
+		array|string $handle,
+		?string $src = null,
+		array $deps = [],
+		array|string $condition = 'global',
+		string $load_method = 'sync',
+		?string $version = '1.0.0',
+		string $load_hook = 'wp_head',
+		?string $media = null
+	): void {
 		$defaults = compact( 'handle', 'src', 'deps', 'condition', 'load_method', 'version', 'load_hook', 'media' );
 		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 
@@ -135,17 +144,24 @@ if ( ! function_exists( 'am_preload' ) ) :
 	/**
 	 * Provide an asset with a `preload` resource hint for the browser to prioritize.
 	 *
-	 * @param array|string $handle       Handle for asset. This is necessary for dependency management.
-	 * @param string       $src          URI to asset.
-	 * @param array|string $condition    Corresponds to a configured loading condition that, if matches,
-	 *                                   will allow the asset to load.
-	 *                                   'global' is assumed if no condition is declared.
-	 * @param string|null  $version      Version of the asset.
-	 * @param string       $media        Media query to restrict when this asset is loaded.
-	 * @param string       $as           A hint to the browser about what type of asset this is.
-	 *                                   See $preload_as for valid options.
-	 * @param boolean      $crossorigin  Preload this asset cross-origin.
-	 * @param string       $mime_type    The MIME type for the preloaded asset.
+	 * @param array|string $handle        Handle for asset. This is necessary for dependency management.
+	 * @param string       $src           URI to asset.
+	 * @param array|string $condition     Corresponds to a configured loading condition that, if matches,
+	 *                                    will allow the asset to load.
+	 *                                    'global' is assumed if no condition is declared.
+	 * @param string|null  $version       Version of the asset.
+	 * @param string       $media         Media query to restrict when this asset is loaded.
+	 * @param string       $as            A hint to the browser about what type of asset this is.
+	 *                                    See $preload_as for valid options.
+	 * @param boolean      $crossorigin   Preload this asset cross-origin.
+	 * @param string       $mime_type     The MIME type for the preloaded asset.
+	 * @param array|string $imagesrcset   Candidate images and their descriptors, either as a string in
+	 *                                    the same form as an `<img>` tag's `srcset`, or as an array
+	 *                                    keyed by descriptor, e.g. [ 480 => 'hero-480.jpg' ]. Implies
+	 *                                    `as` of 'image'.
+	 * @param string       $imagesizes    The sizes the image will be displayed at, in the same form as an
+	 *                                    `<img>` tag's `sizes`. Requires $imagesrcset.
+	 * @param string       $fetchpriority Relative priority for fetching the asset. One of 'auto', 'high', or 'low'.
 	 *
 	 * @phpstan-param string|array{
 	 *   handle: string,
@@ -155,12 +171,40 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 *   media?: string,
 	 *   as?: string,
 	 *   crossorigin?: bool,
-	 *   mime_type?: string
+	 *   mime_type?: string,
+	 *   imagesrcset?: array<int|string, string>|string,
+	 *   imagesizes?: string,
+	 *   fetchpriority?: 'auto'|'high'|'low'
 	 * } $handle Handle for asset. This is necessary for dependency management.
 	 */
-	function am_preload( array|string $handle, ?string $src = null, array|string $condition = 'global', ?string $version = '1.0.0', string $media = 'all', ?string $as = null, bool $crossorigin = false, ?string $mime_type = null ): void {
-		$defaults = compact( 'handle', 'src', 'condition', 'version', 'media', 'as', 'crossorigin', 'mime_type' );
-		$args     = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
+	function am_preload(
+		array|string $handle,
+		?string $src = null,
+		array|string $condition = 'global',
+		?string $version = '1.0.0',
+		string $media = 'all',
+		?string $as = null,
+		bool $crossorigin = false,
+		?string $mime_type = null,
+		array|string|null $imagesrcset = null,
+		?string $imagesizes = null,
+		?string $fetchpriority = null
+	): void {
+		$defaults = compact(
+			'handle',
+			'src',
+			'condition',
+			'version',
+			'media',
+			'as',
+			'crossorigin',
+			'mime_type',
+			'imagesrcset',
+			'imagesizes',
+			'fetchpriority'
+		);
+
+		$args = is_array( $handle ) ? array_merge( $defaults, $handle ) : $defaults;
 		Preload::instance()->add_asset( $args );
 	}
 

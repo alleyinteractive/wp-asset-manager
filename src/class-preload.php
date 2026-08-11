@@ -32,6 +32,13 @@ class Preload extends Asset_Manager {
 	];
 
 	/**
+	 * Allowed values for the `fetchpriority` attribute.
+	 *
+	 * @var string[]
+	 */
+	public array $fetchpriority_values = [ 'auto', 'high', 'low' ];
+
+	/**
 	 * Asset type this class is responsible for loading and managing.
 	 *
 	 * @var string|null
@@ -48,7 +55,8 @@ class Preload extends Asset_Manager {
 	/**
 	 * Map of asset 'as' and 'type` attributes based on file extension, used to
 	 * patch in attributes for commonly-preloaded assets.
-	 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 	 *
 	 * @var array
 	 */
@@ -81,7 +89,7 @@ class Preload extends Asset_Manager {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
 			$this->generate_asset_error( 'invalid_preload_as_attribute', $asset );
 		} elseif ( ! empty( $asset['src'] ) ) {
-			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s />';
+			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s %9$s />';
 
 			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
 				// Make sure we include the asset version for styles and scripts..
@@ -100,17 +108,25 @@ class Preload extends Asset_Manager {
 					esc_attr( $asset['as'] ),
 					esc_attr( $asset['media'] ),
 					empty( $asset['mime_type'] ) ? '' : sprintf( 'type="%s" ', esc_attr( $asset['mime_type'] ) ),
-					! empty( $asset['crossorigin'] ) ? 'crossorigin' : ''
+					! empty( $asset['crossorigin'] ) ? 'crossorigin' : '',
+					empty( $asset['imagesrcset'] ) ? '' : sprintf( 'imagesrcset="%s"', esc_attr( $asset['imagesrcset'] ) ),
+					empty( $asset['imagesizes'] ) ? '' : sprintf( 'imagesizes="%s"', esc_attr( $asset['imagesizes'] ) ),
+					empty( $asset['fetchpriority'] ) ? '' : sprintf( 'fetchpriority="%s"', esc_attr( $asset['fetchpriority'] ) )
 				),
 				[
 					'link' => [
-						'rel'         => [],
-						'href'        => [],
-						'class'       => [],
-						'as'          => [],
-						'media'       => [],
-						'type'        => [],
-						'crossorigin' => [],
+						'rel'           => [],
+						'href'          => [],
+						'class'         => [],
+						'as'            => [],
+						'media'         => [],
+						'type'          => [],
+						'crossorigin'   => [],
+						'imagesrcset'   => [],
+						'imagesizes'    => [],
+						'fetchpriority' => [
+							'values' => $this->fetchpriority_values,
+						],
 					],
 				]
 			);
@@ -129,7 +145,55 @@ class Preload extends Asset_Manager {
 		// Preloads will always be in <head>, so we force the `wp_head` load hook.
 		$asset['load_hook'] = 'wp_head';
 
+		// Flatten the array form of `imagesrcset` so everything downstream sees a string.
+		if ( ! empty( $asset['imagesrcset'] ) && is_array( $asset['imagesrcset'] ) ) {
+			$asset['imagesrcset'] = $this->build_imagesrcset( $asset['imagesrcset'], $asset['handle'] );
+		}
+
 		return $asset;
+	}
+
+	/**
+	 * Build an `imagesrcset` attribute value from a map of descriptors to image URLs.
+	 *
+	 * The array is keyed by descriptor so each candidate is declared once. An integer key
+	 * becomes a width descriptor — `400 => 'hero-400.jpg'` gives `hero-400.jpg 400w` — and a
+	 * string key is used as-is, which is how pixel density candidates such as `2x` are declared.
+	 *
+	 * @param array<int|string, string> $candidates Map of descriptor to image URL.
+	 * @param string                    $handle     Handle for the asset, used in error messages.
+	 * @return string
+	 */
+	public function build_imagesrcset( array $candidates, string $handle = '' ): string {
+		/*
+		 * A list has sequential integer keys, which would be read as widths and produce
+		 * nonsense like `hero.jpg 0w`.
+		 */
+		if ( array_is_list( $candidates ) ) {
+			_doing_it_wrong(
+				'am_preload',
+				sprintf(
+					/* translators: %s: the asset handle */
+					esc_html__( 'The array form of "imagesrcset" for "%s" must be keyed by descriptor, e.g. [ 480 => \'hero-480.jpg\' ]. The attribute will not be printed.', 'wp-asset-manager' ),
+					esc_html( $handle )
+				),
+				'2.0.0'
+			);
+
+			return '';
+		}
+
+		$srcset = [];
+
+		foreach ( $candidates as $descriptor => $url ) {
+			if ( ! is_string( $url ) || '' === $url ) {
+				continue;
+			}
+
+			$srcset[] = $url . ' ' . ( is_int( $descriptor ) ? $descriptor . 'w' : $descriptor );
+		}
+
+		return implode( ', ', $srcset );
 	}
 
 	/**
@@ -144,10 +208,49 @@ class Preload extends Asset_Manager {
 			$asset = $this->set_asset_types( $asset );
 		}
 
+		// `imagesrcset` is only meaningful on an image, so infer `as` when it wasn't supplied.
+		if ( ! empty( $asset['imagesrcset'] ) && empty( $asset['as'] ) ) {
+			$asset['as'] = 'image';
+		}
+
+		if ( ! empty( $asset['imagesizes'] ) && empty( $asset['imagesrcset'] ) ) {
+			_doing_it_wrong(
+				'am_preload',
+				sprintf(
+					/* translators: %s: the asset handle */
+					esc_html__( '"imagesizes" has no effect for "%s" without "imagesrcset" and will not be printed.', 'wp-asset-manager' ),
+					esc_html( $asset['handle'] )
+				),
+				'2.0.0'
+			);
+
+			unset( $asset['imagesizes'] );
+		}
+
+		if (
+			! empty( $asset['fetchpriority'] )
+			&& ! in_array( $asset['fetchpriority'], $this->fetchpriority_values, true )
+		) {
+			_doing_it_wrong(
+				'am_preload',
+				sprintf(
+					/* translators: 1: the unsupported fetchpriority value, 2: the asset handle, 3: comma-separated list of supported values */
+					esc_html__( 'Unsupported "fetchpriority" value "%1$s" for "%2$s". The attribute will not be printed. Supported values: %3$s.', 'wp-asset-manager' ),
+					esc_html( $asset['fetchpriority'] ),
+					esc_html( $asset['handle'] ),
+					esc_html( implode( ', ', $this->fetchpriority_values ) )
+				),
+				'2.0.0'
+			);
+
+			unset( $asset['fetchpriority'] );
+		}
+
 		if ( ! empty( $asset['as'] ) && 'font' === $asset['as'] ) {
 			/**
 			 * Preloading fonts requires the `crossorigin` attribute.
-			 * https://drafts.csswg.org/css-fonts/#font-fetching-requirements
+			 *
+			 * @see https://drafts.csswg.org/css-fonts/#font-fetching-requirements
 			 */
 			$asset['crossorigin'] = true;
 		}
