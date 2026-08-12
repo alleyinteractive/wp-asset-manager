@@ -79,7 +79,7 @@ abstract class Asset_Manager {
 	/**
 	 * Array of default classes to add to printed assets handles
 	 *
-	 * @var list<string>
+	 * @var array<string>
 	 */
 	public $default_classes = [];
 
