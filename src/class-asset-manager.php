@@ -11,30 +11,33 @@ namespace Alley\WP\Asset_Manager;
  * Asset_Manager
  *
  * Asset manager class.
+ *
+ * @phpstan-consistent-constructor
  */
 abstract class Asset_Manager {
 	use Concerns\Asset_Error;
+	use Concerns\Asset_Values;
 	use Concerns\Singleton;
 	use Concerns\Conditions;
 
 	/**
 	 * Array of assets to insert
 	 *
-	 * @var array
+	 * @var array<int, array<string, mixed>>
 	 */
 	public $assets = [];
 
 	/**
 	 * Reference array of asset handles
 	 *
-	 * @var array
+	 * @var array<int, string>
 	 */
 	public $asset_handles = [];
 
 	/**
 	 * Reference array of assets with their handle as the array key
 	 *
-	 * @var array
+	 * @var array<string, array<string, mixed>>
 	 */
 	public $assets_by_handle = [];
 
@@ -48,7 +51,7 @@ abstract class Asset_Manager {
 	/**
 	 * Reference to default assets in WP core
 	 *
-	 * @var array
+	 * @var array<string, \_WP_Dependency>
 	 */
 	public $core_assets_ref = [];
 
@@ -69,14 +72,14 @@ abstract class Asset_Manager {
 	/**
 	 * Array of conditions with which to determine when a assets loads
 	 *
-	 * @var array
+	 * @var array<string, bool>
 	 */
 	public $conditions = [];
 
 	/**
 	 * Array of default classes to add to printed assets handles
 	 *
-	 * @var array
+	 * @var list<string>
 	 */
 	public $default_classes = [];
 
@@ -124,7 +127,7 @@ abstract class Asset_Manager {
 	 *      it with a custom print condition.
 	 *    - Custom actions will likely require that you enqueue the assets on the same action, but with an earlier priority.
 	 *
-	 * @var array $load_hooks {
+	 * @var array<string, array<string, int>> $load_hooks {
 	 *      List of available hooks on which an asset can be loaded. These can be any valid hook.
 	 *
 	 *      @type array $hook {
@@ -152,24 +155,24 @@ abstract class Asset_Manager {
 	/**
 	 * Default print function throws error (and prints nothing)
 	 *
-	 * @param array $asset Asset to print.
+	 * @param array<string, mixed> $asset Asset to print.
 	 */
-	abstract public function print_asset( $asset );
+	abstract public function print_asset( $asset ): void;
 
 	/**
 	 * Perform final mutations before adding asset to array
 	 *
-	 * @param array $asset Asset to mutate.
-	 * @return array
+	 * @param array<string, mixed> $asset Asset to mutate.
+	 * @return array<string, mixed>
 	 */
 	abstract public function pre_add_asset( $asset );
 
 	/**
 	 * Perform mutations to asset after validation
 	 *
-	 * @param array $asset Asset to mutate.
+	 * @param array<string, mixed> $asset Asset to mutate.
 	 *
-	 * @return array
+	 * @return array<string, mixed>
 	 */
 	abstract public function post_validate_asset( $asset );
 
@@ -186,13 +189,13 @@ abstract class Asset_Manager {
 	 *
 	 * NOTE: $handle provided when enqueueing the asset will always be added as a class
 	 */
-	public function set_defaults() {
+	public function set_defaults(): void {
 		/**
-		 * Filter function used to get the default classes to add to the resulting asset markup
+		 * Filter function used to get the default classes to add to the resulting asset markup.
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param array $classes List of classes to apply to `class` attribute of resulting asset markup
+		 * @param string[] $classes List of classes to apply to `class` attribute of resulting asset markup.
 		 */
 		$this->default_classes = apply_filters( 'am_asset_classes', [ 'wp-asset-manager' ] );
 
@@ -201,7 +204,7 @@ abstract class Asset_Manager {
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param bool $ignore_errors Whether or not to ignore errors
+		 * @param bool $ignore_errors Whether or not to ignore errors.
 		 */
 		$this->be_quiet = (bool) apply_filters( 'am_ignore_asset_errors', false );
 
@@ -219,15 +222,19 @@ abstract class Asset_Manager {
 	/**
 	 * Set or filter properties for a specific type of asset
 	 */
-	public function set_asset_type_defaults() {}
+	public function set_asset_type_defaults(): void {}
 
 	/**
-	 * Add hooks for outputting assets
+	 * Add hooks for outputting assets.
 	 */
-	public function add_hooks() {
+	public function add_hooks(): void {
 		foreach ( $this->load_hooks as $hook => $functions ) {
 			foreach ( $functions as $function => $priority ) {
-				add_action( $hook, [ $this, $function ], $priority );
+				$callback = [ $this, $function ];
+
+				if ( is_callable( $callback ) ) {
+					add_action( $hook, $callback, $priority );
+				}
 			}
 		}
 	}
@@ -235,16 +242,16 @@ abstract class Asset_Manager {
 	/**
 	 * Set reference to core assets
 	 *
-	 * @param mixed $assets Assets object.
+	 * @param \WP_Dependencies $assets Assets object.
 	 */
-	public function set_core_assets_ref( $assets ) {
+	public function set_core_assets_ref( $assets ): void {
 		$this->core_assets_ref = $assets->registered;
 	}
 
 	/**
 	 * Add an asset to the manifest of assets to load
 	 *
-	 * @param array $args {
+	 * @param array<string, mixed> $args {
 	 *  Arguments for loading asset. May differ based on asset type, but most contain the following.
 	 *
 	 *      @type string       $handle      Handle for asset. Currently not used, but could be used to dequeue assets in the future.
@@ -255,9 +262,10 @@ abstract class Asset_Manager {
 	 *                                Accepts 'sync', 'async', 'defer', with additional values for specific asset types.
 	 * }
 	 */
-	public function add_asset( $args ) {
+	public function add_asset( $args ): void {
 		$wp_enqueue_function = $this->wp_enqueue_function;
 		$args['type']        = $this->asset_type;
+		$handle              = $this->asset_string( $args, 'handle' );
 
 		if ( $this->asset_should_add( $args ) ) {
 			// Validate load style.
@@ -274,8 +282,8 @@ abstract class Asset_Manager {
 						sprintf(
 							/* translators: 1: the unsupported load method, 2: the asset handle, 3: comma-separated list of supported load methods */
 							esc_html__( 'Unsupported load method "%1$s" for "%2$s". The asset will load synchronously. Supported load methods: %3$s.', 'wp-asset-manager' ),
-							esc_html( $args['load_method'] ),
-							esc_html( $args['handle'] ),
+							esc_html( $this->asset_string( $args, 'load_method' ) ),
+							esc_html( $handle ),
 							esc_html( implode( ', ', $this->load_methods ) )
 						),
 						'2.0.0'
@@ -317,7 +325,7 @@ abstract class Asset_Manager {
 					$args['loaded']            = true;
 					$asset_uses_core_functions = true;
 				} else {
-					echo wp_kses_post( $this->format_error( $this->generate_asset_error( 'invalid_enqueue_function', false, $wp_enqueue_function ) ) );
+					$this->generate_asset_error( 'invalid_enqueue_function', [], $wp_enqueue_function );
 				}
 			}
 
@@ -328,8 +336,8 @@ abstract class Asset_Manager {
 			// Add to asset arrays.
 			// phpcs:disable Generic.Formatting.MultipleStatementAlignment
 			$this->assets[] = $args;
-			$this->assets_by_handle[ $args['handle'] ] = $args;
-			$this->asset_handles[] = $args['handle'];
+			$this->assets_by_handle[ $handle ] = $args;
+			$this->asset_handles[] = $handle;
 			//phpcs:enable
 		}
 	}
@@ -337,7 +345,7 @@ abstract class Asset_Manager {
 	/**
 	 * Loop through assets and print each on the appropriate hook, as specified
 	 */
-	public function load_assets() {
+	public function load_assets(): void {
 		foreach ( $this->sort_assets_by_dependency() as $idx ) {
 			$asset = $this->assets[ $idx ];
 
@@ -392,7 +400,7 @@ abstract class Asset_Manager {
 
 			$order[] = $idx;
 
-			$emitted[ $this->assets[ $idx ]['handle'] ] = true;
+			$emitted[ $this->asset_string( $this->assets[ $idx ], 'handle' ) ] = true;
 		}
 
 		return $order;
@@ -401,16 +409,12 @@ abstract class Asset_Manager {
 	/**
 	 * Determine whether every dependency of an asset has already been printed.
 	 *
-	 * @param array               $asset   Asset to check.
-	 * @param array<string, bool> $emitted Handles that have already been placed, as keys.
+	 * @param array<string, mixed> $asset   Asset to check.
+	 * @param array<string, bool>  $emitted Handles that have already been placed, as keys.
 	 * @return bool
 	 */
 	protected function asset_deps_are_met( $asset, $emitted ): bool {
-		if ( empty( $asset['deps'] ) || ! is_array( $asset['deps'] ) ) {
-			return true;
-		}
-
-		foreach ( $asset['deps'] as $dep ) {
+		foreach ( $this->asset_deps( $asset ) as $dep ) {
 			/*
 			 * A dependency this class doesn't manage can't be positioned relative to anything
 			 * it prints, so treat it as met. Dependencies that are missing outright, or that
@@ -427,17 +431,18 @@ abstract class Asset_Manager {
 	/**
 	 * Consolidate direct dependents of this asset
 	 *
-	 * @param array $asset Asset to sort in the dependency array.
+	 * @param array<string, mixed> $asset Asset to sort in the dependency array.
 	 *
-	 * @return array
+	 * @return list<string>
 	 */
 	public function find_dependents( $asset ) {
 		$dependents = [];
+		$handle     = $this->asset_string( $asset, 'handle' );
 
 		// Loop through each asset and check if this one is in its dependency array.
 		foreach ( $this->assets as $current_asset ) {
-			if ( ! empty( $current_asset['deps'] ) && in_array( $asset['handle'], $current_asset['deps'], true ) ) {
-				$dependents[] = $current_asset['handle'];
+			if ( in_array( $handle, $this->asset_deps( $current_asset ), true ) ) {
+				$dependents[] = $this->asset_string( $current_asset, 'handle' );
 			}
 		}
 
@@ -447,8 +452,11 @@ abstract class Asset_Manager {
 	/**
 	 * Make sure the assets and their dependencies are valid
 	 */
-	public function validate_assets() {
+	public function validate_assets(): void {
 		foreach ( $this->assets as $idx => $asset ) {
+			$handle    = $this->asset_string( $asset, 'handle' );
+			$load_hook = $this->asset_string( $asset, 'load_hook' );
+
 			// Collect dependents.
 			$asset['dependents'] = $this->find_dependents( $asset );
 
@@ -457,41 +465,37 @@ abstract class Asset_Manager {
 
 			// Validate asset load_hook.
 			$available_hooks     = array_keys( $this->load_hooks );
-			$asset_load_hook_key = array_search( $asset['load_hook'], $available_hooks, true );
+			$asset_load_hook_key = array_search( $load_hook, $available_hooks, true );
 
-			if ( empty( $this->load_hooks[ $asset['load_hook'] ] ) ) {
+			if ( empty( $this->load_hooks[ $load_hook ] ) ) {
 				$this->generate_asset_error( 'invalid_load_hook', $asset );
 				continue;
 			}
 
 			// Check for missing dependencies or mismatched load_hook.
-			if ( ! empty( $asset['deps'] ) ) {
-				foreach ( $asset['deps'] as $dependency ) {
-					$this_dep = [];
+			foreach ( $this->asset_deps( $asset ) as $dependency ) {
+				// Check if dependency exists.
+				if ( empty( $this->assets_by_handle[ $dependency ] ) ) {
+					$this->generate_asset_error( 'missing', $asset, $dependency );
+					// Skip to the next dependency if this one is missing, as none of the other errors will be relevant.
+					continue;
+				}
 
-					// Check if dependency exists.
-					if ( empty( $this->assets_by_handle[ $dependency ] ) ) {
-						$this->generate_asset_error( 'missing', $asset, $dependency );
-						// Skip to the next dependency if this one is missing, as none of the other errors will be relevant.
-						continue;
-					} else {
-						$this_dep = $this->assets_by_handle[ $dependency ];
-					}
+				$this_dep          = $this->assets_by_handle[ $dependency ];
+				$dep_load_hook_key = array_search( $this->asset_string( $this_dep, 'load_hook' ), $available_hooks, true );
 
-					$dep_load_hook_key = array_search( $this_dep['load_hook'], $available_hooks, true );
+				// Ensure dependency is loading in an appropriate load_hook.
+				if ( $dep_load_hook_key > $asset_load_hook_key ) {
+					$this->generate_asset_error( 'unsafe_load_hook', $this_dep, $asset );
+				}
 
-					// Ensure dependency is loading in an appropriate load_hook.
-					if ( $dep_load_hook_key > $asset_load_hook_key ) {
-						$this->generate_asset_error( 'unsafe_load_hook', $this_dep, $asset );
-					}
+				// Ensure dependencies don't require each other.
+				$dep_handle = $this->asset_string( $this_dep, 'handle' );
 
-					// Ensure dependencies don't require each other.
-					if ( ! empty( $this_dep['deps'] )
-						&& in_array( $asset['handle'], $this_dep['deps'], true )
-						&& in_array( $this_dep['handle'], $asset['deps'], true )
-					) {
-						$this->generate_asset_error( 'circular_dependency', $asset, $this_dep['handle'] );
-					}
+				if ( in_array( $handle, $this->asset_deps( $this_dep ), true )
+					&& in_array( $dep_handle, $this->asset_deps( $asset ), true )
+				) {
+					$this->generate_asset_error( 'circular_dependency', $asset, $dep_handle );
 				}
 			}
 
@@ -499,29 +503,32 @@ abstract class Asset_Manager {
 			$asset = $this->post_validate_asset( $asset );
 
 			// Reset asset in arrays.
-			$this->assets[ $idx ]                       = $asset;
-			$this->assets_by_handle[ $asset['handle'] ] = $asset;
-			$this->asset_handles[ $idx ]                = $asset['handle'];
+			$this->assets[ $idx ]              = $asset;
+			$this->assets_by_handle[ $handle ] = $asset;
+			$this->asset_handles[ $idx ]       = $handle;
 		} // End foreach.
 	}
 
 	/**
 	 * Set enqueue options for a given asset.
 	 *
-	 * @param array $args Arguments for loading asset.
-	 * @return array|string
+	 * @param array<string, mixed> $args Arguments for loading asset.
+	 * @return array<string, mixed>|string
 	 */
 	protected function set_enqueue_options( $args ): array|string {
 		// If this is for a style, just pass the media argument.
 		if ( 'style' === $args['type'] ) {
-			return $args['media'];
+			$media = $this->asset_string( $args, 'media' );
+
+			return '' !== $media ? $media : 'all';
 		}
 
-		$enqueue_options = [ 'in_footer' => $args['in_footer'] ];
+		$load_method     = $this->asset_string( $args, 'load_method' );
+		$enqueue_options = [ 'in_footer' => ! empty( $args['in_footer'] ) ];
 
 		// If the load method is async or defer, let core handle it via the loading strategy.
-		if ( in_array( $args['load_method'], [ 'async', 'defer' ], true ) ) {
-			$enqueue_options['strategy'] = $args['load_method'];
+		if ( in_array( $load_method, [ 'async', 'defer' ], true ) ) {
+			$enqueue_options['strategy'] = $load_method;
 		}
 
 		return $enqueue_options;
@@ -530,7 +537,7 @@ abstract class Asset_Manager {
 	/**
 	 * Register an asset to the WP dependency registry.
 	 *
-	 * @param array $args Arguments for loading asset.
+	 * @param array<string, mixed> $args Arguments for loading asset.
 	 */
 	protected function register_asset_to_wp_deps( array $args ): void {
 		/**
@@ -560,36 +567,37 @@ abstract class Asset_Manager {
 			return;
 		}
 
+		$handle = $this->asset_string( $args, 'handle' );
+
 		// Account for the `am_modify_load_method` function, which might apply to already registered/core assets.
-		if ( $dep_register->query( $args['handle'], 'registered' ) ) {
+		if ( $dep_register->query( $handle, 'registered' ) ) {
 			return;
 		}
 
 		// Register the asset.
 		$dep_register->add(
-			$args['handle'],
+			$handle,
 			$args['src'],
-			$args['deps'],
-			$args['version'],
+			$this->asset_deps( $args ),
+			$this->asset_string( $args, 'version' ),
 			$this->set_enqueue_options( $args )
 		);
 
 		// Fake the enqueued state. Asset is printed by our `print_asset` method.
-		$dep_register->done[] = $args['handle'];
+		$dep_register->done[] = $handle;
 	}
 
 	/**
 	 * Check if a asset has any dependencies that exist in WP Core and, if so, enqueue them
 	 *
-	 * @param array $asset Asset to check for core dependencies.
+	 * @param array<string, mixed> $asset Asset to check for core dependencies.
 	 */
-	public function add_core_dependencies( $asset ) {
-		$load_method = ! empty( $asset['load_method'] ) ? $asset['load_method'] : 'sync';
+	public function add_core_dependencies( $asset ): void {
+		$load_method = $this->asset_string( $asset, 'load_method' );
+		$load_method = '' !== $load_method ? $load_method : 'sync';
 
-		if ( ! empty( $asset['deps'] ) ) {
-			foreach ( $asset['deps'] as $dependency ) {
-				$this->add_core_asset( $dependency, $load_method );
-			}
+		foreach ( $this->asset_deps( $asset ) as $dependency ) {
+			$this->add_core_asset( $dependency, $load_method );
 		}
 	}
 
@@ -599,14 +607,19 @@ abstract class Asset_Manager {
 	 * @param string $handle      Handle of core asset to add.
 	 * @param string $load_method Customize load method of core asset, otherwise leave it as 'sync'.
 	 */
-	public function add_core_asset( $handle, $load_method = 'sync' ) {
-		if ( ! is_string( $this->core_assets_global ) || empty( $this->core_assets_global ) ) {
+	public function add_core_asset( $handle, $load_method = 'sync' ): void {
+		if ( empty( $this->core_assets_global ) ) {
 			return;
 		}
 
-		$core_assets        = $GLOBALS[ $this->core_assets_global ] ?? [];
-		$core_assets_ref    = $core_assets->registered ?? [];
-		$in_footer          = $core_assets->in_footer ?? [];
+		$core_assets = $GLOBALS[ $this->core_assets_global ] ?? null;
+
+		if ( ! $core_assets instanceof \WP_Dependencies ) {
+			return;
+		}
+
+		$core_assets_ref    = $core_assets->registered;
+		$in_footer          = $core_assets instanceof \WP_Scripts ? $core_assets->in_footer : [];
 		$core_asset_handles = array_keys( $core_assets_ref );
 
 		/*
@@ -643,19 +656,24 @@ abstract class Asset_Manager {
 	 * If the provided $load_hook has already happened (determined by the order in which $this->load_hooks are defined),
 	 * the asset will be printed at the next available opportunity.
 	 *
-	 * @param array $asset Asset to check whether or not it should load.
+	 * @param array<string, mixed> $asset Asset to check whether or not it should load.
 	 *
 	 * @return bool
 	 */
 	public function asset_should_load( $asset ) {
 		$this_action           = current_filter();
 		$available_hooks       = array_keys( $this->load_hooks );
-		$target_hook_position  = array_search( $asset['load_hook'], $available_hooks, true );
+		$load_hook             = $this->asset_string( $asset, 'load_hook' );
+		$target_hook_position  = array_search( $load_hook, $available_hooks, true );
 		$current_hook_position = array_search( $this_action, $available_hooks, true );
 
-		// Load assets that are configured to load on this hook or on a previous hook but were enqueued too late.
-		$dom_position_matches = ! empty( $asset['load_hook'] )
-			&& ( $target_hook_position <= $current_hook_position || false === $target_hook_position );
+		/*
+		 * Load assets that are configured to load on this hook, or on a previous hook but were
+		 * enqueued too late. An unrecognised hook is checked first so that those assets load at
+		 * the next opportunity rather than being compared against a position that doesn't exist.
+		 */
+		$dom_position_matches = '' !== $load_hook
+			&& ( false === $target_hook_position || $target_hook_position <= $current_hook_position );
 		$has_src              = ! empty( $asset['src'] );
 		// Load assets that have not yet been loaded.
 		$asset_loaded = ! empty( $asset['loaded'] ) ? $asset['loaded'] : false;

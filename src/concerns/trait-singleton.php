@@ -9,12 +9,17 @@ namespace Alley\WP\Asset_Manager\Concerns;
 
 /**
  * Make a class into a singleton.
+ *
+ * Subclasses are instantiated through `new static()`, so every class using this trait has to
+ * keep the same constructor signature.
+ *
+ * @phpstan-consistent-constructor
  */
 trait Singleton {
 	/**
 	 * Existing instances.
 	 *
-	 * @var array
+	 * @var array<class-string, static>
 	 */
 	protected static $instances = [];
 
@@ -24,12 +29,12 @@ trait Singleton {
 	 * @return static
 	 */
 	public static function instance() {
-		$class = get_called_class();
+		$class = static::class;
 
 		if ( ! isset( static::$instances[ $class ] ) ) {
 			static::$instances[ $class ] = new static();
 		}
 
-		return self::$instances[ $class ];
+		return static::$instances[ $class ];
 	}
 }

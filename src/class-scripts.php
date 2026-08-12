@@ -49,7 +49,7 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Set default properties for script manager
 	 */
-	public function set_asset_type_defaults() {
+	public function set_asset_type_defaults(): void {
 		/**
 		 * Filter function for setting new inline script context.
 		 *
@@ -70,7 +70,7 @@ class Scripts extends Asset_Manager {
 	 * @param string $handle      Handle of script to modify.
 	 * @param string $load_method Target load method.
 	 */
-	public function modify_load_method( $handle, $load_method ) {
+	public function modify_load_method( $handle, $load_method ): void {
 		// Add script if it's a core asset.
 		$this->add_core_asset( $handle );
 
@@ -97,25 +97,28 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Print a single script.
 	 *
-	 * @param array $script Script to insert into DOM.
+	 * @param array<string, mixed> $script Script to insert into DOM.
 	 */
-	public function print_asset( $script ) {
-		$classes   = $this->default_classes;
-		$classes[] = $script['handle'];
+	public function print_asset( $script ): void {
+		$handle      = $this->asset_string( $script, 'handle' );
+		$load_method = $this->asset_string( $script, 'load_method' );
+		$src         = $script['src'] ?? '';
+		$classes     = $this->default_classes;
+		$classes[]   = $handle;
 
-		if ( ! empty( $script['src'] ) && ! in_array( $script['load_method'], $this->wp_enqueue_methods, true ) ) {
-			if ( 'inline' === $script['load_method'] ) {
-				if ( is_array( $script['src'] ) ) {
+		if ( ! empty( $src ) && ! in_array( $load_method, $this->wp_enqueue_methods, true ) ) {
+			if ( 'inline' === $load_method ) {
+				if ( is_array( $src ) ) {
 					// If src is an array, add it as a property containing a JSON object on a global variable.
 					printf(
 						'<script class="%1$s" type="text/javascript">window.%2$s = window.%2$s || {}; window.%2$s["%3$s"] = %4$s</script>',
 						esc_attr( implode( ' ', $classes ) ),
 						esc_js( $this->inline_script_context ),
-						esc_js( $script['handle'] ),
-						wp_json_encode( $script['src'] )
+						esc_js( $handle ),
+						wp_json_encode( $src )
 					);
-				} elseif ( am_validate_path( $script['src'] ) ) {
-					$file_contents = file_get_contents( $script['src'] ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+				} elseif ( is_string( $src ) && am_validate_path( $src ) ) {
+					$file_contents = file_get_contents( $src ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 					printf(
 						'<script class="%1$s" type="text/javascript">%2$s</script>',
@@ -132,8 +135,8 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Perform final mutations before adding script to array.
 	 *
-	 * @param array $script Script to mutate.
-	 * @return array
+	 * @param array<string, mixed> $script Script to mutate.
+	 * @return array<string, mixed>
 	 */
 	public function pre_add_asset( $script ) {
 		return $script;
@@ -142,28 +145,32 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Add script to async/defer script list.
 	 *
-	 * @param array $script Script to add.
-	 * @return array
+	 * @param array<string, mixed> $script Script to add.
+	 * @return array<string, mixed>
 	 */
 	public function post_validate_asset( $script ) {
 		$unsafe_dependents = [];
+		$load_method       = $this->asset_string( $script, 'load_method' );
+		$dependents        = $this->asset_deps( [ 'deps' => $script['dependents'] ?? [] ] );
 
-		if ( ! empty( $script['dependents'] ) ) {
-			if ( 'defer' === $script['load_method'] ) {
+		if ( $dependents ) {
+			if ( 'defer' === $load_method ) {
 				// Dependent is unsafe if it's not also 'defer'.
-				foreach ( $script['dependents'] as $dependent ) {
-					$dependent_info = $this->assets_by_handle[ $dependent ];
-					if ( 'defer' !== $dependent_info['load_method'] ) {
+				foreach ( $dependents as $dependent ) {
+					$dependent_info = $this->assets_by_handle[ $dependent ] ?? [];
+
+					if ( 'defer' !== $this->asset_string( $dependent_info, 'load_method' ) ) {
 						$unsafe_dependents[] = $dependent;
 					}
 				}
-			} elseif ( 'async' === $script['load_method'] ) {
+			} elseif ( 'async' === $load_method ) {
 				// All dependents are unsafe.
-				$unsafe_dependents = $script['dependents'];
+				$unsafe_dependents = $dependents;
 			}
 
-			if ( ! empty( $unsafe_dependents ) && is_array( $unsafe_dependents ) ) {
-				$example_dependent = $this->assets_by_handle[ $unsafe_dependents[0] ];
+			if ( $unsafe_dependents ) {
+				$example_dependent = $this->assets_by_handle[ $unsafe_dependents[0] ] ?? [];
+
 				$this->generate_asset_error( 'unsafe_load_method', $script, $example_dependent );
 			}
 		}

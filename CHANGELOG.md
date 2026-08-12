@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * Added `imagesrcset`, `imagesizes`, and `fetchpriority` options to `am_preload()` for preloading responsive images ([#55](https://github.com/alleyinteractive/wp-asset-manager/issues/55)).
+* Added PHPStan support, at level 9.
 
 ### Deprecations
 
@@ -47,6 +48,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   depends on it, transitively. Assets with no dependency between them keep their registration
   order. This changes output order only where the registration order already contradicted the
   declared dependencies.
+* Fixed a fatal error when an asset was enqueued with a function that doesn't exist. The
+  `invalid_enqueue_function` branch passed the return value of `generate_asset_error()` — which
+  returns nothing and has already printed the error — into `format_error()`, so any user with the
+  `am_view_asset_error` capability hit a method call on null.
+* Fixed `create_symbol()` returning null instead of a pair when an SVG file can't be read or
+  parsed. The caller destructures the return value, so a missing sprite file raised two
+  "Trying to access array offset on value of type null" warnings on every page that used it.
+* Corrected `SVG_Sprite::get_svg()`, which was documented as returning a `DOMDocument` but returns
+  the `<svg>` `DOMElement`, or now null on failure. The wrong type made `get_default_dimensions()`
+  and `create_symbol()` look broken to static analysis even though they were correct.
+* Corrected `generate_asset_error()`, documented as taking an array error code when every one of
+  its call sites passes a string, and `asset_should_add()`, documented as taking a string asset
+  when it is always given an array and whose `@return WP_Error` resolved to a class that does not
+  exist.
 * Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as
   accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
 * Fixed `am_modify_load_method()` raising a `TypeError` when passed an array of options, the form

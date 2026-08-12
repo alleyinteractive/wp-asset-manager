@@ -58,7 +58,7 @@ class Preload extends Asset_Manager {
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 	 *
-	 * @var array
+	 * @var array<string, array<string, string>>
 	 */
 	public array $asset_types = [
 		'css'   => [
@@ -78,40 +78,42 @@ class Preload extends Asset_Manager {
 	/**
 	 * Print a single asset
 	 *
-	 * @param array $asset Asset to insert into DOM.
+	 * @param array<string, mixed> $asset Asset to insert into DOM.
 	 */
-	public function print_asset( $asset ) {
+	public function print_asset( $asset ): void {
+		$as           = $this->asset_string( $asset, 'as' );
+		$src          = $this->asset_string( $asset, 'src' );
 		$classes      = $this->default_classes;
-		$classes[]    = $asset['handle'];
+		$classes[]    = $this->asset_string( $asset, 'handle' );
 		$print_string = '';
 
-		if ( empty( $asset['as'] ) || ! in_array( $asset['as'], $this->preload_as, true ) ) {
+		if ( '' === $as || ! in_array( $as, $this->preload_as, true ) ) {
 			// We weren't able to patch in the 'as' attribute in `post_validate_asset`.
 			$this->generate_asset_error( 'invalid_preload_as_attribute', $asset );
-		} elseif ( ! empty( $asset['src'] ) ) {
+		} elseif ( '' !== $src ) {
 			$print_string = '<link rel="preload" href="%1$s" class="%2$s" as="%3$s" media="%4$s" %5$s %6$s %7$s %8$s %9$s />';
 
-			if ( in_array( $asset['as'], [ 'style', 'script' ], true ) ) {
+			if ( in_array( $as, [ 'style', 'script' ], true ) ) {
 				// Make sure we include the asset version for styles and scripts..
-				$asset['src'] = add_query_arg(
+				$src = add_query_arg(
 					'ver',
-					$asset['version'],
-					$asset['src']
+					$this->asset_string( $asset, 'version' ),
+					$src
 				);
 			}
 
 			echo wp_kses(
 				sprintf(
 					$print_string,
-					esc_url( $asset['src'] ),
+					esc_url( $src ),
 					esc_attr( implode( ' ', $classes ) ),
-					esc_attr( $asset['as'] ),
-					esc_attr( $asset['media'] ),
-					empty( $asset['mime_type'] ) ? '' : sprintf( 'type="%s" ', esc_attr( $asset['mime_type'] ) ),
+					esc_attr( $as ),
+					esc_attr( $this->asset_string( $asset, 'media' ) ),
+					empty( $asset['mime_type'] ) ? '' : sprintf( 'type="%s" ', esc_attr( $this->asset_string( $asset, 'mime_type' ) ) ),
 					! empty( $asset['crossorigin'] ) ? 'crossorigin' : '',
-					empty( $asset['imagesrcset'] ) ? '' : sprintf( 'imagesrcset="%s"', esc_attr( $asset['imagesrcset'] ) ),
-					empty( $asset['imagesizes'] ) ? '' : sprintf( 'imagesizes="%s"', esc_attr( $asset['imagesizes'] ) ),
-					empty( $asset['fetchpriority'] ) ? '' : sprintf( 'fetchpriority="%s"', esc_attr( $asset['fetchpriority'] ) )
+					empty( $asset['imagesrcset'] ) ? '' : sprintf( 'imagesrcset="%s"', esc_attr( $this->asset_string( $asset, 'imagesrcset' ) ) ),
+					empty( $asset['imagesizes'] ) ? '' : sprintf( 'imagesizes="%s"', esc_attr( $this->asset_string( $asset, 'imagesizes' ) ) ),
+					empty( $asset['fetchpriority'] ) ? '' : sprintf( 'fetchpriority="%s"', esc_attr( $this->asset_string( $asset, 'fetchpriority' ) ) )
 				),
 				[
 					'link' => [
@@ -136,8 +138,8 @@ class Preload extends Asset_Manager {
 	/**
 	 * Perform final mutations before adding asset to array.
 	 *
-	 * @param array $asset Asset to mutate.
-	 * @return array
+	 * @param array<string, mixed> $asset Asset to mutate.
+	 * @return array<string, mixed>
 	 */
 	public function pre_add_asset( $asset ) {
 		// This is the only valid option, so we're patching it here.
@@ -147,7 +149,7 @@ class Preload extends Asset_Manager {
 
 		// Flatten the array form of `imagesrcset` so everything downstream sees a string.
 		if ( ! empty( $asset['imagesrcset'] ) && is_array( $asset['imagesrcset'] ) ) {
-			$asset['imagesrcset'] = $this->build_imagesrcset( $asset['imagesrcset'], $asset['handle'] );
+			$asset['imagesrcset'] = $this->build_imagesrcset( $asset['imagesrcset'], $this->asset_string( $asset, 'handle' ) );
 		}
 
 		return $asset;
@@ -160,8 +162,8 @@ class Preload extends Asset_Manager {
 	 * becomes a width descriptor — `400 => 'hero-400.jpg'` gives `hero-400.jpg 400w` — and a
 	 * string key is used as-is, which is how pixel density candidates such as `2x` are declared.
 	 *
-	 * @param array<int|string, string> $candidates Map of descriptor to image URL.
-	 * @param string                    $handle     Handle for the asset, used in error messages.
+	 * @param array<int|string, mixed> $candidates Map of descriptor to image URL.
+	 * @param string                   $handle     Handle for the asset, used in error messages.
 	 * @return string
 	 */
 	public function build_imagesrcset( array $candidates, string $handle = '' ): string {
@@ -199,8 +201,8 @@ class Preload extends Asset_Manager {
 	/**
 	 * Perform mutations to asset after validation.
 	 *
-	 * @param array $asset Asset to mutate.
-	 * @return array
+	 * @param array<string, mixed> $asset Asset to mutate.
+	 * @return array<string, mixed>
 	 */
 	public function post_validate_asset( $asset ) {
 		// Attempt to patch the `as` and `mime_type` values if either is missing.
@@ -219,7 +221,7 @@ class Preload extends Asset_Manager {
 				sprintf(
 					/* translators: %s: the asset handle */
 					esc_html__( '"imagesizes" has no effect for "%s" without "imagesrcset" and will not be printed.', 'wp-asset-manager' ),
-					esc_html( $asset['handle'] )
+					esc_html( $this->asset_string( $asset, 'handle' ) )
 				),
 				'2.0.0'
 			);
@@ -236,8 +238,8 @@ class Preload extends Asset_Manager {
 				sprintf(
 					/* translators: 1: the unsupported fetchpriority value, 2: the asset handle, 3: comma-separated list of supported values */
 					esc_html__( 'Unsupported "fetchpriority" value "%1$s" for "%2$s". The attribute will not be printed. Supported values: %3$s.', 'wp-asset-manager' ),
-					esc_html( $asset['fetchpriority'] ),
-					esc_html( $asset['handle'] ),
+					esc_html( $this->asset_string( $asset, 'fetchpriority' ) ),
+					esc_html( $this->asset_string( $asset, 'handle' ) ),
 					esc_html( implode( ', ', $this->fetchpriority_values ) )
 				),
 				'2.0.0'
@@ -263,15 +265,17 @@ class Preload extends Asset_Manager {
 	 * A MIME type isn't required, but will prevent the browser downloading an
 	 * asset it doesn't support.
 	 *
-	 * @param array $asset The asset for which the types are needed.
-	 * @return array
+	 * @param array<string, mixed> $asset The asset for which the types are needed.
+	 * @return array<string, mixed>
 	 */
 	public function set_asset_types( $asset ) {
-		if ( empty( $asset ) || ! isset( $asset['src'] ) ) {
+		$src = $this->asset_string( $asset, 'src' );
+
+		if ( empty( $asset ) || '' === $src ) {
 			return $asset;
 		}
 
-		$path_parts = pathinfo( $asset['src'] );
+		$path_parts = pathinfo( $src );
 
 		if ( empty( $path_parts['extension'] ) ) {
 			return $asset;

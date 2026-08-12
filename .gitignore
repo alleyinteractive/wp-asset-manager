@@ -26,3 +26,7 @@ composer.lock
 /vendor/
 /node_modules
 .phpunit.result.cache
+
+# Local overrides of the shipped tooling config.
+phpcs.xml
+phpstan.neon

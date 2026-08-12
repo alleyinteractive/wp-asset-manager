@@ -13,8 +13,11 @@ use DOMText;
 
 /**
  * Asset_Manager_SVG_Sprite class.
+ *
+ * @phpstan-consistent-constructor
  */
 class SVG_Sprite {
+	use Concerns\Asset_Values;
 	use Concerns\Singleton;
 	use Concerns\Conditions;
 
@@ -28,7 +31,7 @@ class SVG_Sprite {
 	/**
 	 * Array for attributes to add to each symbol.
 	 *
-	 * @var array
+	 * @var array<string, string>|null
 	 */
 	public static ?array $_global_attributes; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
@@ -49,21 +52,21 @@ class SVG_Sprite {
 	/**
 	 * Reference array of asset handles.
 	 *
-	 * @var array
+	 * @var list<string>
 	 */
 	public $asset_handles = [];
 
 	/**
 	 * Mapping of definitions for symbols added to the sprite.
 	 *
-	 * @var array
+	 * @var array<string, array<string, mixed>>
 	 */
 	public array $sprite_map = [];
 
 	/**
 	 * Allowed tags and attributes for echoing <svg> and <use> elements.
 	 *
-	 * @var array
+	 * @var array<string, array<string, bool>>
 	 */
 	public array $kses_svg_allowed_tags = [
 		'svg' => [],
@@ -101,7 +104,7 @@ class SVG_Sprite {
 	 *
 	 * @return string
 	 */
-	public function get_svg_directory() {
+	public function get_svg_directory(): string {
 		if ( ! isset( static::$_svg_directory ) ) {
 			/**
 			 * Filter function for updating the directory upon which a symbol's relative
@@ -119,8 +122,10 @@ class SVG_Sprite {
 
 	/**
 	 * Get the SVG directory.
+	 *
+	 * @return array<string, string>
 	 */
-	public function get_global_attributes() {
+	public function get_global_attributes(): array {
 		if ( ! isset( static::$_global_attributes ) ) {
 			static::$_global_attributes = [];
 		}
@@ -143,13 +148,11 @@ class SVG_Sprite {
 	/**
 	 * Creates the sprite sheet.
 	 */
-	public function create_sprite_sheet() {
+	public function create_sprite_sheet(): void {
 		$this->sprite_document = new DOMDocument();
-
-		$this->svg_root = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		$this->svg_root        = $this->sprite_document->createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 
 		$this->svg_root->setAttribute( 'style', 'left:-9999px;overflow:hidden;position:absolute' );
-
 		$this->svg_root->setAttribute( 'focusable', 'false' );
 		$this->svg_root->setAttribute( 'height', '0' );
 		$this->svg_root->setAttribute( 'role', 'none' );
@@ -164,7 +167,7 @@ class SVG_Sprite {
 	/**
 	 * Prints the sprite sheet to the page at `wp_body_open`.
 	 */
-	public function print_sprite_sheet() {
+	public function print_sprite_sheet(): void {
 		// Allowed tags and attributes for SVG.
 		include __DIR__ . '/kses-svg.php';
 
@@ -193,7 +196,7 @@ class SVG_Sprite {
 	 * @param  string $handle The asset handle.
 	 * @return string         The asset handle formatted for use as the symbol id.
 	 */
-	public function format_handle_as_symbol_id( $handle ) {
+	public function format_handle_as_symbol_id( $handle ): string {
 		return empty( $handle )
 			? ''
 			: "am-symbol-{$handle}";
@@ -206,7 +209,7 @@ class SVG_Sprite {
 	 * @param  string $path The relative or absolute path to the SVG file.
 	 * @return string       The absolute filepath.
 	 */
-	public function get_the_normalized_filepath( $path ) {
+	public function get_the_normalized_filepath( $path ): string {
 		if ( empty( $path ) ) {
 			return '';
 		}
@@ -220,9 +223,9 @@ class SVG_Sprite {
 	/**
 	 * Update allowed SVG.
 	 *
-	 * @param array $attributes Asset attributes.
+	 * @param array<string, mixed> $attributes Asset attributes.
 	 */
-	public function update_svg_allowed_tags( $attributes ) {
+	public function update_svg_allowed_tags( $attributes ): void {
 		foreach ( array_keys( $attributes ) as $attr ) {
 			$this->kses_svg_allowed_tags['svg'][ $attr ] = true;
 		}
@@ -244,11 +247,11 @@ class SVG_Sprite {
 	 * Returns the contents of an SVG file.
 	 *
 	 * @param string $path The SVG file path.
-	 * @return DOMDocument The SVG file contents.
+	 * @return DOMElement|null The `<svg>` element, or null if the file can't be read or parsed.
 	 */
 	public function get_svg( $path ) {
 		if ( empty( $path ) ) {
-			return '';
+			return null;
 		}
 
 		if ( am_validate_path( $path ) ) {
@@ -257,29 +260,29 @@ class SVG_Sprite {
 			if ( ! empty( $file_contents ) ) {
 				$doc = new DOMDocument();
 				$doc->loadXML( $file_contents );
-				$svg = $doc->getElementsByTagName( 'svg' );
+				$svg = $doc->getElementsByTagName( 'svg' )->item( 0 );
 
-				if ( ! empty( $svg->item( 0 ) ) ) {
-					return $svg->item( 0 );
+				if ( $svg instanceof DOMElement ) {
+					return $svg;
 				}
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	/**
 	 * Determine an asset's default dimensions.
 	 *
-	 * @param  DOMDocument $svg   The SVG contents.
-	 * @param  array       $asset The asset definition.
-	 * @return array              The height and width to use for the asset.
+	 * @param  DOMElement           $svg   The `<svg>` element.
+	 * @param  array<string, mixed> $asset The asset definition.
+	 * @return array{width: int, height: int} The height and width to use for the asset.
 	 */
-	public function get_default_dimensions( $svg, $asset ) {
-		$attributes = $asset['attributes'] ?? [];
+	public function get_default_dimensions( $svg, $asset ): array {
+		$attributes = is_array( $asset['attributes'] ?? null ) ? $asset['attributes'] : [];
 
 		// Default to the height and width attributes from the asset definition.
-		if ( ! empty( $attributes['height'] ) && ! empty( $attributes['width'] ) ) {
+		if ( is_numeric( $attributes['height'] ?? null ) && is_numeric( $attributes['width'] ?? null ) ) {
 			return [
 				'width'  => (int) $attributes['width'],
 				'height' => (int) $attributes['height'],
@@ -287,8 +290,8 @@ class SVG_Sprite {
 		}
 
 		// Fall back to <svg> attribute values if we have both.
-		$width_attr  = (int) $svg->getAttribute( 'width' ) ?? 0;
-		$height_attr = (int) $svg->getAttribute( 'height' ) ?? 0;
+		$width_attr  = (int) $svg->getAttribute( 'width' );
+		$height_attr = (int) $svg->getAttribute( 'height' );
 
 		if ( ! empty( $width_attr ) && ! empty( $height_attr ) ) {
 			return [
@@ -298,7 +301,7 @@ class SVG_Sprite {
 		}
 
 		// Use the viewBox attribute values if neither of the above are present.
-		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
+		$viewbox = $svg->getAttribute( 'viewBox' );
 
 		if ( ! empty( $viewbox ) ) {
 			// 0. min-x, 1. min-y, 2. width, 3. height.
@@ -320,13 +323,23 @@ class SVG_Sprite {
 	}
 
 	/**
+	 * Read the attribute map out of an asset definition.
+	 *
+	 * @param array<string, mixed> $asset Asset to read from.
+	 * @return array<string, mixed>
+	 */
+	private function asset_attributes( array $asset ): array {
+		return is_array( $asset['attributes'] ?? null ) ? $asset['attributes'] : [];
+	}
+
+	/**
 	 * Perform final mutations before adding an asset to sprite.
 	 *
-	 * @param  array $asset Asset to mutate.
-	 * @return array        The modified asset definition.
+	 * @param  array<string, mixed> $asset Asset to mutate.
+	 * @return array<string, mixed>        The modified asset definition.
 	 */
-	public function pre_add_asset( $asset ) {
-		$src = $this->get_the_normalized_filepath( $asset['src'] );
+	public function pre_add_asset( $asset ): array {
+		$src = $this->get_the_normalized_filepath( $this->asset_string( $asset, 'src' ) );
 
 		return ( empty( $src ) )
 			? $asset
@@ -338,17 +351,17 @@ class SVG_Sprite {
 	 *
 	 * @todo Simplify this so we don't have to pass the asset around.
 	 *
-	 * @param  array $asset The asset definition.
-	 * @return array        The modified asset and the symbol element.
+	 * @param  array<string, mixed> $asset The asset definition.
+	 * @return array{0: array<string, mixed>, 1: DOMElement|null} The modified asset and the symbol element.
 	 */
 	public function create_symbol( $asset ) {
 		$asset = $this->pre_add_asset( $asset );
 
 		// Get the SVG file contents.
-		$svg = $this->get_svg( $asset['src'] ?? '' );
+		$svg = $this->get_svg( $this->asset_string( $asset, 'src' ) );
 
-		if ( ! ( $svg instanceof DOMElement ) ) {
-			return;
+		if ( ! $svg instanceof DOMElement ) {
+			return [ $asset, null ];
 		}
 
 		/*
@@ -359,20 +372,20 @@ class SVG_Sprite {
 		$default_dimensions = $this->get_default_dimensions( $svg, $asset );
 
 		if ( ! empty( $default_dimensions['width'] ) && ! empty( $default_dimensions['height'] ) ) {
-			$asset['attributes'] = array_merge( $asset['attributes'] ?? [], $default_dimensions );
+			$asset['attributes'] = array_merge( $this->asset_attributes( $asset ), $default_dimensions );
 		}
 
 		// Create the <symbol> element.
 		$symbol = $this->sprite_document->createElement( 'symbol' );
 
 		// Add the id attribute.
-		$symbol->setAttribute( 'id', $this->format_handle_as_symbol_id( $asset['handle'] ) );
+		$symbol->setAttribute( 'id', $this->format_handle_as_symbol_id( $this->asset_string( $asset, 'handle' ) ) );
 
 		// DOMDocument::getElementById will only work if we set this attribute as the ID.
 		$symbol->setIdAttribute( 'id', true );
 
 		// Use the viewBox attribute from the SVG asset.
-		$viewbox = $svg->getAttribute( 'viewBox' ) ?? '';
+		$viewbox = $svg->getAttribute( 'viewBox' );
 
 		if ( ! empty( $viewbox ) ) {
 			$symbol->setAttribute( 'viewBox', $viewbox );
@@ -393,7 +406,7 @@ class SVG_Sprite {
 	/**
 	 * Adds an asset to the sprite sheet.
 	 *
-	 * @param array $asset An asset definition.
+	 * @param array<string, mixed> $asset An asset definition.
 	 */
 	public function add_asset( $asset ): void {
 		if ( ! $this->asset_should_add( $asset ) ) {
@@ -409,8 +422,10 @@ class SVG_Sprite {
 		// Append the symbol to the SVG sprite.
 		$this->svg_root->appendChild( $symbol );
 
-		$this->asset_handles[]                = $asset['handle'];
-		$this->sprite_map[ $asset['handle'] ] = $asset;
+		$handle = $this->asset_string( $asset, 'handle' );
+
+		$this->asset_handles[]       = $handle;
+		$this->sprite_map[ $handle ] = $asset;
 	}
 
 	/**
@@ -427,7 +442,14 @@ class SVG_Sprite {
 
 		// Remove the registered asset handle.
 		$idx = array_search( $handle, $this->asset_handles, true );
-		unset( $this->asset_handles[ $idx ] );
+
+		if ( false !== $idx ) {
+			$handles = $this->asset_handles;
+
+			unset( $handles[ $idx ] );
+
+			$this->asset_handles = array_values( $handles );
+		}
 
 		// Remove the entry in the sprite_map.
 		unset( $this->sprite_map[ $handle ] );
@@ -443,6 +465,11 @@ class SVG_Sprite {
 		}
 
 		// Remove the symbol.
+		if ( ! $existing_symbol->parentNode instanceof \DOMNode ) {
+			// Success: the symbol is not attached to anything.
+			return true;
+		}
+
 		$symbol_was_removed = $existing_symbol->parentNode->removeChild( $existing_symbol );
 
 		// `removeChild` returns the old child on success.
@@ -452,8 +479,8 @@ class SVG_Sprite {
 	/**
 	 * Filter allowed HTML to allow svg & use tags and attributes.
 	 *
-	 * @param array $allowed Allowed tags, attributes, and/or entities.
-	 * @return array filtered tags.
+	 * @param array<string, mixed> $allowed Allowed tags, attributes, and/or entities.
+	 * @return array<string, mixed> filtered tags.
 	 */
 	public function extend_kses_post_with_use_svg( $allowed ) {
 		$use_svg_tags = $this->kses_svg_allowed_tags;
@@ -463,9 +490,9 @@ class SVG_Sprite {
 	/**
 	 * Returns the SVG markup for displaying a symbol.
 	 *
-	 * @param  string $handle The symbol handle.
-	 * @param  array  $attrs  Additional attributes to add to the <svg> element.
-	 * @return string         The <svg> and <use> elements for displaying a symbol.
+	 * @param  string               $handle The symbol handle.
+	 * @param  array<string, mixed> $attrs  Additional attributes to add to the <svg> element.
+	 * @return string                       The <svg> and <use> elements for displaying a symbol.
 	 */
 	public function get_symbol( $handle, $attrs = [] ) {
 		if ( empty( $handle ) || ! in_array( $handle, array_keys( $this->sprite_map ), true ) ) {
@@ -482,28 +509,30 @@ class SVG_Sprite {
 		 * Use the dimensions from `get_default_dimensions()` to calculate the
 		 * expected size when only one dimension is provided in $attrs.
 		 */
-		if ( ! empty( $asset['attributes']['width'] ) && ! empty( $asset['attributes']['height'] ) ) {
+		$attributes = $this->asset_attributes( $asset );
+
+		if ( is_numeric( $attributes['width'] ?? null ) && ! empty( $attributes['height'] ) && is_numeric( $attributes['height'] ) ) {
 			$use_ratio_for_width  = ( empty( $attrs['width'] ) && ! empty( $attrs['height'] ) );
 			$use_ratio_for_height = ( empty( $attrs['height'] ) && ! empty( $attrs['width'] ) );
 
-			$ratio = ( $asset['attributes']['width'] / $asset['attributes']['height'] );
+			$ratio = ( (float) $attributes['width'] / (float) $attributes['height'] );
 
-			if ( $use_ratio_for_width ) {
+			if ( $use_ratio_for_width && is_numeric( $attrs['height'] ) ) {
 				// width from height: ratio * height.
-				$attrs['width'] = $this->format_precision( $ratio * $attrs['height'] );
-			} elseif ( $use_ratio_for_height ) {
+				$attrs['width'] = $this->format_precision( $ratio * (float) $attrs['height'] );
+			} elseif ( $use_ratio_for_height && is_numeric( $attrs['width'] ) ) {
 				// height from width: width / ratio.
-				$attrs['height'] = $this->format_precision( $attrs['width'] / $ratio );
+				$attrs['height'] = $this->format_precision( (float) $attrs['width'] / $ratio );
 			}
 		}
 
 		// Merge attributes.
 		$local_attrs = array_merge(
 			$this->get_global_attributes(),
-			$asset['attributes'] ?? [],
+			$attributes,
 			$attrs
 		);
-		$local_attrs = array_map( 'esc_attr', $local_attrs );
+		$local_attrs = array_map( static fn ( $value ): string => esc_attr( is_scalar( $value ) ? (string) $value : '' ), $local_attrs );
 
 		// Ensure attributes are in allowed_html.
 		$this->update_svg_allowed_tags( $local_attrs );
@@ -527,10 +556,10 @@ class SVG_Sprite {
 	/**
 	 * Print a symbol's SVG markup.
 	 *
-	 * @param  string $handle The asset handle.
-	 * @param  array  $attrs  Additional HTML attributes to add to the SVG markup.
+	 * @param  string               $handle The asset handle.
+	 * @param  array<string, mixed> $attrs  Additional HTML attributes to add to the SVG markup.
 	 */
-	public function use_symbol( $handle, $attrs = [] ) {
+	public function use_symbol( $handle, $attrs = [] ): void {
 		$symbol_markup = $this->get_symbol( $handle, $attrs );
 
 		if ( ! empty( $symbol_markup ) ) {
