@@ -18,9 +18,11 @@ composer install
 ## Running the checks
 
 ```sh
-composer test         # everything: phpcs, then phpunit
+composer test         # everything: phpcs, then phpstan, then phpunit
+composer lint         # static checks only: phpcs, then phpstan
 composer phpcs        # coding standards only
 composer phpcbf       # fix what can be fixed automatically
+composer phpstan      # static analysis only
 composer phpunit      # tests only
 ```
 
@@ -45,6 +47,8 @@ When you run the tests from inside an existing WordPress installation — for ex
 
 ## Coding standards
 
-The project follows [Alley's coding standards](https://github.com/alleyinteractive/alley-coding-standards), configured in `phpcs.xml.dist`. Two deliberate deviations are documented in that file:
+The project follows [Alley's coding standards](https://github.com/alleyinteractive/alley-coding-standards), configured in `phpcs.xml.dist`.
 
-Please keep `composer test` green, and add a `CHANGELOG.md` entry for anything user-facing.
+## Static analysis
+
+[PHPStan](https://phpstan.org) runs at level 9, configured in `phpstan.neon.dist`, over `src/` and the two plugin bootstrap files.

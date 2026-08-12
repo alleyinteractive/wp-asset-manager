@@ -2,17 +2,11 @@ includes:
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
 
 parameters:
-    # PHPStan 2.x added level 10 (`max`), which treats `mixed` as strictly as any other type.
-    # That is a separate, larger piece of work; see the changelog entry for 2.0.0.
     level: 9
 
     paths:
         - src/
-        - asset-manager.php
         - wp-asset-manager.php
 
-    # The plugin's classes are autoloaded by `alleyinteractive/composer-wordpress-autoloader`
-    # via `extra.wordpress-autoloader`, which PHPStan's Composer integration doesn't read.
-    # Loading the autoloader registers it so `Alley\WP\Asset_Manager\*` resolves.
     bootstrapFiles:
         - vendor/autoload.php

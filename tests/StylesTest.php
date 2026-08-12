@@ -127,7 +127,9 @@ class StylesTest extends TestCase {
 				'load_method' => 'async',
 			]
 		);
+
 		am_enqueue_style( $async_style );
+
 		$this->assertNotContains( 'loadCSS', Scripts::instance()->asset_handles );
 
 		$defer_style = array_merge(
@@ -136,7 +138,9 @@ class StylesTest extends TestCase {
 				'load_method' => 'defer',
 			]
 		);
+
 		am_enqueue_style( $defer_style );
+
 		$this->assertContains( 'loadCSS', Scripts::instance()->asset_handles );
 		$this->assertContains(
 			[
