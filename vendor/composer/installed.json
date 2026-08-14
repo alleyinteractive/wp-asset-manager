@@ -1,0 +1,113 @@
+{
+    "packages": [
+        {
+            "name": "alleyinteractive/composer-wordpress-autoloader",
+            "version": "v1.3.0",
+            "version_normalized": "1.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alleyinteractive/composer-wordpress-autoloader.git",
+                "reference": "5ce8e37467028f85bf3bdaba6fb4bd5b7f40051f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alleyinteractive/composer-wordpress-autoloader/zipball/5ce8e37467028f85bf3bdaba6fb4bd5b7f40051f",
+                "reference": "5ce8e37467028f85bf3bdaba6fb4bd5b7f40051f",
+                "shasum": ""
+            },
+            "require": {
+                "alleyinteractive/wordpress-autoloader": "^1.1.1",
+                "composer-plugin-api": "^2.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "composer/composer": "^2.4",
+                "phpunit/phpunit": "^11.0",
+                "squizlabs/php_codesniffer": "^4.0"
+            },
+            "time": "2025-09-05T14:24:46+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "class": "ComposerWordPressAutoloader\\Plugin"
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/autoload.php"
+                ],
+                "psr-4": {
+                    "ComposerWordPressAutoloader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alley Interactive",
+                    "email": "info@alley.co"
+                },
+                {
+                    "name": "Sean Fisher",
+                    "email": "sean@alley.co"
+                }
+            ],
+            "description": "Autoload files using WordPress File Conventions using Composer",
+            "support": {
+                "issues": "https://github.com/alleyinteractive/composer-wordpress-autoloader/issues",
+                "source": "https://github.com/alleyinteractive/composer-wordpress-autoloader/tree/v1.3.0"
+            },
+            "install-path": "../alleyinteractive/composer-wordpress-autoloader"
+        },
+        {
+            "name": "alleyinteractive/wordpress-autoloader",
+            "version": "v1.2.1",
+            "version_normalized": "1.2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alleyinteractive/wordpress-autoloader.git",
+                "reference": "570a0e911f806448d2709864729a53731c49fcd9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alleyinteractive/wordpress-autoloader/zipball/570a0e911f806448d2709864729a53731c49fcd9",
+                "reference": "570a0e911f806448d2709864729a53731c49fcd9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5.45",
+                "squizlabs/php_codesniffer": "^4.0"
+            },
+            "time": "2025-04-21T17:28:11+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/class-autoloader.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alley Interactive",
+                    "email": "info@alley.co"
+                }
+            ],
+            "description": "Autoload files using WordPress File Conventions",
+            "support": {
+                "issues": "https://github.com/alleyinteractive/wordpress-autoloader/issues",
+                "source": "https://github.com/alleyinteractive/wordpress-autoloader/tree/v1.2.1"
+            },
+            "install-path": "../alleyinteractive/wordpress-autoloader"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

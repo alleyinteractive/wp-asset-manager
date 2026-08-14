@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'alleyinteractive/wp-asset-manager',
+        'pretty_version' => 'dev-release/v1.x',
+        'version' => 'dev-release/v1.x',
+        'reference' => '2a26f780c50240eab12a0a282b610f0d4c145f3b',
+        'type' => 'wordpress-plugin',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        'alleyinteractive/composer-wordpress-autoloader' => array(
+            'pretty_version' => 'v1.3.0',
+            'version' => '1.3.0.0',
+            'reference' => '5ce8e37467028f85bf3bdaba6fb4bd5b7f40051f',
+            'type' => 'composer-plugin',
+            'install_path' => __DIR__ . '/../alleyinteractive/composer-wordpress-autoloader',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'alleyinteractive/wordpress-autoloader' => array(
+            'pretty_version' => 'v1.2.1',
+            'version' => '1.2.1.0',
+            'reference' => '570a0e911f806448d2709864729a53731c49fcd9',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../alleyinteractive/wordpress-autoloader',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'alleyinteractive/wp-asset-manager' => array(
+            'pretty_version' => 'dev-release/v1.x',
+            'version' => 'dev-release/v1.x',
+            'reference' => '2a26f780c50240eab12a0a282b610f0d4c145f3b',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
