@@ -3,8 +3,7 @@ name: "All Pull Request Tests"
 on:
   pull_request:
     branches:
-      - develop
-      - production
+      - release/v1.x
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
@@ -43,6 +42,9 @@ jobs:
           wordpress-version: '${{ matrix.wordpress }}'
           skip-wordpress-install: 'true'
           wordpress-multisite: '${{ matrix.multisite }}'
+          # The test bootstrap calls `with_sqlite()`, so the MySQL, Redis, and
+          # Memcached containers would start and go unused.
+          skip-services: 'true'
   # This required job ensures that all PR checks have passed before merging.
   all-pr-checks-passed:
     name: All PR checks passed

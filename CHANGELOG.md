@@ -2,6 +2,19 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.4
+
+### Fixed
+
+* Added an explicit dependency on `alleyinteractive/composer-wordpress-autoloader`. It was previously inherited from `mantle-framework/testkit`, which dropped it in v1.21.0, leaving a fresh `composer install` unable to autoload the plugin's own classes.
+* Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
+
+### Changed
+
+* Excluded the `WordPress.NamingConventions.PrefixAllGlobals` sniff. WPCS 3.x enforces a four-character minimum prefix, which rejects the plugin's published `am_` prefix.
+* Test expectations adapt to the running WordPress version. WordPress 7.0 rebuilt `wp_kses_hair()` on the HTML API, which lowercases SVG attribute names such as `viewBox` and encodes single quotes as `&apos;`. Both are cosmetic and the plugin's markup is unchanged ([#76](https://github.com/alleyinteractive/wp-asset-manager/issues/76)).
+* CI runs against the `release/v1.x` maintenance branch, and no longer starts the MySQL, Redis, and Memcached containers; the test bootstrap uses SQLite.
+* Releases are built and tagged from `release/v1.x`. They are created as drafts, so that publishing a patch does not move the repository's "Latest" marker backwards onto an older series.
 
 ## 1.4.3
 

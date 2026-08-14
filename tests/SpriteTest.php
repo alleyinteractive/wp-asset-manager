@@ -88,7 +88,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
@@ -125,7 +125,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
@@ -191,7 +191,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
@@ -273,7 +273,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
@@ -298,7 +298,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_embedded_script_expected,
+			$this->expected_after_kses( $without_embedded_script_expected ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the script tag and disallowed attribute.'
 		);
@@ -366,7 +366,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_non_standard_attribute_expected,
+			$this->expected_after_kses( $without_non_standard_attribute_expected ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
@@ -402,7 +402,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$with_non_standard_attribute_expected,
+			$this->expected_after_kses( $with_non_standard_attribute_expected ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
@@ -430,7 +430,7 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$camelcase_tags_attrs_expected,
+			$this->expected_after_kses( $camelcase_tags_attrs_expected ),
 			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the SVG tags and attributes.'
 		);

@@ -3,7 +3,17 @@
 	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
 
 	<!-- Include Alley Rules -->
-	<rule ref="Alley-Interactive" />
+	<rule ref="Alley-Interactive">
+		<!--
+		This plugin's published prefix, `am_`, is three characters, which is below the
+		sniff's hardcoded MIN_PREFIX_LENGTH of 4. That makes `am_` invalid to this sniff
+		regardless of configuration, so every am_-prefixed function, hook, constant and
+		variable is reported as unprefixed.
+
+		See https://github.com/WordPress/WordPress-Coding-Standards/issues/1836.
+		-->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals" />
+	</rule>
 
 	<arg value="ps" />
 	<arg name="parallel" value="8" />

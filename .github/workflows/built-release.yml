@@ -3,9 +3,7 @@ name: Built Branch and Release
 on:
   push:
     branches:
-      - develop
-      - main
-      - production
+      - release/v1.x
 
 permissions:
   contents: write
@@ -17,3 +15,9 @@ jobs:
     if: github.repository != 'alleyinteractive/create-wordpress-plugin'
     steps:
       - uses: alleyinteractive/action-release@develop
+        with:
+          # `action-release` always passes `--latest` to `gh release create`. Releases from
+          # this branch are tagged after the current major's, so publishing automatically
+          # would move the repository's "Latest" marker backwards onto an older series.
+          # Create a draft instead, and untick "Set as latest" when publishing.
+          draft: 'true'

@@ -60,7 +60,7 @@ class StylesTest extends TestCase {
 		];
 		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.onload=null;this.media=\'all\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-async-asset" /></noscript>';
 		$actual_style_output   = get_echo( [ Styles::instance(), 'print_asset' ], [ $async_style ] );
-		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to `all`' );
+		$this->assertEquals( $this->expected_after_kses( $expected_style_output ), $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to `all`' );
 
 		// Async load with media method
 		$async_media_style     = [
@@ -71,7 +71,7 @@ class StylesTest extends TestCase {
 		];
 		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager inline-async-asset" href="http://client/css/test.css" media="print" onload="this.onload=null;this.media=\'screen and (min-width: 1200px)\'" /><noscript><link rel="stylesheet" href="http://client/css/test.css" media="screen and (min-width: 1200px)" class="wp-asset-manager inline-async-asset" /></noscript>';
 		$actual_style_output   = get_echo( [ Styles::instance(), 'print_asset' ], [ $async_media_style ] );
-		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to the media attribute value specified in the config' );
+		$this->assertEquals( $this->expected_after_kses( $expected_style_output ), $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to the media attribute value specified in the config' );
 
 		// Defer load method
 		$defer_style           = [

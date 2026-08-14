@@ -11,6 +11,9 @@
     "name": "Alley Interactive",
     "email": "info@alley.com"
   }],
+  "require": {
+    "alleyinteractive/composer-wordpress-autoloader": "^1.3"
+  },
   "require-dev": {
     "alleyinteractive/alley-coding-standards": "^2.0",
     "mantle-framework/testkit": "^1.2"
