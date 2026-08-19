@@ -125,7 +125,6 @@ abstract class TestCase extends \Mantle\Testkit\Test_Case {
 		Styles::instance()->assets            = [];
 		Styles::instance()->assets_by_handle  = [];
 		Styles::instance()->asset_handles     = [];
-		Styles::instance()->loadcss_added     = false;
 		Preload::instance()->assets           = [];
 		Preload::instance()->assets_by_handle = [];
 		Preload::instance()->asset_handles    = [];

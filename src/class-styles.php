@@ -12,14 +12,9 @@ namespace Alley\WP\Asset_Manager;
  */
 class Styles extends Asset_Manager {
 	/**
-	 * Whether or not loadCSS has been loaded.
+	 * Methods by which a stylesheet can be loaded into the DOM.
 	 *
-	 * @var bool
-	 */
-	public $loadcss_added = false;
-
-	/**
-	 * Methods by which a stylesheet can be loaded into the DOM
+	 * `defer` is deprecated and remapped to `async` in `pre_add_asset()`.
 	 *
 	 * @var string[]
 	 */
@@ -71,7 +66,7 @@ class Styles extends Asset_Manager {
 				} else {
 					$this->generate_asset_error( 'unsafe_inline', $stylesheet );
 				}
-			} elseif ( 'async' === $load_method || 'defer' === $load_method ) {
+			} elseif ( 'async' === $load_method ) {
 				$media   = $this->asset_string( $stylesheet, 'media' );
 				$version = $this->asset_string( $stylesheet, 'version' );
 
@@ -79,12 +74,8 @@ class Styles extends Asset_Manager {
 					$src = add_query_arg( 'ver', $version, $src );
 				}
 
-				if ( 'async' === $load_method ) {
-					$onload_media = '' !== $media ? $media : 'all';
-					$print_string = '<link rel="stylesheet" class="%2$s" href="%1$s" media="print" onload="this.onload=null;this.media=\'' . $onload_media . '\'" /><noscript><link rel="stylesheet" href="%1$s" %3$s class="%2$s" /></noscript>';
-				} elseif ( 'defer' === $load_method ) {
-					$print_string = '<script class="%2$s" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("%1$s");});</script><noscript><link rel="stylesheet" href="%1$s" class="%2$s" %3$s/></noscript>';
-				}
+				$onload_media = '' !== $media ? $media : 'all';
+				$print_string = '<link rel="stylesheet" class="%2$s" href="%1$s" media="print" onload="this.onload=null;this.media=\'' . $onload_media . '\'" /><noscript><link rel="stylesheet" href="%1$s" %3$s class="%2$s" /></noscript>';
 
 				echo wp_kses(
 					sprintf(
@@ -102,10 +93,6 @@ class Styles extends Asset_Manager {
 							'as'     => [],
 							'onload' => [],
 						],
-						'script'   => [
-							'class' => [],
-							'type'  => [],
-						],
 						'noscript' => [],
 					]
 				);
@@ -114,23 +101,28 @@ class Styles extends Asset_Manager {
 	}
 
 	/**
-	 * Add loadCSS if necessary.
+	 * Remap the deprecated `defer` load method to `async`.
+	 *
+	 * `defer` loaded the stylesheet with loadCSS on `DOMContentLoaded`, which hides it from
+	 * the browser until the DOM is parsed and depends on a library that is abandoned
+	 * upstream. `async` is the same non-blocking intent with an immediate fetch.
 	 *
 	 * @param array<string, mixed> $stylesheet Stylesheet to check.
 	 * @return array<string, mixed>
 	 */
 	public function pre_add_asset( $stylesheet ) {
-		// Add loadCSS for defer method.
-		if ( 'defer' === $this->asset_string( $stylesheet, 'load_method' ) && ! $this->loadcss_added ) {
-			am_enqueue_script(
-				[
-					'handle'      => 'loadCSS',
-					'src'         => AM_BASE_DIR . '/js/loadCSS.min.js',
-					'load_method' => 'inline',
-					'load_hook'   => 'am_critical',
-				]
+		if ( 'defer' === $this->asset_string( $stylesheet, 'load_method' ) ) {
+			_doing_it_wrong(
+				'am_enqueue_style',
+				sprintf(
+					/* translators: %s: the asset handle */
+					esc_html__( 'The "defer" load method used for "%s" is deprecated for stylesheets and now behaves as "async". Use "async" instead.', 'wp-asset-manager' ),
+					esc_html( $this->asset_string( $stylesheet, 'handle' ) )
+				),
+				'2.0.0'
 			);
-			$this->loadcss_added = true;
+
+			$stylesheet['load_method'] = 'async';
 		}
 
 		return $stylesheet;
@@ -146,7 +138,7 @@ class Styles extends Asset_Manager {
 		$dependents  = is_array( $stylesheet['dependents'] ?? null ) ? $stylesheet['dependents'] : [];
 		$load_method = $this->asset_string( $stylesheet, 'load_method' );
 
-		if ( $dependents && in_array( $load_method, [ 'async', 'defer' ], true ) ) {
+		if ( $dependents && 'async' === $load_method ) {
 			$dependent = $this->asset_string( [ 'handle' => reset( $dependents ) ], 'handle' );
 
 			$this->generate_asset_error( 'unsafe_load_method', $stylesheet, $this->assets_by_handle[ $dependent ] ?? [] );

@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Removed `Scripts::$async_scripts`, `Scripts::add_to_async()`, `Scripts::add_attributes()`, `Scripts::disable_concat()`, and `Scripts::manage_async()`, the pre-WordPress-6.3 async and defer fallback that core's `strategy` argument replaced.
 * Removed `Asset_Manager::$assets_by_dependency` and `Asset_Manager::$assets_manual`.
 * Removed the `preload` load method from `am_enqueue_style()`, deprecated since 0.1.1.
+* The `defer` load method for stylesheets now behaves as `async` and raises a `_doing_it_wrong()` notice. `defer` hid the stylesheet from the browser until `DOMContentLoaded`; `async` keeps the non-blocking intent but starts the fetch immediately. The bundled loadCSS library — archived upstream, with the `async` markup as its official replacement — is no longer shipped or auto-enqueued, and `Styles::$loadcss_added` was removed. Note the timing change: previously deferred stylesheets now begin downloading during HTML parsing instead of after it.
 
 ### Added
 
@@ -22,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecations
 
 * The `am_*` template tags will be formally deprecated in the next major version. They continue to work in 2.x.
+* The `defer` load method for stylesheets is deprecated. It behaves as `async` in 2.x and will be removed in the next major version.
 
 ### Fixed
 

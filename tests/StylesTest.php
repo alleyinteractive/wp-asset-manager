@@ -2,8 +2,8 @@
 /**
  * Asset Manager Tests: Styles.
  *
- * Tests stylesheet-specific behavior: printing, async/defer
- * load methods, and the loadCSS dependency.
+ * Tests stylesheet-specific behavior: printing, load methods,
+ * and dependency order.
  *
  * @package Asset_Manager
  */
@@ -91,16 +91,6 @@ class StylesTest extends TestCase {
 		$actual_style_output   = capture( fn () => Styles::instance()->print_asset( $async_media_style ) );
 		$this->assertEquals( $this->expected_after_kses( $expected_style_output ), $actual_style_output, 'Should load CSS via <link> tag that, on load, will switch to the media attribute from `print` to the media attribute value specified in the config' );
 
-		// Defer load method
-		$defer_style           = [
-			'handle'      => 'inline-defer-asset',
-			'src'         => 'client/css/test.css',
-			'load_method' => 'defer',
-		];
-		$expected_style_output = '<script class="wp-asset-manager inline-defer-asset" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){loadCSS("http://client/css/test.css");});</script><noscript><link rel="stylesheet" href="http://client/css/test.css" class="wp-asset-manager inline-defer-asset" /></noscript>';
-		$actual_style_output   = capture( fn () => Styles::instance()->print_asset( $defer_style ) );
-		$this->assertEquals( $expected_style_output, $actual_style_output, 'Should load CSS via loadCSS() function called on DOMContentLoaded' );
-
 		// Inline load method with missing file
 		$inline_fail  = [
 			'handle'      => 'inline-missing',
@@ -120,42 +110,27 @@ class StylesTest extends TestCase {
 		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_inline</em>', $style_output, 'Should throw an error if file provided is not hosted on the same domain' );
 	}
 
-	public function test_pre_add_asset(): void {
-		$async_style = array_merge(
-			$this->test_style,
-			[
-				'load_method' => 'async',
-			]
+	/**
+	 * Test that the `defer` load method for stylesheets behaves as `async`.
+	 */
+	public function test_defer_load_method_is_remapped_to_async(): void {
+		$this->setExpectedIncorrectUsage( 'am_enqueue_style' );
+
+		am_enqueue_style(
+			array_merge(
+				$this->test_style,
+				[ 'load_method' => 'defer' ]
+			)
 		);
 
-		am_enqueue_style( $async_style );
+		$stored = Styles::instance()->assets_by_handle[ $this->test_style['handle'] ];
 
-		$this->assertNotContains( 'loadCSS', Scripts::instance()->asset_handles );
+		$this->assertSame( 'async', $stored['load_method'], 'A deferred stylesheet should be stored as `async`.' );
+		$this->assertNotContains( 'loadCSS', Scripts::instance()->asset_handles, 'loadCSS should no longer be enqueued.' );
 
-		$defer_style = array_merge(
-			$this->test_style_two,
-			[
-				'load_method' => 'defer',
-			]
-		);
-
-		am_enqueue_style( $defer_style );
-
-		$this->assertContains( 'loadCSS', Scripts::instance()->asset_handles );
-		$this->assertContains(
-			[
-				'handle'      => 'loadCSS',
-				'src'         => AM_BASE_DIR . '/js/loadCSS.min.js',
-				'deps'        => [],
-				'condition'   => 'global',
-				'load_method' => 'inline',
-				'version'     => '1.0.0',
-				'load_hook'   => 'am_critical',
-				'type'        => 'script',
-				'in_footer'   => false,
-			],
-			Scripts::instance()->assets
-		);
+		$expected_style_output = '<link rel="stylesheet" class="wp-asset-manager my-test-style" href="http://www.example.org/wp-content/themes/example/static/css/test.css?ver=1.0.0" media="print" onload="this.onload=null;this.media=\'all\'" /><noscript><link rel="stylesheet" href="http://www.example.org/wp-content/themes/example/static/css/test.css?ver=1.0.0" media="all" class="wp-asset-manager my-test-style" /></noscript>';
+		$actual_style_output   = capture( fn () => Styles::instance()->print_asset( $stored ) );
+		$this->assertEquals( $this->expected_after_kses( $expected_style_output ), $actual_style_output, 'A deferred stylesheet should render the async markup.' );
 	}
 
 	/**
@@ -314,23 +289,22 @@ class StylesTest extends TestCase {
 		$sync_style = array_merge(
 			$this->test_style,
 			[
-				'deps' => [ 'defer-style-test' ],
+				'deps' => [ 'async-style-test' ],
 			]
 		);
 
-		$defer_style = array_merge(
+		$async_style = array_merge(
 			$this->test_style_two,
 			[
-				'handle'      => 'defer-style-test',
-				'load_method' => 'defer',
+				'handle'      => 'async-style-test',
+				'load_method' => 'async',
 			]
 		);
 
 		am_enqueue_style( $sync_style );
 
-		// Defer style test
-		$defer_style['dependents'] = Styles::instance()->find_dependents( $defer_style );
-		$output                    = capture( fn () => Styles::instance()->post_validate_asset( $defer_style ) );
-		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded stylesheet depends on a stylesheet with a defer attribute' );
+		$async_style['dependents'] = Styles::instance()->find_dependents( $async_style );
+		$output                    = capture( fn () => Styles::instance()->post_validate_asset( $async_style ) );
+		$this->assertStringContainsString( '<strong>ENQUEUE ERROR</strong>: <em>unsafe_load_method</em>', $output, 'Should throw an error if a synchronously-loaded stylesheet depends on an asynchronously-loaded stylesheet' );
 	}
 }
