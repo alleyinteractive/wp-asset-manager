@@ -55,11 +55,7 @@ class Styles extends Asset_Manager {
 			if ( 'inline' === $load_method ) {
 				// Validate inline styles.
 				if ( am_validate_path( $src ) ) {
-					if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-						$contents = \wpcom_vip_file_get_contents( $src );
-					} else {
-						$contents = file_get_contents( $src ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
-					}
+					$contents = file_get_contents( $src ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 					printf(
 						'<style class="%1$s" type="text/css">%2$s</style>',
