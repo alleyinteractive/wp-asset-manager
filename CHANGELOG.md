@@ -1,7 +1,58 @@
-# Change Log
+# ChangeLog
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+
+### Breaking
+
+* Raised the minimum PHP version to 8.3.
+* Raised the minimum WordPress version to 6.3.
+* Changed the text domain from `am` to `wp-asset-manager` to match the plugin slug.
+* Removed the `async-defer` load method ([#63](https://github.com/alleyinteractive/wp-asset-manager/issues/63)).
+* Removed `Scripts::$async_scripts`, `Scripts::add_to_async()`, `Scripts::add_attributes()`, `Scripts::disable_concat()`, and `Scripts::manage_async()`, the pre-WordPress-6.3 async and defer fallback that core's `strategy` argument replaced.
+* Removed `Asset_Manager::$assets_by_dependency` and `Asset_Manager::$assets_manual`.
+* Removed the `preload` load method from `am_enqueue_style()`, deprecated since 0.1.1.
+* The `defer` load method for stylesheets now behaves as `async` and raises a `_doing_it_wrong()` notice. `defer` hid the stylesheet from the browser until `DOMContentLoaded`; `async` keeps the non-blocking intent but starts the fetch immediately. The bundled loadCSS library — archived upstream, with the `async` markup as its official replacement — is no longer shipped or auto-enqueued, and `Styles::$loadcss_added` was removed. Note the timing change: previously deferred stylesheets now begin downloading during HTML parsing instead of after it.
+
+### Added
+
+* Added `imagesrcset`, `imagesizes`, and `fetchpriority` options to `am_preload()` for preloading responsive images ([#55](https://github.com/alleyinteractive/wp-asset-manager/issues/55)).
+* Added PHPStan at level 9.
+
+### Deprecations
+
+* The `am_*` template tags will be formally deprecated in the next major version. They continue to work in 2.x.
+* The `defer` load method for stylesheets is deprecated. It behaves as `async` in 2.x and will be removed in the next major version.
+
+### Fixed
+
+* Fixed test failures on WordPress 7.0, which rebuilt `wp_kses_hair()` on the HTML API ([#76](https://github.com/alleyinteractive/wp-asset-manager/issues/76)).
+* Fixed `deps` being ignored for assets the plugin prints itself ([#22](https://github.com/alleyinteractive/wp-asset-manager/issues/22)). Inline, async, and defer assets bypass `wp_enqueue_*` and so never reached core's dependency resolution; they are now ordered so a dependency prints before anything that depends on it, transitively, while unrelated assets keep their registration order.
+* Fixed `am_modify_load_method()` failing to apply `async` or `defer` on WordPress 6.3+ ([#62](https://github.com/alleyinteractive/wp-asset-manager/issues/62)). The load method is carried by core's `strategy` argument, which is only read at enqueue time, so it is now written back with `wp_script_add_data()`.
+* Fixed `am_modify_load_method()` raising a `TypeError` when passed an array of options, the form shown in the documentation. It now accepts `array|string` like every other `am_*` helper.
+* Fixed `SVG_Sprite` adding a nested array to the `safe_style_css` allowlist ([#73](https://github.com/alleyinteractive/wp-asset-manager/issues/73)), which raised an "Array to string conversion" warning on every rendered page once a downstream callback ran `array_unique()` over the list.
+* Fixed a fatal error when an asset was enqueued with a function that doesn't exist. The `invalid_enqueue_function` branch passed the return value of `generate_asset_error()` — which returns nothing and has already printed the error — into `format_error()`, so any user with the `am_view_asset_error` capability hit a method call on null.
+* Fixed `create_symbol()` returning null instead of a pair when an SVG file can't be read or parsed. The caller destructures the return value, so a missing sprite file raised two "Trying to access array offset on value of type null" warnings on every page that used it.
+* Fixed a PHPStan type mismatch so the `condition` key of `am_enqueue_script()` is recognized as accepting both an array and a string ([#72](https://github.com/alleyinteractive/wp-asset-manager/pull/72)).
+* Corrected `SVG_Sprite::get_svg()`, documented as returning a `DOMDocument` when it returns the `<svg>` `DOMElement`, or now null on failure. The wrong type made `get_default_dimensions()` and `create_symbol()` look broken to static analysis even though they were correct.
+* Corrected `generate_asset_error()`, documented as taking an array error code when every one of its call sites passes a string, and `asset_should_add()`, documented as taking a string asset when it is always given an array and whose `@return WP_Error` resolved to a class that does not exist.
+* `SVG_Sprite::remove_symbol()` now compares handles strictly, matching every other `in_array()` call in the codebase.
+* Added an explicit dependency on `alleyinteractive/composer-wordpress-autoloader`, previously inherited from `mantle-framework/testkit`, which dropped it in v1.21.0 and left a fresh `composer install` unable to autoload the plugin's own classes.
+
+### Changed
+
+* Moved the API reference out of the README and into the [wiki](https://github.com/alleyinteractive/wp-asset-manager/wiki).
+* CI now tests PHP 8.3, 8.4, and 8.5 against the latest WordPress, plus a dedicated job covering the minimum supported WordPress version.
+* CI no longer starts the MySQL, Redis, and Memcached containers; the test bootstrap uses SQLite.
+* Excluded the `WordPress.NamingConventions.PrefixAllGlobals` sniff. WPCS 3.x enforces a four-character minimum prefix, which rejects the plugin's published `am_` prefix.
+* Excluded the `WordPress.WP.EnqueuedResources` sniff. Printing `<link>` and `<script>` tags directly is what the async and defer load methods are for.
+* Renamed `phpcs.xml` to `phpcs.xml.dist` so the ruleset can be overridden locally.
+* Tests use Mantle's `Mantle\Support\Helpers\capture()` in place of a local `get_echo()` helper.
+* Test suite is now linted: test files declare `strict_types`, test methods declare `public` visibility and `void` return types, and each test class is scoped with `#[CoversClass]`.
+* `am_enqueue_script()` and `am_enqueue_style()` now call `_doing_it_wrong()` when given an unrecognised load method, instead of silently falling back to `sync`. Omitting the load method entirely still selects the default without a notice.
+* Added a `Text Domain` header to the plugin file.
+* Added `CONTRIBUTING.md`.
 
 ## 1.4.3
 

@@ -1,6 +1,6 @@
 {
   "name": "@alleyinteractive/wp-asset-manager",
-  "version": "1.4.3",
+  "version": "2.0.0",
   "description": "Asset Manager is a toolkit for managing front-end assets and more tightly controlling where, when, and how they're loaded.",
   "engines": {
     "node": "22",

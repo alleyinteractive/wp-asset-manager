@@ -2,6 +2,8 @@
 .github
 .phpcs
 .phpcs.xml
+phpcs.xml
+phpcs.xml.dist
 .phpunit.result.cache
 .scaffolder
 .scoper

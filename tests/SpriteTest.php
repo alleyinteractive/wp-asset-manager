@@ -1,9 +1,27 @@
 <?php
+/**
+ * Asset Manager Tests: SVG Sprite.
+ *
+ * Tests symbol registration, sprite-sheet escaping, symbol
+ * markup, and dimension calculation.
+ *
+ * @package Asset_Manager
+ */
+
+declare(strict_types=1);
 
 namespace Alley\WP\Asset_Manager\Tests;
 
 use Alley\WP\Asset_Manager\SVG_Sprite;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+
+use function Mantle\Support\Helpers\capture;
+
+/**
+ * SpriteTest class.
+ */
+#[CoversClass( SVG_Sprite::class )]
 class SpriteTest extends TestCase {
 
 	public $empty_sprite_wrapper = '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" height="0" role="none" style="left:-9999px;overflow:hidden;position:absolute" viewBox="0 0 0 0" width="0">%s</svg>';
@@ -24,7 +42,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adjusting relative filepaths.
 	 */
-	function test_get_the_normalized_filepath() {
+	public function test_get_the_normalized_filepath(): void {
 		$this->assertEquals(
 			$this->svg_directory . 'relative/path.svg',
 			SVG_Sprite::instance()->get_the_normalized_filepath( 'relative/path.svg' ),
@@ -41,7 +59,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adding multiple assets to the sprite sheet.
 	 */
-	function test_add_assets() {
+	public function test_add_assets(): void {
 		$this->assertEquals(
 			sprintf( $this->empty_sprite_wrapper, '' ),
 			SVG_Sprite::instance()->sprite_document->C14N(),
@@ -50,9 +68,9 @@ class SpriteTest extends TestCase {
 
 		am_register_symbol(
 			[
-				'handle'     => 'no-dimensions',
-				'src'        => 'no-dimensions.svg',
-				'condition'  => 'global',
+				'handle'    => 'no-dimensions',
+				'src'       => 'no-dimensions.svg',
+				'condition' => 'global',
 			]
 		);
 
@@ -88,8 +106,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -97,7 +115,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adding an asset without dimensions.
 	 */
-	function test_add_asset_no_dimensions() {
+	public function test_add_asset_no_dimensions(): void {
 
 		am_register_symbol(
 			[
@@ -125,8 +143,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -169,7 +187,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adding and retrieving an asset with dimensions.
 	 */
-	function test_with_dimensions() {
+	public function test_with_dimensions(): void {
 
 		am_register_symbol(
 			[
@@ -191,8 +209,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 
@@ -219,7 +237,7 @@ class SpriteTest extends TestCase {
 				[
 					'width'     => 48,
 					'class'     => 'am-test',
-					'data-test' => 'test'
+					'data-test' => 'test',
 				]
 			),
 			'Should get the svg + use markup, with calculated height, global attributes, and additional attributes.'
@@ -233,16 +251,15 @@ class SpriteTest extends TestCase {
 
 		$this->assertEquals(
 			$with_attributes_markup_expected,
-			get_echo(
-				'am_use_symbol',
-				[
+			capture(
+				fn () => am_use_symbol(
 					'with-dimensions',
 					[
 						'width'     => 48,
 						'class'     => 'am-test',
-						'data-test' => 'test'
+						'data-test' => 'test',
 					]
-				]
+				)
 			),
 			'Should echo the svg + use markup, with calculated height, global attributes, and additional attributes.'
 		);
@@ -251,7 +268,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adding an asset with dimensions.
 	 */
-	function test_asset_with_export_junk() {
+	public function test_asset_with_export_junk(): void {
 
 		am_register_symbol(
 			[
@@ -273,8 +290,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			SVG_Sprite::instance()->sprite_document->C14N(),
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( SVG_Sprite::instance()->sprite_document->C14N() ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -282,7 +299,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test adding an asset with an embedded script tag and `onClick` event attribute.
 	 */
-	function test_asset_with_embedded_script() {
+	public function test_asset_with_embedded_script(): void {
 
 		am_register_symbol(
 			[
@@ -298,8 +315,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_embedded_script_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $without_embedded_script_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the script tag and disallowed attribute.'
 		);
 	}
@@ -307,7 +324,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test defining dimensions when adding an asset without height/width attributes.
 	 */
-	function test_asset_with_defined_dimensions() {
+	public function test_asset_with_defined_dimensions(): void {
 
 		am_register_symbol(
 			[
@@ -348,7 +365,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test escaping non-standard attributes.
 	 */
-	function test_escape_non_standard_attributes() {
+	public function test_escape_non_standard_attributes(): void {
 
 		am_register_symbol(
 			[
@@ -366,8 +383,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$without_non_standard_attribute_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $without_non_standard_attribute_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet.'
 		);
 	}
@@ -375,7 +392,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test allowing non-standard attributes with `am_sprite_allowed_tags`.
 	 */
-	function test_allow_non_standard_attribute() {
+	public function test_allow_non_standard_attribute(): void {
 
 		am_register_symbol(
 			[
@@ -387,7 +404,7 @@ class SpriteTest extends TestCase {
 
 		add_filter(
 			'am_sprite_allowed_tags',
-			function( $allowed_tags ) {
+			function ( $allowed_tags ) {
 				$allowed_tags['path']['asset-manager'] = true;
 
 				return $allowed_tags;
@@ -402,8 +419,8 @@ class SpriteTest extends TestCase {
 		);
 
 		$this->assertEquals(
-			$with_non_standard_attribute_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $with_non_standard_attribute_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the sprite sheet with the extra allowed attribute.'
 		);
 	}
@@ -411,7 +428,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Verifies `$am_svg_allowed_tags` is formatted correctly.
 	 */
-	function test_escape_camelcase_tags_and_attributes() {
+	public function test_escape_camelcase_tags_and_attributes(): void {
 
 		am_register_symbol(
 			[
@@ -429,9 +446,15 @@ class SpriteTest extends TestCase {
 			$camelcase_tags_attrs
 		);
 
+		/*
+		 * camelCase element names survive escaping on every supported version. camelCase
+		 * attribute names only survive through WordPress 6.9 — from 7.0 on, `wp_kses_hair()`
+		 * lowercases them, which `expected_after_kses()` accounts for. Browsers restore the
+		 * canonical casing when parsing SVG in HTML, so the rendered sprite is unchanged.
+		 */
 		$this->assertEquals(
-			$camelcase_tags_attrs_expected,
-			get_echo( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
+			$this->expected_after_kses( $camelcase_tags_attrs_expected ),
+			capture( [ SVG_Sprite::instance(), 'print_sprite_sheet' ] ),
 			'Should properly escape the SVG tags and attributes.'
 		);
 	}
@@ -439,7 +462,7 @@ class SpriteTest extends TestCase {
 	/**
 	 * Test replacing a symbol.
 	 */
-	function test_replace_symbol() {
+	public function test_replace_symbol(): void {
 		$clean_with_dimensions = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
 
 		$with_export_junk = '<symbol id="am-symbol-deregister-test" viewBox="0 0 24 24"><title>Export Junk</title><desc>Created with Sketch.</desc><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path><path d="M0 0h24v24H0z" fill="none"></path></symbol>';
@@ -483,5 +506,49 @@ class SpriteTest extends TestCase {
 		// Returns true if the symbol hasn't been registered.
 		$symbol_not_exist = am_deregister_symbol( 'nonexistent' );
 		$this->assertTrue( $symbol_not_exist );
+	}
+
+	/**
+	 * Test that the sprite's `safe_style_css` entries are added as individual strings.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/73
+	 */
+	public function test_safe_style_css_is_a_flat_list_of_strings(): void {
+		SVG_Sprite::instance();
+
+		$styles = apply_filters( 'safe_style_css', [ 'color' ] );
+
+		$this->assertSame(
+			[],
+			array_filter( $styles, 'is_array' ),
+			'`safe_style_css` should not contain nested arrays.'
+		);
+
+		foreach ( [ 'left', 'overflow', 'position' ] as $property ) {
+			$this->assertContains( $property, $styles, "`{$property}` should be allowed as a style property." );
+		}
+	}
+
+	/**
+	 * Test that a downstream `safe_style_css` callback can treat the allowlist as strings.
+	 *
+	 * @link https://github.com/alleyinteractive/wp-asset-manager/issues/73
+	 */
+	public function test_safe_style_css_survives_a_downstream_array_unique(): void {
+		SVG_Sprite::instance();
+
+		add_filter(
+			'safe_style_css',
+			fn ( $styles ) => array_unique( [ ...$styles, 'fill' ] ),
+			20
+		);
+
+		$filtered = safecss_filter_attr( 'left:-9999px;overflow:hidden;position:absolute' );
+
+		remove_all_filters( 'safe_style_css', 20 );
+
+		foreach ( [ 'left:-9999px', 'overflow:hidden', 'position:absolute' ] as $declaration ) {
+			$this->assertStringContainsString( $declaration, $filtered, "`{$declaration}` should survive kses." );
+		}
 	}
 }

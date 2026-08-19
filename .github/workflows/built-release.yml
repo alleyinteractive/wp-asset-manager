@@ -3,8 +3,6 @@ name: Built Branch and Release
 on:
   push:
     branches:
-      - develop
-      - main
       - production
 
 permissions:
