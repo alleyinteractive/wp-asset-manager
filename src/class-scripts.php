@@ -2,7 +2,7 @@
 /**
  * Class file for Asset_Manager_Scripts
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager;
@@ -12,115 +12,52 @@ namespace Alley\WP\Asset_Manager;
  */
 class Scripts extends Asset_Manager {
 	/**
-	 * Scripts loaded via async or defer
-	 *
-	 * @var array
-	 */
-	public $async_scripts = [];
-
-	/**
 	 * Global JS variable on which inline objects should be added as a property
 	 *
-	 * @var array
+	 * @var string
 	 */
-	public $inline_script_context = 'amScripts';
+	public string $inline_script_context = 'amScripts';
 
 	/**
 	 * Methods by which a script can be loaded into the DOM
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $load_methods = [ 'inline', 'sync', 'async', 'defer', 'async-defer' ];
+	public array $load_methods = [ 'inline', 'sync', 'async', 'defer' ];
 
 	/**
 	 * Methods for which wp_enqueue_* should be used instead of internal printing function
 	 *
-	 * @var array
+	 * @var string[]
 	 */
-	public $wp_enqueue_methods = [ 'sync', 'async', 'defer', 'async-defer' ];
+	public array $wp_enqueue_methods = [ 'sync', 'async', 'defer' ];
 
 	/**
 	 * Asset type this class is responsible for loading and managing
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	public $asset_type = 'script';
+	public ?string $asset_type = 'script';
 
 	/**
 	 * Core asset reference filter
 	 *
 	 * @var string
 	 */
-	public $core_ref_type = 'scripts';
-
-	/**
-	 * Constructor.
-	 */
-	protected function __construct() {
-		parent::__construct();
-
-		$this->manage_async();
-	}
+	public ?string $core_ref_type = 'scripts';
 
 	/**
 	 * Set default properties for script manager
 	 */
-	public function set_asset_type_defaults() {
+	public function set_asset_type_defaults(): void {
 		/**
-		 * Filter function for setting new inline script context
+		 * Filter function for setting new inline script context.
 		 *
 		 * @since 0.0.1
 		 *
-		 * @param string $inline_script_context Property of the window object under which inlined values will be nested
+		 * @param string $inline_script_context Property of the window object under which inlined values will be nested.
 		 */
 		$this->inline_script_context = apply_filters( 'am_inline_script_context', 'amScripts' );
-	}
-
-	/**
-	 * Add filters for managing async or defer load methods
-	 */
-	public function manage_async() {
-		add_filter( 'script_loader_tag', [ $this, 'add_attributes' ], 10, 2 );
-		add_filter( 'wpcom_js_do_concat', [ $this, 'disable_concat' ], 10, 2 );
-		add_filter( 'js_do_concat', [ $this, 'disable_concat' ], 10, 2 );
-	}
-
-	/**
-	 * Add async and defer attributes to script tags where necessary
-	 *
-	 * @param string $tag    HTML <script> tag.
-	 * @param string $handle Handle of script.
-	 *
-	 * @return string The updated script tag
-	 */
-	public function add_attributes( $tag, $handle ) {
-		if ( isset( $this->assets_by_handle[ $handle ] ) ) {
-			$this_script = $this->assets_by_handle[ $handle ];
-			$attribute   = 'async-defer' === $this_script['load_method'] ? 'async defer' : $this_script['load_method'];
-
-			if ( in_array( $handle, $this->async_scripts, true ) && ! preg_match( "/[^-_]{$attribute}[^-_]/", $tag ) ) {
-				// Insert load attribute in front of src attribute to ensure we don't add it to script tags containing inline code.
-				$tag = str_replace( 'src=', $attribute . ' src=', $tag );
-			}
-		}
-
-		return $tag;
-	}
-
-	/**
-	 * Disable JS concatenation for async and defer scripts.
-	 *
-	 * @param bool   $do_concat Whether or not to concatenate this script.
-	 * @param string $handle    Handle for enqueued script.
-	 *
-	 * @return bool
-	 */
-	public function disable_concat( $do_concat, $handle ) {
-		if ( in_array( $handle, $this->async_scripts, true ) ) {
-			$do_concat = false;
-		}
-
-		return $do_concat;
 	}
 
 	/**
@@ -133,7 +70,7 @@ class Scripts extends Asset_Manager {
 	 * @param string $handle      Handle of script to modify.
 	 * @param string $load_method Target load method.
 	 */
-	public function modify_load_method( $handle, $load_method ) {
+	public function modify_load_method( $handle, $load_method ): void {
 		// Add script if it's a core asset.
 		$this->add_core_asset( $handle );
 
@@ -144,32 +81,44 @@ class Scripts extends Asset_Manager {
 		if ( false !== $key && in_array( $load_method, $this->load_methods, true ) ) {
 			$this->assets_by_handle[ $handle ]['load_method'] = $load_method;
 			$this->assets[ $key ]['load_method']              = $load_method;
-			$this->add_to_async( $this->assets_by_handle[ $handle ] );
+
+			/*
+			 * The script is already registered with WordPress at this point, so the
+			 * `strategy` passed to `wp_enqueue_script()` can no longer be changed by
+			 * re-enqueueing. `wp_script_add_data()` writes to the same storage that
+			 * `WP_Scripts::do_item()` reads when it renders the tag.
+			 */
+			if ( in_array( $load_method, [ 'async', 'defer' ], true ) ) {
+				wp_script_add_data( $handle, 'strategy', $load_method );
+			}
 		}
 	}
 
 	/**
 	 * Print a single script.
 	 *
-	 * @param array $script Script to insert into DOM.
+	 * @param array<string, mixed> $script Script to insert into DOM.
 	 */
-	public function print_asset( $script ) {
-		$classes   = $this->default_classes;
-		$classes[] = $script['handle'];
+	public function print_asset( $script ): void {
+		$handle      = $this->asset_string( $script, 'handle' );
+		$load_method = $this->asset_string( $script, 'load_method' );
+		$src         = $script['src'] ?? '';
+		$classes     = $this->default_classes;
+		$classes[]   = $handle;
 
-		if ( ! empty( $script['src'] ) && ! in_array( $script['load_method'], $this->wp_enqueue_methods, true ) ) {
-			if ( 'inline' === $script['load_method'] ) {
-				if ( is_array( $script['src'] ) ) {
+		if ( ! empty( $src ) && ! in_array( $load_method, $this->wp_enqueue_methods, true ) ) {
+			if ( 'inline' === $load_method ) {
+				if ( is_array( $src ) ) {
 					// If src is an array, add it as a property containing a JSON object on a global variable.
 					printf(
 						'<script class="%1$s" type="text/javascript">window.%2$s = window.%2$s || {}; window.%2$s["%3$s"] = %4$s</script>',
 						esc_attr( implode( ' ', $classes ) ),
 						esc_js( $this->inline_script_context ),
-						esc_js( $script['handle'] ),
-						wp_json_encode( $script['src'] )
+						esc_js( $handle ),
+						wp_json_encode( $src )
 					);
-				} elseif ( am_validate_path( $script['src'] ) ) {
-					$file_contents = file_get_contents( $script['src'] ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+				} elseif ( is_string( $src ) && am_validate_path( $src ) ) {
+					$file_contents = file_get_contents( $src ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 					printf(
 						'<script class="%1$s" type="text/javascript">%2$s</script>',
@@ -186,8 +135,8 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Perform final mutations before adding script to array.
 	 *
-	 * @param array $script Script to mutate.
-	 * @return array
+	 * @param array<string, mixed> $script Script to mutate.
+	 * @return array<string, mixed>
 	 */
 	public function pre_add_asset( $script ) {
 		return $script;
@@ -196,54 +145,36 @@ class Scripts extends Asset_Manager {
 	/**
 	 * Add script to async/defer script list.
 	 *
-	 * @param array $script Script to add.
-	 * @return array
+	 * @param array<string, mixed> $script Script to add.
+	 * @return array<string, mixed>
 	 */
 	public function post_validate_asset( $script ) {
 		$unsafe_dependents = [];
+		$load_method       = $this->asset_string( $script, 'load_method' );
+		$dependents        = $this->asset_deps( [ 'deps' => $script['dependents'] ?? [] ] );
 
-		if ( ! empty( $script['dependents'] ) ) {
-			if ( 'defer' === $script['load_method'] ) {
+		if ( $dependents ) {
+			if ( 'defer' === $load_method ) {
 				// Dependent is unsafe if it's not also 'defer'.
-				foreach ( $script['dependents'] as $dependent ) {
-					$dependent_info = $this->assets_by_handle[ $dependent ];
-					if ( 'defer' !== $dependent_info['load_method'] ) {
+				foreach ( $dependents as $dependent ) {
+					$dependent_info = $this->assets_by_handle[ $dependent ] ?? [];
+
+					if ( 'defer' !== $this->asset_string( $dependent_info, 'load_method' ) ) {
 						$unsafe_dependents[] = $dependent;
 					}
 				}
-			} elseif ( 'async' === $script['load_method'] || 'async-defer' === $script['load_method'] ) {
+			} elseif ( 'async' === $load_method ) {
 				// All dependents are unsafe.
-				$unsafe_dependents = $script['dependents'];
+				$unsafe_dependents = $dependents;
 			}
 
-			if ( ! empty( $unsafe_dependents ) && is_array( $unsafe_dependents ) ) {
-				$example_dependent = $this->assets_by_handle[ $unsafe_dependents[0] ];
+			if ( $unsafe_dependents ) {
+				$example_dependent = $this->assets_by_handle[ $unsafe_dependents[0] ] ?? [];
+
 				$this->generate_asset_error( 'unsafe_load_method', $script, $example_dependent );
 			}
 		}
 
-		$this->add_to_async( $script );
-
 		return $script;
-	}
-
-	/**
-	 * Add a script handle to the list of async or defer scripts
-	 *
-	 * @param array $script Script to add.
-	 */
-	public function add_to_async( $script ) {
-		// For version of WordPress 6.3+ async and defer can use the core strategy for loading.
-		if ( version_compare( $GLOBALS['wp_version'], '6.3', '<' ) ) {
-			$load_methods_to_async = [ 'async', 'defer', 'async-defer' ];
-		} else {
-			$load_methods_to_async = [ 'async-defer' ];
-		}
-		if (
-			in_array( $script['load_method'], $load_methods_to_async, true ) &&
-			! in_array( $script['handle'], $this->async_scripts, true )
-		) {
-			$this->async_scripts[] = $script['handle'];
-		}
 	}
 }

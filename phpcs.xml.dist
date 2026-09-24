@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<ruleset
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer rules for WP Asset Manager"
+  xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+	<description>PHP_CodeSniffer rules for WP Asset Manager.</description>
+
+	<!-- Include Alley Rules -->
+	<rule ref="Alley-Interactive" />
+
+	<!--
+	  Pass some flags to PHPCS:
+	  p flag: Show progress of the run.
+	  s flag: Show sniff codes in all reports.
+	  v flag: Print processed files.
+    -->
+	<arg value="psv"/>
+
+    <!-- Check up to 20 files simultaneously. -->
+    <arg name="parallel" value="20"/>
+
+    <!-- Set severity to 1 to see everything that isn't effectively turned off. -->
+    <arg name="severity" value="1"/>
+
+    <!-- Configure the PHP version -->
+    <config name="testVersion" value="8.3-"/>
+
+    <!-- The version set here matches the minimum version tested. -->
+    <config name="minimum_wp_version" value="6.3"/>
+
+	<!-- Project customizations go here -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<!--
+			Verify that the text_domain is set to the desired text-domain.
+			Multiple valid text domains can be provided as additional <element> nodes.
+			 -->
+			<property name="text_domain" type="array">
+				<element value="wp-asset-manager" />
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+	The plugin's public API is prefixed `am_`. WPCS 3.x enforces a four-character minimum
+	prefix (PrefixAllGlobalsSniff::MIN_PREFIX_LENGTH), silently discards `am_` for being
+	too short, and then reports every `am_*` symbol as unprefixed. There is no per-prefix
+	escape hatch — see
+	https://github.com/WordPress/WordPress-Coding-Standards/issues/1836 — so the sniff is
+	excluded outright.
+
+	Those template tags are slated for deprecation in the next major version; see the
+	deprecation note in CHANGELOG.md. Until then, renaming them would break every consumer.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals" />
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidVariableName">
+		<properties>
+			<property name="allowed_custom_properties" type="array">
+				<element value="childNodes"/>
+				<element value="nodeName"/>
+				<element value="parentNode"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.PHP.ForbiddenFunctions">
+		<properties>
+			<!--
+			WordPress.com VIP does not propagate wp_cache_set data across datacenters,
+			largely to avoid attempting to propagate large (>50k) data for batcache.
+			-->
+			<property name="forbiddenFunctions" type="array">
+				<element key="wp_cache_add" value="wp_cache_set" />
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+	Printing <link> and <script> tags directly is what this plugin does. The async and
+	defer load methods deliberately bypass `wp_enqueue_style()`/`wp_enqueue_script()` so
+	assets can load without blocking render, and the test suite asserts against that
+	markup. The sniff has nothing useful to say here.
+	-->
+	<rule ref="WordPress.WP.EnqueuedResources">
+		<exclude name="WordPress.WP.EnqueuedResources" />
+	</rule>
+
+	<!--
+	Rules below are scoped to the test suite, where the production-code assumptions
+	behind them don't hold. Everything else still applies to tests.
+	-->
+
+	<!-- Test classes are PSR-4 autoloaded, so they use StudlyCaps filenames, not `class-*.php`. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<!-- Tests set globals such as $wp_current_filter to simulate the hook context under test. -->
+	<rule ref="WordPress.WP.GlobalVariablesOverride">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<!-- Asset Manager conditions use an `exclude` key; this sniff reads it as a get_posts() argument. -->
+	<rule ref="WordPressVIPMinimum.Performance.WPQueryParams">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+</ruleset>

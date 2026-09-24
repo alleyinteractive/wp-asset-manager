@@ -3,7 +3,6 @@ name: "All Pull Request Tests"
 on:
   pull_request:
     branches:
-      - develop
       - production
     types: [opened, synchronize, reopened, ready_for_review]
 
@@ -15,12 +14,17 @@ jobs:
     if: github.event.pull_request.draft == false
     # Timeout after 10 minutes
     timeout-minutes: 10
-    # Define a matrix of PHP/WordPress versions to test against
+    # Test each supported PHP version against the latest WordPress, plus a single
+    # job on the minimum supported WordPress version to guard againt the minimum version(s).
     strategy:
       matrix:
-        php: [8.2, 8.3]
+        php: [8.3, 8.4, 8.5]
         wordpress: ["latest"]
         multisite: ["true", "false"]
+        include:
+          - php: 8.4
+            wordpress: "6.3"
+            multisite: "false"
     runs-on: ubuntu-latest
     # Cancel any existing runs of this workflow
     concurrency:
@@ -43,6 +47,10 @@ jobs:
           wordpress-version: '${{ matrix.wordpress }}'
           skip-wordpress-install: 'true'
           wordpress-multisite: '${{ matrix.multisite }}'
+          # The test bootstrap calls `with_sqlite()`, so the MySQL, Redis, and
+          # Memcached containers would start and go unused.
+          skip-services: 'true'
+
   # This required job ensures that all PR checks have passed before merging.
   all-pr-checks-passed:
     name: All PR checks passed

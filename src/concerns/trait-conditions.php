@@ -2,7 +2,7 @@
 /**
  * Trait file for asset conditions.
  *
- * @package AssetManager
+ * @package Asset_Manager
  */
 
 namespace Alley\WP\Asset_Manager\Concerns;
@@ -15,12 +15,14 @@ trait Conditions {
 	/**
 	 * Storage of the asset conditions.
 	 *
-	 * @var array
+	 * @var array<string, bool>|null
 	 */
-	protected static $_conditions; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+	protected static $_conditions = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Get the available conditions for loading assets.
+	 *
+	 * @return array<string, bool>
 	 */
 	public static function get_conditions() {
 		if ( ! isset( static::$_conditions ) || ( defined( 'WP_IRVING_TEST' ) && WP_IRVING_TEST ) ) {
@@ -35,7 +37,7 @@ trait Conditions {
 			 *     @type bool $condition Condition to check. Accepts any value that can be coerced to a boolean.
 			 * }
 			 */
-			static::$_conditions = apply_filters(
+			$filtered = apply_filters(
 				'am_asset_conditions',
 				[
 					'global' => true,
@@ -43,6 +45,17 @@ trait Conditions {
 					'search' => is_search(),
 				]
 			);
+
+			// A filter can return anything, so coerce it back into a map of condition names.
+			$conditions = [];
+
+			foreach ( $filtered as $name => $value ) {
+				if ( is_string( $name ) ) {
+					$conditions[ $name ] = (bool) $value;
+				}
+			}
+
+			static::$_conditions = $conditions;
 		}
 
 		return static::$_conditions;
@@ -51,8 +64,8 @@ trait Conditions {
 	/**
 	 * Determine if an asset should be added (enqueued) or not.
 	 *
-	 * @param string $asset Type of asset.
-	 * @return bool|WP_Error
+	 * @param array<string, mixed> $asset Asset to check.
+	 * @return bool
 	 */
 	public function asset_should_add( $asset ) {
 		/**
@@ -77,54 +90,55 @@ trait Conditions {
 			return true;
 		}
 
-		$conditions       = static::get_conditions();
-		$condition_result = true;
+		$condition  = $asset['condition'];
+		$conditions = static::get_conditions();
 
-		// Default functionality of condition is 'include'.
-		if ( ! empty( $asset['condition']['include'] ) ) {
-			$condition_include = $asset['condition']['include'];
-		} elseif ( ! empty( $asset['condition']['include_any'] ) ) {
-			$condition_include_any = $asset['condition']['include_any'];
-		} elseif ( empty( $asset['condition']['exclude'] ) ) {
-			$condition_include = $asset['condition'];
+		/*
+		 * A condition is either a bare condition name, a list of them, or a map of
+		 * `include` / `include_any` / `exclude` lists. Only the map form has keys to read.
+		 */
+		$map = is_array( $condition ) ? $condition : [];
+
+		$condition_include     = [];
+		$condition_include_any = [];
+		$condition_exclude     = $this->condition_list( $map['exclude'] ?? [] );
+
+		if ( ! empty( $map['include'] ) ) {
+			$condition_include = $this->condition_list( $map['include'] );
+		} elseif ( ! empty( $map['include_any'] ) ) {
+			$condition_include_any = $this->condition_list( $map['include_any'] );
+		} elseif ( ! $condition_exclude ) {
+			// No keys at all, so the whole value is the list of conditions to include.
+			$condition_include = $this->condition_list( $condition );
 		}
 
-		// Check 'include' conditions (all must be true for asset to load)
-		// There might only be an 'exclude' condition, so check empty() first.
-		if ( ! empty( $condition_include ) ) {
-			$condition_include = ! is_array( $condition_include ) ? [ $condition_include ] : $condition_include;
+		$condition_result = true;
 
-			foreach ( $condition_include as $condition_true ) {
+		// Check 'include' conditions (all must be true for asset to load).
+		foreach ( $condition_include as $condition_true ) {
+			if ( empty( $conditions[ $condition_true ] ) ) {
+				$condition_result = false;
+				break;
+			}
+		}
+
+		// Check for 'include_any' to allow for matching of _any_ condition instead of all conditions.
+		if ( $condition_include_any ) {
+			$condition_result = false;
+
+			foreach ( $condition_include_any as $condition_true ) {
 				if ( ! empty( $conditions[ $condition_true ] ) ) {
-					continue;
-				} else {
-					$condition_result = false;
+					$condition_result = true;
 					break;
 				}
 			}
 		}
 
-		// Check for 'include_any' to allow for matching of _any_ condition instead of all conditions.
-		if ( ! empty( $condition_include_any ) ) {
-			$condition_result      = false;
-			$condition_include_any = ! is_array( $condition_include_any ) ? [ $condition_include_any ] : $condition_include_any;
-
-			foreach ( $condition_include_any as $condition_true ) {
-				if ( $conditions[ $condition_true ] ) {
-					$condition_result = true;
-				}
-			}
-		}
-
-		// Check 'exclude' conditions (all must be false for asset to load)
+		// Check 'exclude' conditions (all must be false for asset to load).
 		// Verify $condition_result is true. If it's already false, we don't need to check excludes.
-		if ( ! empty( $asset['condition']['exclude'] ) && $condition_result ) {
-			$condition_exclude = ! is_array( $asset['condition']['exclude'] ) ? [ $asset['condition']['exclude'] ] : $asset['condition']['exclude'];
-
+		if ( $condition_exclude && $condition_result ) {
 			foreach ( $condition_exclude as $condition_false ) {
-				if ( ! $conditions[ $condition_false ] ) {
-					continue;
-				} else {
+				if ( ! empty( $conditions[ $condition_false ] ) ) {
 					$condition_result = false;
 					break;
 				}
@@ -132,5 +146,26 @@ trait Conditions {
 		}
 
 		return $condition_result;
+	}
+
+	/**
+	 * Normalize a condition value into a list of condition names.
+	 *
+	 * Conditions are supplied by the caller, so a single name and a list of names are both
+	 * accepted, and anything that isn't a usable name is dropped rather than compared.
+	 *
+	 * @param mixed $condition One condition name, or a list of them.
+	 * @return list<string>
+	 */
+	private function condition_list( $condition ): array {
+		$names = [];
+
+		foreach ( is_array( $condition ) ? $condition : [ $condition ] as $name ) {
+			if ( is_string( $name ) && '' !== $name ) {
+				$names[] = $name;
+			}
+		}
+
+		return $names;
 	}
 }
