@@ -43,13 +43,17 @@ if ( ! function_exists( 'am_enqueue_script' ) ) :
 	 * @param string                           $load_hook    Hook on which to load this asset.
 	 *
 	 * @phpstan-param string|array{
-	 *   handle: array<string, mixed>|string,
-	 *   src?: array<string, mixed>|string,
-	 *   condition?: string,
-	 *   deps?: array<string>,
-	 *   load_hook?: string,
-	 *   load_method?: string,
-	 *   version?: string
+	 *  handle: array<string, mixed>|string,
+	 *  src?: array<string, mixed>|string,
+	 *  condition?: array<string>|array{
+	 *      include?: array<string>|string,
+	 *      include_any?: array<string>|string,
+	 *      exclude?: array<string>|string
+	 *  }|string,
+	 *  deps?: array<string>,
+	 *  load_hook?: string,
+	 *  load_method?: string,
+	 *  version?: string
 	 * } $handle
 	 */
 	function am_enqueue_script( array|string $handle, array|string|null $src = null, array $deps = [], array|string $condition = 'global', string $load_method = 'sync', ?string $version = '1.0.0', string $load_hook = 'wp_head' ): void {
