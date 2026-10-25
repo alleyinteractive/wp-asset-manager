@@ -118,7 +118,11 @@ if ( ! function_exists( 'am_enqueue_style' ) ) :
 	 *   handle: string,
 	 *   src?: string,
 	 *   deps?: array<string>,
-	 *   condition?: array<string>|string,
+	 *   condition?: array<string>|array{
+	 *     include?: array<string>|string,
+	 *     include_any?: array<string>|string,
+	 *     exclude?: array<string>|string
+	 *   }|string,
 	 *   load_method?: string,
 	 *   version?: string,
 	 *   load_hook?: string,
@@ -170,7 +174,11 @@ if ( ! function_exists( 'am_preload' ) ) :
 	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
-	 *   condition?: array<string>|string,
+	 *   condition?: array<string>|array{
+	 *     include?: array<string>|string,
+	 *     include_any?: array<string>|string,
+	 *     exclude?: array<string>|string
+	 *   }|string,
 	 *   version?: string,
 	 *   media?: string,
 	 *   as?: string,
@@ -233,7 +241,11 @@ if ( ! function_exists( 'am_register_symbol' ) ) :
 	 * @phpstan-param string|array{
 	 *   handle: string,
 	 *   src?: string,
-	 *   condition?: array<string>|string,
+	 *   condition?: array<string>|array{
+	 *     include?: array<string>|string,
+	 *     include_any?: array<string>|string,
+	 *     exclude?: array<string>|string
+	 *   }|string,
 	 *   attributes?: array<string, string>
 	 * } $handle
 	 */
